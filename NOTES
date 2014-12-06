@@ -1,0 +1,25 @@
+December 6, 2014.
+
+The idea is to make a proper ssh implementation for Android.  Important
+features:
+
+   * it should run happily without root (on a non-root port)
+
+   * it should be a regular android app requiring no special permissions,
+     and not requiring any 'magic' executable files
+
+   * should not rely on busybox
+
+   * preferably support sftp
+
+   * open source
+
+The existing apps are either expensive, don't work, need root, or too
+complicated, or a mix of all of the above.  And none of them are open
+source.
+
+I figure I'll start with dropbear, which I will run through JNI instead
+of putting it in its own binary (because making such a binary executable
+is a bit of a hack).
+
+So that's the plan........
