@@ -36,7 +36,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirlgen.c \
 	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirltest.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/aes/aes.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/aes/aes_tab.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/anubis.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/blowfish.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/cast5.c \
@@ -53,7 +52,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/safer/saferp.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/skipjack.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/twofish/twofish.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/twofish/twofish_tab.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/xtea.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/encauth/ccm/ccm_memory.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/encauth/ccm/ccm_test.c \
@@ -99,13 +97,10 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/rmd256.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/rmd320.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha1.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha224.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha256.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha384.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha512.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/tiger.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/whirl/whirl.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/whirl/whirltab.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/f9/f9_done.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/f9/f9_file.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/mac/f9/f9_init.c \
@@ -330,7 +325,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/rng_get_bytes.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/rng_make_prng.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sober128.c \
-	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sober128tab.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sprng.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/yarrow.c \
 	$(DROPBEAR_PATH)/libtomcrypt/testprof/base64_test.c \
