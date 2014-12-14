@@ -32,13 +32,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/genrsa.c \
 	$(DROPBEAR_PATH)/gensignkey.c \
 	$(DROPBEAR_PATH)/keyimport.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/encrypt.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/hashsum.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/multi.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/small.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/timing.c \
-	$(DROPBEAR_PATH)/libtomcrypt/demos/tv_gen.c \
 	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/saferp_optimizer.c \
 	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirlgen.c \
 	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirltest.c \
@@ -472,8 +465,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sqr.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sub.c \
 	$(DROPBEAR_PATH)/libtommath/bncore.c \
-	$(DROPBEAR_PATH)/libtommath/demo/demo.c \
-	$(DROPBEAR_PATH)/libtommath/demo/timing.c \
 	$(DROPBEAR_PATH)/libtommath/etc/2kprime.c \
 	$(DROPBEAR_PATH)/libtommath/etc/drprime.c \
 	$(DROPBEAR_PATH)/libtommath/etc/mersenne.c \
