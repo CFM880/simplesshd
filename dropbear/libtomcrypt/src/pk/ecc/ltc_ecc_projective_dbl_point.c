@@ -14,6 +14,7 @@
  * All curves taken from NIST recommendation paper of July 1999
  * Available at http://csrc.nist.gov/cryptval/dss.htm
  */
+#define LTC_SOURCE 1
 #include "tomcrypt.h"
 
 /**
