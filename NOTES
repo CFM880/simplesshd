@@ -23,3 +23,22 @@ of putting it in its own binary (because making such a binary executable
 is a bit of a hack).
 
 So that's the plan........
+
+
+December 14, 2014.
+
+I got dropbear to compile under the Android NDK, so now it's time to work
+on the Android side of it.
+
+I need:
+  * a Service that can be started, stopped, and queried for whether it's
+    running or not
+  * a Thread to implement the Service's work (by calling into dropbear's
+    main()), which can also be stopped.
+  * a config UI with at least these choices:
+    - bool: start on boot (def: true)
+    - number: port number (def: 2222)
+    - string: path to authorized_keys file (def: /sdcard/ssh)
+    - string: name of default shell (def: /system/bin/sh -l)
+    - string: default path for HOME (def: /sdcard/ssh)
+    - button: start or (if it's running) stop
