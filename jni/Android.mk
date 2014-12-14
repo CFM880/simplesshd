@@ -19,11 +19,8 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/compat.c \
 	$(DROPBEAR_PATH)/crypto_desc.c \
 	$(DROPBEAR_PATH)/curve25519-donna.c \
-	$(DROPBEAR_PATH)/dbmulti.c \
 	$(DROPBEAR_PATH)/dbrandom.c \
 	$(DROPBEAR_PATH)/dbutil.c \
-	$(DROPBEAR_PATH)/dropbearconvert.c \
-	$(DROPBEAR_PATH)/dropbearkey.c \
 	$(DROPBEAR_PATH)/dss.c \
 	$(DROPBEAR_PATH)/ecc.c \
 	$(DROPBEAR_PATH)/ecdsa.c \
@@ -443,9 +440,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sqr.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sub.c \
 	$(DROPBEAR_PATH)/libtommath/bncore.c \
-	$(DROPBEAR_PATH)/libtommath/mtest/mpi.c \
-	$(DROPBEAR_PATH)/libtommath/mtest/mtest.c \
-	$(DROPBEAR_PATH)/libtommath/pre_gen/mpi.c \
 	$(DROPBEAR_PATH)/list.c \
 	$(DROPBEAR_PATH)/listener.c \
 	$(DROPBEAR_PATH)/loginrec.c \
