@@ -36,7 +36,7 @@ I need:
   * a Thread to implement the Service's work (by calling into dropbear's
     main()), which can also be stopped.
   * a config UI with at least these choices:
-    - bool: start on boot (def: true)
+    - bool: start on boot (def: false)
     - number: port number (def: 2222)
     - string: path to authorized_keys file (def: /sdcard/ssh)
     - string: name of default shell (def: /system/bin/sh -l)

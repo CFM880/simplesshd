@@ -2,12 +2,82 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="Hello World, SimpleSSHD"
-    />
+    android:layout_height="fill_parent">
+    <LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="1dp"
+	android:layout_weight="1">
+	<TextView
+	    android:layout_width="1dp"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="3"
+	    android:text="Start on boot"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	<CheckBox android:id="@+id/onboot"
+	    android:layout_width="1dp"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="1"
+	    android:gravity="right" />
+    </LinearLayout>
+    <LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="1dp"
+	android:layout_weight="1">
+	<TextView
+	    android:layout_width="1dp"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="2"
+	    android:text="Port"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	<EditText android:id="@+id/port"
+	    android:layout_width="1dp"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="1"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:singleLine="true"
+	    android:inputType="numberDecimal" />
+    </LinearLayout>
+    <TextView
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:text="Path to authorized_keys"
+	android:textAppearance="?android:attr/textAppearanceSmall" />
+    <EditText android:id="@+id/path"
+	android:layout_width="1dp"
+	android:layout_height="fill_parent"
+	android:layout_weight="1"
+	android:textAppearance="?android:attr/textAppearanceMedium"
+	android:singleLine="true" />
+    <TextView
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:text="Login shell"
+	android:textAppearance="?android:attr/textAppearanceSmall" />
+    <EditText android:id="@+id/shell"
+	android:layout_width="1dp"
+	android:layout_height="fill_parent"
+	android:layout_weight="1"
+	android:textAppearance="?android:attr/textAppearanceMedium"
+	android:singleLine="true" />
+    <TextView
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:text="Home directory"
+	android:textAppearance="?android:attr/textAppearanceSmall" />
+    <EditText android:id="@+id/home"
+	android:layout_width="1dp"
+	android:layout_height="fill_parent"
+	android:layout_weight="1"
+	android:textAppearance="?android:attr/textAppearanceMedium"
+	android:singleLine="true" />
+    <Button android:id="@+id/startstop"
+	android:layout_width="fill_parent"
+	android:layout_height="1dp"
+	android:layout_weight="1"
+	android:text="Start"
+	android:textAppearance="?android:attr/textAppearanceLarge"
+	android:onClick="starstop_clicked" />
 </LinearLayout>
 
