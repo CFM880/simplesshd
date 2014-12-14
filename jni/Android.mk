@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    :=
 LOCAL_MODULE    := simplesshd-jni
 
 DROPBEAR_PATH := ../dropbear/
