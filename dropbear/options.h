@@ -41,7 +41,7 @@
  * Both of these flags can be defined at once, don't compile without at least
  * one of them. */
 #define NON_INETD_MODE
-#define INETD_MODE
+#undef INETD_MODE
 
 /* Setting this disables the fast exptmod bignum code. It saves ~5kB, but is
  * perhaps 20% slower for pubkey operations (it is probably worth experimenting
@@ -52,24 +52,24 @@
 several kB in binary size however will make the symmetrical ciphers and hashes
 slower, perhaps by 50%. Recommended for small systems that aren't doing
 much traffic. */
-#define DROPBEAR_SMALL_CODE
+#undef DROPBEAR_SMALL_CODE
 
 /* Enable X11 Forwarding - server only */
-#define ENABLE_X11FWD
+#undef ENABLE_X11FWD
 
 /* Enable TCP Fowarding */
 /* 'Local' is "-L" style (client listening port forwarded via server)
  * 'Remote' is "-R" style (server listening port forwarded via client) */
 
-#define ENABLE_CLI_LOCALTCPFWD
-#define ENABLE_CLI_REMOTETCPFWD
+#undef ENABLE_CLI_LOCALTCPFWD
+#undef ENABLE_CLI_REMOTETCPFWD
 
-#define ENABLE_SVR_LOCALTCPFWD
-#define ENABLE_SVR_REMOTETCPFWD
+#undef ENABLE_SVR_LOCALTCPFWD
+#undef ENABLE_SVR_REMOTETCPFWD
 
 /* Enable Authentication Agent Forwarding */
-#define ENABLE_SVR_AGENTFWD
-#define ENABLE_CLI_AGENTFWD
+#undef ENABLE_SVR_AGENTFWD
+#undef ENABLE_CLI_AGENTFWD
 
 
 /* Note: Both ENABLE_CLI_PROXYCMD and ENABLE_CLI_NETCAT must be set to
@@ -77,14 +77,14 @@ much traffic. */
 
 /* Allow using -J <proxycommand> to run the connection through a 
    pipe to a program, rather the normal TCP connection */
-#define ENABLE_CLI_PROXYCMD
+#undef ENABLE_CLI_PROXYCMD
 
 /* Enable "Netcat mode" option. This will forward standard input/output
  * to a remote TCP-forwarded connection */
-#define ENABLE_CLI_NETCAT
+#undef ENABLE_CLI_NETCAT
 
 /* Whether to support "-c" and "-m" flags to choose ciphers/MACs at runtime */
-#define ENABLE_USER_ALGO_LIST
+#undef ENABLE_USER_ALGO_LIST
 
 /* Encryption - at least one required.
  * Protocol RFC requires 3DES and recommends AES128 for interoperability.
@@ -94,7 +94,7 @@ much traffic. */
 #define DROPBEAR_3DES
 #define DROPBEAR_AES256
 /* Compiling in Blowfish will add ~6kB to runtime heap memory usage */
-/*#define DROPBEAR_BLOWFISH*/
+#define DROPBEAR_BLOWFISH
 #define DROPBEAR_TWOFISH256
 #define DROPBEAR_TWOFISH128
 
@@ -175,7 +175,7 @@ much traffic. */
 
 /* Whether to print the message of the day (MOTD). This doesn't add much code
  * size */
-#define DO_MOTD
+#undef DO_MOTD
 
 /* The MOTD file path */
 #ifndef MOTD_FILENAME
@@ -192,7 +192,7 @@ much traffic. */
  * PAM challenge/response.
  * You can't enable both PASSWORD and PAM. */
 
-#define ENABLE_SVR_PASSWORD_AUTH
+#undef ENABLE_SVR_PASSWORD_AUTH
 /* PAM requires ./configure --enable-pam */
 /*#define ENABLE_SVR_PAM_AUTH */
 #define ENABLE_SVR_PUBKEY_AUTH
@@ -203,9 +203,9 @@ much traffic. */
 #define ENABLE_SVR_PUBKEY_OPTIONS
 #endif
 
-#define ENABLE_CLI_PASSWORD_AUTH
-#define ENABLE_CLI_PUBKEY_AUTH
-#define ENABLE_CLI_INTERACT_AUTH
+#undef ENABLE_CLI_PASSWORD_AUTH
+#undef ENABLE_CLI_PUBKEY_AUTH
+#undef ENABLE_CLI_INTERACT_AUTH
 
 /* This variable can be used to set a password for client
  * authentication on the commandline. Beware of platforms
@@ -213,7 +213,7 @@ much traffic. */
  * note that it will be provided for all "hidden" client-interactive
  * style prompts - if you want something more sophisticated, use 
  * SSH_ASKPASS instead. Comment out this var to remove this functionality.*/
-#define DROPBEAR_PASSWORD_ENV "DROPBEAR_PASSWORD"
+#undef DROPBEAR_PASSWORD_ENV
 
 /* Define this (as well as ENABLE_CLI_PASSWORD_AUTH) to allow the use of
  * a helper program for the ssh client. The helper program should be
@@ -257,26 +257,17 @@ much traffic. */
 
 /* The default file to store the daemon's process ID, for shutdown
    scripts etc. This can be overridden with the -P flag */
-#ifndef DROPBEAR_PIDFILE
-#define DROPBEAR_PIDFILE "/var/run/dropbear.pid"
-#endif
+#undef DROPBEAR_PIDFILE
 
 /* The command to invoke for xauth when using X11 forwarding.
  * "-q" for quiet */
-#ifndef XAUTH_COMMAND
-#define XAUTH_COMMAND "/usr/bin/xauth -q"
-#endif
+#undef XAUTH_COMMAND
 
-/* if you want to enable running an sftp server (such as the one included with
- * OpenSSH), set the path below. If the path isn't defined, sftp will not
- * be enabled */
-#ifndef SFTPSERVER_PATH
-#define SFTPSERVER_PATH "/usr/libexec/sftp-server"
-#endif
+#undef SFTPSERVER_PATH
 
 /* This is used by the scp binary when used as a client binary. If you're
  * not using the Dropbear client, you'll need to change it */
-#define _PATH_SSH_PROGRAM "/usr/bin/dbclient"
+#undef _PATH_SSH_PROGRAM
 
 /* Whether to log commands executed by a client. This only logs the 
  * (single) command sent to the server, not what a user did in a 

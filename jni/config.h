@@ -16,4 +16,10 @@
 #define HAVE_FREEADDRINFO 1
 #define HAVE_GETNAMEINFO 1
 
+#define HAVE_BASENAME 1
+#define HAVE_NETINET_TCP_H 1
+
+
+#define DROPBEAR_SERVER 1
+
 #endif /* __CONFIG_H__ */
