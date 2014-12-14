@@ -32,9 +32,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/genrsa.c \
 	$(DROPBEAR_PATH)/gensignkey.c \
 	$(DROPBEAR_PATH)/keyimport.c \
-	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/saferp_optimizer.c \
-	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirlgen.c \
-	$(DROPBEAR_PATH)/libtomcrypt/notes/etc/whirltest.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/aes/aes.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/anubis.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/ciphers/blowfish.c \
@@ -327,19 +324,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sober128.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/sprng.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/prngs/yarrow.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/base64_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/cipher_hash_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/der_tests.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/dsa_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/ecc_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/katja_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/mac_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/modes_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/pkcs_1_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/rsa_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/store_test.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/test_driver.c \
-	$(DROPBEAR_PATH)/libtomcrypt/testprof/x86_prof.c \
 	$(DROPBEAR_PATH)/libtommath/bn_error.c \
 	$(DROPBEAR_PATH)/libtommath/bn_fast_mp_invmod.c \
 	$(DROPBEAR_PATH)/libtommath/bn_fast_mp_montgomery_reduce.c \
@@ -459,12 +443,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sqr.c \
 	$(DROPBEAR_PATH)/libtommath/bn_s_mp_sub.c \
 	$(DROPBEAR_PATH)/libtommath/bncore.c \
-	$(DROPBEAR_PATH)/libtommath/etc/2kprime.c \
-	$(DROPBEAR_PATH)/libtommath/etc/drprime.c \
-	$(DROPBEAR_PATH)/libtommath/etc/mersenne.c \
-	$(DROPBEAR_PATH)/libtommath/etc/mont.c \
-	$(DROPBEAR_PATH)/libtommath/etc/pprime.c \
-	$(DROPBEAR_PATH)/libtommath/etc/tune.c \
 	$(DROPBEAR_PATH)/libtommath/mtest/mpi.c \
 	$(DROPBEAR_PATH)/libtommath/mtest/mtest.c \
 	$(DROPBEAR_PATH)/libtommath/pre_gen/mpi.c \
