@@ -111,7 +111,6 @@ void main_noinetd() {
 	int maxsock = -1;
 	int listensocks[MAX_LISTEN_ADDR];
 	size_t listensockcount = 0;
-	FILE *pidfile = NULL;
 
 	int childpipes[MAX_UNAUTH_CLIENTS];
 	char * preauth_addrs[MAX_UNAUTH_CLIENTS];
@@ -162,13 +161,6 @@ void main_noinetd() {
 		dropbear_log(LOG_INFO, "Not backgrounding");
 	}
 
-	/* create a PID file so that we can be killed easily */
-	pidfile = fopen(svr_opts.pidfile, "w");
-	if (pidfile) {
-		fprintf(pidfile, "%d\n", getpid());
-		fclose(pidfile);
-	}
-
 	/* incoming connection select loop */
 	for(;;) {
 
@@ -190,7 +182,6 @@ void main_noinetd() {
 		val = select(maxsock+1, &fds, NULL, NULL, NULL);
 
 		if (exitflag) {
-			unlink(svr_opts.pidfile);
 			dropbear_exit("Terminated by signal");
 		}
 		
