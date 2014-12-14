@@ -10,18 +10,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/bignum.c \
 	$(DROPBEAR_PATH)/buffer.c \
 	$(DROPBEAR_PATH)/circbuffer.c \
-	$(DROPBEAR_PATH)/cli-agentfwd.c \
-	$(DROPBEAR_PATH)/cli-auth.c \
-	$(DROPBEAR_PATH)/cli-authinteract.c \
-	$(DROPBEAR_PATH)/cli-authpasswd.c \
-	$(DROPBEAR_PATH)/cli-authpubkey.c \
-	$(DROPBEAR_PATH)/cli-channel.c \
-	$(DROPBEAR_PATH)/cli-chansession.c \
-	$(DROPBEAR_PATH)/cli-kex.c \
-	$(DROPBEAR_PATH)/cli-main.c \
-	$(DROPBEAR_PATH)/cli-runopts.c \
-	$(DROPBEAR_PATH)/cli-session.c \
-	$(DROPBEAR_PATH)/cli-tcpfwd.c \
 	$(DROPBEAR_PATH)/common-algo.c \
 	$(DROPBEAR_PATH)/common-channel.c \
 	$(DROPBEAR_PATH)/common-chansession.c \
