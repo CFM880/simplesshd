@@ -139,7 +139,7 @@
 #ifdef DROPBEAR_ECC
 #define MECC
 #define LTC_ECC_SHAMIR
-#define LTC_ECC_TIMING_RESISTANT
+// #define LTC_ECC_TIMING_RESISTANT
 #define MPI
 #define LTM_DESC
 #ifdef DROPBEAR_ECC_256
