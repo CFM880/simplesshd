@@ -525,9 +525,8 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/tcp-accept.c \
 	$(DROPBEAR_PATH)/termcodes.c
 
-
 LOCAL_SRC_FILES := interface.c $(DROPBEAR_SRCS)
-LOCAL_C_INCLUDES:= ../dropbear
+LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
 # LOCAL_LDLIBS    := 
 
 include $(BUILD_SHARED_LIBRARY)
