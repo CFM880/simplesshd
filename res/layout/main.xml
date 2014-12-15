@@ -3,75 +3,76 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <LinearLayout
-	android:orientation="horizontal"
+    <ScrollView
 	android:layout_width="fill_parent"
 	android:layout_height="1dp"
 	android:layout_weight="1">
-	<TextView
-	    android:layout_width="1dp"
-	    android:layout_height="fill_parent"
-	    android:layout_weight="3"
-	    android:text="Start on boot"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
-	<CheckBox android:id="@+id/onboot"
-	    android:layout_width="1dp"
-	    android:layout_height="fill_parent"
-	    android:layout_weight="1"
-	    android:gravity="right" />
-    </LinearLayout>
-    <LinearLayout
-	android:orientation="horizontal"
-	android:layout_width="fill_parent"
-	android:layout_height="1dp"
-	android:layout_weight="1">
-	<TextView
-	    android:layout_width="1dp"
-	    android:layout_height="fill_parent"
-	    android:layout_weight="2"
-	    android:text="Port"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
-	<EditText android:id="@+id/port"
-	    android:layout_width="1dp"
-	    android:layout_height="fill_parent"
-	    android:layout_weight="1"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-	    android:singleLine="true"
-	    android:inputType="numberDecimal" />
-    </LinearLayout>
-    <TextView
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:text="Path to authorized_keys"
-	android:textAppearance="?android:attr/textAppearanceSmall" />
-    <EditText android:id="@+id/path"
-	android:layout_width="1dp"
-	android:layout_height="fill_parent"
-	android:layout_weight="1"
-	android:textAppearance="?android:attr/textAppearanceMedium"
-	android:singleLine="true" />
-    <TextView
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:text="Login shell"
-	android:textAppearance="?android:attr/textAppearanceSmall" />
-    <EditText android:id="@+id/shell"
-	android:layout_width="1dp"
-	android:layout_height="fill_parent"
-	android:layout_weight="1"
-	android:textAppearance="?android:attr/textAppearanceMedium"
-	android:singleLine="true" />
-    <TextView
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:text="Home directory"
-	android:textAppearance="?android:attr/textAppearanceSmall" />
-    <EditText android:id="@+id/home"
-	android:layout_width="1dp"
-	android:layout_height="fill_parent"
-	android:layout_weight="1"
-	android:textAppearance="?android:attr/textAppearanceMedium"
-	android:singleLine="true" />
+	<RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    <TextView android:id="@+id/onboot_lab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:text="Start on boot"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+	    <CheckBox android:id="@+id/onboot"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true" />
+	    <TextView android:id="@+id/port_lab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/onboot_lab"
+		android:text="Port"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+	    <EditText android:id="@+id/port"
+		android:layout_width="100dp"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/onboot_lab"
+		android:layout_alignParentRight="true"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:singleLine="true"
+		android:inputType="numberDecimal" />
+	    <TextView android:id="@+is/path_lab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/port_lab"
+		android:text="Path to authorized_keys"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+	    <EditText android:id="@+id/path"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/path_lab"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:singleLine="true" />
+	    <TextView android:id="@+is/shell_lab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/path"
+		android:text="Login shell"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+	    <EditText android:id="@+id/shell"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/shell_lab"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:singleLine="true" />
+	    <TextView android:id="@+is/home_lab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/shell"
+		android:text="Home directory"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+	    <EditText android:id="@+id/home"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/home_lab"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:singleLine="true" />
+	</RelativeLayout>
+    </ScrollView>
     <Button android:id="@+id/startstop"
 	android:layout_width="fill_parent"
 	android:layout_height="1dp"
@@ -80,4 +81,3 @@
 	android:textAppearance="?android:attr/textAppearanceLarge"
 	android:onClick="starstop_clicked" />
 </LinearLayout>
-
