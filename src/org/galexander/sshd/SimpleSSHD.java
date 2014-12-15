@@ -63,6 +63,7 @@ public class SimpleSSHD extends Activity
 		if (!s.equals(get_shell(prefs))) { edit.putString("shell", s); }
 		s = home_view.getText().toString();
 		if (!s.equals(get_home(prefs))) { edit.putString("home", s); }
+		edit.commit();
 	}
 
 	private boolean get_onboot(SharedPreferences p) {
