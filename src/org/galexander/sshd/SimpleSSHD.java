@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.Intent;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Button;
@@ -51,7 +52,7 @@ public class SimpleSSHD extends Activity
 	private void startstop_clicked(View v) {
 		save_prefs();
 		Intent i = new Intent(this, SimpleSSHDService.class);
-		if (SimpleSSHDService.is_started() {
+		if (SimpleSSHDService.is_started()) {
 			i.putExtra("stop", true);
 		}
 		startService(i);
