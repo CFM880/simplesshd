@@ -19,6 +19,7 @@ public class SimpleSSHD extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Prefs.init(this);
 		setContentView(R.layout.main);
 		onboot_view = (CheckBox)findViewById(R.id.onboot);
 		port_view = (EditText)findViewById(R.id.port);
@@ -61,48 +62,31 @@ public class SimpleSSHD extends Activity
 	}
 
 	private void load_prefs() {
-		SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-		onboot_view.setChecked(get_onboot(prefs));
-		port_view.setText(Integer.toString(get_port(prefs)));
-		path_view.setText(get_path(prefs));
-		shell_view.setText(get_shell(prefs));
-		home_view.setText(get_home(prefs));
+		onboot_view.setChecked(Prefs.get_onboot());
+		port_view.setText(Integer.toString(Prefs.get_port()));
+		path_view.setText(Prefs.get_path());
+		shell_view.setText(Prefs.get_shell());
+		home_view.setText(Prefs.get_home());
 	}
 
 	private void save_prefs() {
-		SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-		SharedPreferences.Editor edit = prefs.edit();
+		SharedPreferences.Editor edit = Prefs.edit();
 		boolean b = onboot_view.isChecked();
-		if (b != get_onboot(prefs)) { edit.putBoolean("onboot", b); }
+		if (b != Prefs.get_onboot()) { edit.putBoolean("onboot", b); }
 		int i;
 		try {
 			i = Integer.valueOf(port_view.getText().toString());
 		} catch (Exception e) {
 			i = 0;
 		}
-		if (i != get_port(prefs)) { edit.putInt("port", i); }
+		if (i != Prefs.get_port()) { edit.putInt("port", i); }
 		String s = path_view.getText().toString();
-		if (!s.equals(get_path(prefs))) { edit.putString("path", s); }
+		if (!s.equals(Prefs.get_path())) { edit.putString("path", s); }
 		s = shell_view.getText().toString();
-		if (!s.equals(get_shell(prefs))) { edit.putString("shell", s); }
+		if (!s.equals(Prefs.get_shell())) { edit.putString("shell", s); }
 		s = home_view.getText().toString();
-		if (!s.equals(get_home(prefs))) { edit.putString("home", s); }
+		if (!s.equals(Prefs.get_home())) { edit.putString("home", s); }
 		edit.commit();
 	}
 
-	public static boolean get_onboot(SharedPreferences p) {
-		return p.getBoolean("onboot", false);
-	}
-	public static int get_port(SharedPreferences p) {
-		return p.getInt("port", 2222);
-	}
-	public static String get_path(SharedPreferences p) {
-		return p.getString("path", "/sdcard/ssh");
-	}
-	public static String get_shell(SharedPreferences p) {
-		return p.getString("shell", "/system/bin/sh -l");
-	}
-	public static String get_home(SharedPreferences p) {
-		return p.getString("home", "/sdcard/ssh");
-	}
 }
