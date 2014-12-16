@@ -8,7 +8,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-const char *conf_path, *conf_shell, *conf_home;
+const char *conf_path = "", *conf_shell = "", *conf_home = "";
+
+/* NB - this will leak memory like crazy if called often.... */
+const char *
+conf_path_file(const char *fn)
+{
+	char *ret = malloc(strlen(conf_path)+strlen(fn)+20);
+	sprintf(ret, "%s/%s", conf_path, fn);
+	return ret;
+}
 
 /* XXX - do i need a function to generate host keys? DROPBEAR_DELAY_HOSTKEY */
 /* XXX - a C-callable interface to get property strings from the java side (paths, etc) */
@@ -76,12 +85,11 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	if (pid == 0) {
 		char *argv[10] = { "sshd", NULL };
 		int argc = 1;
-		char *logfn;
+		const char *logfn;
 		int logfd;
 		int retval;
 
-		logfn = malloc(strlen(conf_path)+20);
-		sprintf(logfn, "%s/dropbear.err", conf_path);
+		logfn = conf_path_file("dropbear.err");
 		unlink(logfn);
 		logfd = open(logfn, O_CREAT|O_WRONLY, 0666);
 		if (logfd != -1) {
