@@ -38,6 +38,7 @@ public class SimpleSSHD extends Activity
 	public void onPause() {
 		SimpleSSHDService.activity = null;
 		save_prefs();
+		super.onPause();
 	}
 
 	public void update_startstop() {
