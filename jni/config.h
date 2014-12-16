@@ -20,6 +20,7 @@
 #define HAVE_NETINET_TCP_H 1
 
 #define DISABLE_ZLIB 1
+#define DISABLE_SYSLOG 1
 
 
 #define DROPBEAR_SERVER 1
