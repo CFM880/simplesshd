@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <jni.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -109,4 +110,16 @@ Java_org_galexander_sshd_SimpleSSHDService_stop_1sshd(JNIEnv *env_, jobject this
 	pid = (*env)->GetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid);
 	kill(pid, SIGKILL);
 	(*env)->SetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid, 0);
+}
+
+JNIEXPORT int JNICALL
+Java_org_galexander_sshd_SimpleSSHDService_waitpid(JNIEnv *env_, jclass cl,
+			jint pid)
+{
+	int status;
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status)) {
+		return WEXITSTATUS(status);
+	}
+	return 0;
 }

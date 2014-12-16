@@ -14,25 +14,13 @@ public class SimpleSSHDService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if ((intent == null) ||
 		    (!intent.getBooleanExtra("stop", false))) {
-			SharedPreferences p = PreferenceManager.
-					getDefaultSharedPreferences(this);
-			if (is_started()) {
-				stop_sshd();
-			}
-			start_sshd(SimpleSSHD.get_port(p),
-				SimpleSSHD.get_path(p), SimpleSSHD.get_shell(p),
-				SimpleSSHD.get_home(p));
-			if (activity != null) {
-				activity.update_startstop();
-			}
+			do_start();
 /* XXX - maybe we should call startForeground(), but then we'd have to make a
  * bogus notification... */
 			return START_STICKY;
 		} else {
 			stop_sshd();
-			if (activity != null) {
-				activity.update_startstop();
-			}
+			update_activity();
 			stopSelf();
 /* XXX - need stopForeground() too ? */
 			return START_NOT_STICKY;
@@ -46,9 +34,45 @@ public class SimpleSSHDService extends Service {
 		return (sshd_pid != 0);
 	}
 
+	private void do_start() {
+		SharedPreferences p = PreferenceManager.
+				getDefaultSharedPreferences(this);
+		if (is_started()) {
+			stop_sshd();
+		}
+		start_sshd(SimpleSSHD.get_port(p),
+			SimpleSSHD.get_path(p), SimpleSSHD.get_shell(p),
+			SimpleSSHD.get_home(p));
+
+		if (sshd_pid != 0) {
+			final int pid = sshd_pid;
+			(new Thread() {
+				public void run() {
+					waitpid(pid);
+					if (sshd_pid == pid) {
+						sshd_pid = 0;
+					}
+					update_activity();
+				}
+			}).start();
+		}
+		update_activity();
+	}
+
+	private static void update_activity() {
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				public void run() {
+					activity.update_startstop();
+				}
+			});
+		}
+	}
+
 	private native void start_sshd(int port, String path,
 			String shell, String home);
 	private native void stop_sshd();
+	private static native int waitpid(int pid);
 	static {
 		System.loadLibrary("simplesshd-jni");
 	}
