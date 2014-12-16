@@ -80,5 +80,5 @@
 	android:layout_height="wrap_content"
 	android:text="Start"
 	android:textAppearance="?android:attr/textAppearanceLarge"
-	android:onClick="starstop_clicked" />
+	android:onClick="startstop_clicked" />
 </LinearLayout>

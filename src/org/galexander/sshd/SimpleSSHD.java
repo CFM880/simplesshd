@@ -50,7 +50,7 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	private void startstop_clicked(View v) {
+	public void startstop_clicked(View v) {
 		save_prefs();
 		Intent i = new Intent(this, SimpleSSHDService.class);
 		if (SimpleSSHDService.is_started()) {
