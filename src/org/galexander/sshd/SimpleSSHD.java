@@ -29,6 +29,7 @@ public class SimpleSSHD extends Activity
 	}
 
 	public void onResume() {
+		super.onResume();
 		load_prefs();
 		update_startstop();
 		SimpleSSHDService.activity = this;
