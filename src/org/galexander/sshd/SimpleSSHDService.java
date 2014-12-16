@@ -4,6 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
 import android.os.IBinder;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 public class SimpleSSHDService extends Service {
 	public static int sshd_pid = 0;
@@ -11,7 +14,15 @@ public class SimpleSSHDService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
+
 		Prefs.init(this);
+
+		read_pidfile();
+		if (is_started()) {
+			/* would prefer to restart the daemon process rather
+			 * than leave the stale one around.. */
+			stop_sshd();
+		}
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -79,6 +90,22 @@ public class SimpleSSHDService extends Service {
 				}
 			});
 		}
+	}
+
+	private static void read_pidfile() {
+		try {
+			File f = new File(Prefs.get_path(), "dropbear.pid");
+			if (f.exists()) {
+				BufferedReader r = new BufferedReader(
+							new FileReader(f));
+				try {
+					sshd_pid =
+						Integer.valueOf(r.readLine());
+				} finally {
+					r.close();
+				}
+			}
+		} catch (Exception e) { /* *shrug* */ }
 	}
 
 	private native void start_sshd(int port, String path,
