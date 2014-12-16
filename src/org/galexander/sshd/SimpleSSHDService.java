@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class SimpleSSHDService extends Service {
-	public int sshd_pid = 0;
+	public static int sshd_pid = 0;
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if ((intent == null) ||
@@ -24,7 +24,7 @@ public class SimpleSSHDService extends Service {
 		return null;
 	}
 
-	public boolean is_started() {
+	public static boolean is_started() {
 		return (sshd_pid != 0);
 	}
 

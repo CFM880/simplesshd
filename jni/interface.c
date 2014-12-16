@@ -31,7 +31,7 @@ jni_init(JNIEnv *env_)
 	CLASS(string, "java/lang/String")
 	CLASS(simplesshdservice, "org/galexander/sshd/SimpleSSHDService")
 
-	FIELD(sss_sshd_pid, simplesshdservice, "sshd_pid", "I")
+	STFIELD(sss_sshd_pid, simplesshdservice, "sshd_pid", "I")
 
 	return 1;
 }
@@ -48,7 +48,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	if (pid == 0) {
 		/* XXX - call dropbear main() */
 	} else {
-		(*env)->SetIntField(env, this, fid_sss_sshd_pid, pid);
+		(*env)->SetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid, pid);
 	}
 }
 
@@ -59,7 +59,7 @@ Java_org_galexander_sshd_SimpleSSHDService_stop_1sshd(JNIEnv *env_, jobject this
 	if (!jni_init(env_)) {
 		return;
 	}
-	pid = (*env)->GetIntField(env, this, fid_sss_sshd_pid);
+	pid = (*env)->GetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid);
 	kill(pid, SIGKILL);
-	(*env)->SetIntField(env, this, fid_sss_sshd_pid, 0);
+	(*env)->SetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid, 0);
 }
