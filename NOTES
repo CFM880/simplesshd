@@ -42,3 +42,53 @@ I need:
     - string: name of default shell (def: /system/bin/sh -l)
     - string: default path for HOME (def: /sdcard/ssh)
     - button: start or (if it's running) stop
+
+
+December 15, 2014.
+
+Getting to the fun part.  Process management...
+
+To start sshd, it seems like I can startService().  Then in the Service's
+onStartCommand(), call startForeground() so it won't be killed (return
+START_STICKY too?).
+
+The question is if dropbear's main() should run under a separate Thread,
+or a separate Process.  The trouble with a Thread is that it might be
+hard to kill.  The trouble with a process is that there is no way to
+report back status (such as a failure to start sshd).
+
+Connectbot starts a new process for its shell -- it really doesn't have a
+choice because the shell binary isn't linked with Connectbot, and exec()
+in a thread stinks.  To stop it, it just closes stdin/stdout!!!  So
+zombies can (and do) linger.
+
+I suppose dropbear could be in its own process if it had something like
+stdin/stdout to communicate failure?  Or it could just write error
+messages to (i.e.) /sdcard/ssh/log.  To stop the service, it would just
+use kill().
+
+I am curious how the main waiting-for-connections loop looks, but even if
+it uses select(), I'm not sure how I would honor Thread.interrupt() or
+whatever.  It's not guaranteed to interrupt select(), and I'm not keen on
+adding an arbitrary timeout/polling feature to it.
+
+XXX - use ptmx
+XXX - service for start (startForeground, fork) and stop (kill, stopService)
+XXX - logging facility instead of stdout/stderr
+XXX - disable utmp/wtmp
+
+                final int shellPid = pids[0];
+                Runnable exitWatcher = new Runnable() {
+                        public void run() {
+                                Exec.waitFor(shellPid);
+                                bridge.dispatchDisconnect(false);
+                        }
+                };
+                Thread exitWatcherThread = new Thread(exitWatcher);
+                exitWatcherThread.setName("LocalExitWatcher");
+                exitWatcherThread.setDaemon(true);
+                exitWatcherThread.start();
+
+XXX - scp
+XXX - zlib
+XXX - rsync
