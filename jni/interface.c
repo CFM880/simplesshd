@@ -83,7 +83,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 
 	pid = fork();
 	if (pid == 0) {
-		char *argv[10] = { "sshd", NULL };
+		char *argv[100] = { "sshd", NULL };
 		int argc = 1;
 		const char *logfn;
 		int logfd;
@@ -96,6 +96,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 			/* replace stderr, so the output is preserved... */
 			dup2(logfd, 2);
 		}
+
+		argv[argc++] = "-R";	/* enable DROPBEAR_DELAY_HOSTKEY */
 		if (port) {
 			argv[argc++] = "-p";
 			argv[argc] = malloc(20);
