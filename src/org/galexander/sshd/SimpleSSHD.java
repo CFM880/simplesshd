@@ -83,19 +83,19 @@ public class SimpleSSHD extends Activity
 		edit.commit();
 	}
 
-	private boolean get_onboot(SharedPreferences p) {
+	public static boolean get_onboot(SharedPreferences p) {
 		return p.getBoolean("onboot", false);
 	}
-	private int get_port(SharedPreferences p) {
+	public static int get_port(SharedPreferences p) {
 		return p.getInt("port", 2222);
 	}
-	private String get_path(SharedPreferences p) {
+	public static String get_path(SharedPreferences p) {
 		return p.getString("path", "/sdcard/ssh");
 	}
-	private String get_shell(SharedPreferences p) {
+	public static String get_shell(SharedPreferences p) {
 		return p.getString("shell", "/system/bin/sh -l");
 	}
-	private String get_home(SharedPreferences p) {
+	public static String get_home(SharedPreferences p) {
 		return p.getString("home", "/sdcard/ssh");
 	}
 }

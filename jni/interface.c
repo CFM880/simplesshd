@@ -36,19 +36,39 @@ jni_init(JNIEnv *env_)
 	return 1;
 }
 
+static const char *
+from_java_string(jobject s)
+{
+	const char *ret, *t;
+	t = (*env)->GetStringUTFChars(env, s, NULL);
+	if (!t) {
+		return NULL;
+	}
+	ret = strdup(t);
+	(*env)->ReleaseStringUTFChars(env, s, t);
+}
+
 JNIEXPORT void JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
-	jobject this)
+	jobject this,
+	jint port, jobject jpath, jobject jshell, jobject jhome)
 {
 	pid_t pid;
+	const char *path, *shell, *home;
+
 	if (!jni_init(env_)) {
 		return;
 	}
+	path = from_java_string(jpath);
+	shell = from_java_string(jshell);
+	home = from_java_string(jhome);
+
 	pid = fork();
 	if (pid == 0) {
 		/* XXX - call dropbear main() */
 	} else {
-		(*env)->SetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid, pid);
+		(*env)->SetStaticIntField(env, cl_simplesshdservice,
+					fid_sss_sshd_pid, pid);
 	}
 }
 
