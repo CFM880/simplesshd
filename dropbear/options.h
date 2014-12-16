@@ -5,6 +5,8 @@
 #ifndef _OPTIONS_H_
 #define _OPTIONS_H_
 
+extern const char *conf_path_file(const char *fn);	/* in jni/interface.c */
+
 /* Define compile-time options below - the "#ifndef DROPBEAR_XXX .... #endif"
  * parts are to allow for commandline -DDROPBEAR_XXX options etc. */
 
@@ -18,8 +20,6 @@
 /* Listen on all interfaces */
 #define DROPBEAR_DEFADDRESS ""
 #endif
-
-extern const char *conf_path_file(const char *fn);	/* in jni/interface.c */
 
 /* Default hostkey paths - these can be specified on the command line */
 #ifndef DSS_PRIV_FILENAME
@@ -259,7 +259,7 @@ much traffic. */
 
 /* The default file to store the daemon's process ID, for shutdown
    scripts etc. This can be overridden with the -P flag */
-#undef DROPBEAR_PIDFILE
+#define DROPBEAR_PIDFILE conf_path_file("dropbear.pid")
 
 /* The command to invoke for xauth when using X11 forwarding.
  * "-q" for quiet */
