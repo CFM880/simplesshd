@@ -30,7 +30,8 @@ public class SimpleSSHDService extends Service {
 		    (!intent.getBooleanExtra("stop", false))) {
 			do_start();
 /* XXX - maybe we should call startForeground(), but then we'd have to make a
- * bogus notification... */
+ * bogus notification... and START_STICKY seems to actually do a good job of
+ * restarting us if we're killed...  */
 			return START_STICKY;
 		} else {
 			stop_sshd();
