@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 public class SimpleSSHDService extends Service {
 	public static int sshd_pid = 0;
+	public static SimpleSSHD activity = null;
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if ((intent == null) ||
@@ -14,9 +15,15 @@ public class SimpleSSHDService extends Service {
 				stop_sshd();
 			}
 			start_sshd();
+			if (activity != null) {
+				activity.update_startstop();
+			}
 			return START_STICKY;
 		} else {
 			stop_sshd();
+			if (activity != null) {
+				activity.update_startstop();
+			}
 			return START_NOT_STICKY;
 		}
 	}

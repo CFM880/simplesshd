@@ -29,16 +29,32 @@ public class SimpleSSHD extends Activity
 
 	public void onResume() {
 		load_prefs();
-		/* XXX - update startstop_view */
+		update_startstop();
+		SimpleSSHDService.activity = this;
 	}
 
 	public void onPause() {
+		SimpleSSHDService.activity = null;
 		save_prefs();
+	}
+
+	public void update_startstop() {
+		if (SimpleSSHDService.is_started()) {
+			startstop_view.setText("STOP");
+			startstop_view.setTextColor(0xFFFF8888);
+		} else {
+			startstop_view.setText("START");
+			startstop_view.setTextColor(0xFF88FF88);
+		}
 	}
 
 	private void startstop_clicked(View v) {
 		save_prefs();
-		/* XXX */
+		Intent i = new Intent(this, SimpleSSHDService.class);
+		if (SimpleSSHDService.is_started() {
+			i.putExtra("stop", true);
+		}
+		startService(i);
 	}
 
 	private void load_prefs() {
