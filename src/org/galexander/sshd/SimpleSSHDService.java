@@ -26,8 +26,19 @@ public class SimpleSSHDService extends Service {
 			return START_NOT_STICKY;
 		}
 	}
+
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+		/* unfortunately, android doesn't reliably call this when, i.e.,
+		 * the package is upgraded... so it's really pretty useless */
+	public void onDestroy() {
+		if (is_started()) {
+			stop_sshd();
+		}
+		stopSelf();
+		super.onDestroy();
 	}
 
 	public static boolean is_started() {
