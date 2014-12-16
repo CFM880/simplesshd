@@ -72,7 +72,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 
 	pid = fork();
 	if (pid == 0) {
-		char *argv[2] = { "sshd", NULL };
+		char *argv[10] = { "sshd", NULL };
+		int argc = 1;
 		char *logfn;
 		int logfd;
 
@@ -83,6 +84,12 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		if (logfd != -1) {
 			/* replace stderr, so the output is preserved... */
 			dup2(logfd, 2);
+		}
+		if (port) {
+			argv[argc++] = "-p";
+			argv[argc] = malloc(20);
+			sprintf(argv[argc], "%d", (int)port);
+			argc++;
 		}
 		dropbear_main(1, argv);
 	} else {
