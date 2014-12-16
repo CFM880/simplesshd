@@ -54,6 +54,7 @@ from_java_string(jobject s)
 	}
 	ret = strdup(t);
 	(*env)->ReleaseStringUTFChars(env, s, t);
+	return ret;
 }
 
 JNIEXPORT void JNICALL
