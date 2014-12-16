@@ -98,6 +98,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		}
 
 		argv[argc++] = "-R";	/* enable DROPBEAR_DELAY_HOSTKEY */
+		argv[argc++] = "-F";	/* don't redundant fork to background */
 		if (port) {
 			argv[argc++] = "-p";
 			argv[argc] = malloc(20);
