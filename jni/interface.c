@@ -1,7 +1,13 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include <jni.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
+#include <fcntl.h>
+
+const char *conf_path, *conf_shell, *conf_home;
 
 /* XXX - do i need a function to generate host keys? DROPBEAR_DELAY_HOSTKEY */
 /* XXX - a C-callable interface to get property strings from the java side (paths, etc) */
@@ -44,7 +50,7 @@ from_java_string(jobject s)
 	const char *ret, *t;
 	t = (*env)->GetStringUTFChars(env, s, NULL);
 	if (!t) {
-		return NULL;
+		return "";
 	}
 	ret = strdup(t);
 	(*env)->ReleaseStringUTFChars(env, s, t);
@@ -56,18 +62,28 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jint port, jobject jpath, jobject jshell, jobject jhome)
 {
 	pid_t pid;
-	const char *path, *shell, *home;
 
 	if (!jni_init(env_)) {
 		return;
 	}
-	path = from_java_string(jpath);
-	shell = from_java_string(jshell);
-	home = from_java_string(jhome);
+	conf_path = from_java_string(jpath);
+	conf_shell = from_java_string(jshell);
+	conf_home = from_java_string(jhome);
 
 	pid = fork();
 	if (pid == 0) {
 		char *argv[2] = { "sshd", NULL };
+		char *logfn;
+		int logfd;
+
+		logfn = malloc(strlen(conf_path)+20);
+		sprintf(logfn, "%s/dropbear.err", conf_path);
+		unlink(logfn);
+		logfd = open(logfn, O_CREAT|O_WRONLY, 0666);
+		if (logfd != -1) {
+			/* replace stderr, so the output is preserved... */
+			dup2(logfd, 2);
+		}
 		dropbear_main(1, argv);
 	} else {
 		(*env)->SetStaticIntField(env, cl_simplesshdservice,
