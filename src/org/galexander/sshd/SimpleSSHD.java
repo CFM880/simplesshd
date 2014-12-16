@@ -43,10 +43,10 @@ public class SimpleSSHD extends Activity
 	public void update_startstop() {
 		if (SimpleSSHDService.is_started()) {
 			startstop_view.setText("STOP");
-			startstop_view.setTextColor(0xFFFF8888);
+			startstop_view.setTextColor(0xFF881111);
 		} else {
 			startstop_view.setText("START");
-			startstop_view.setTextColor(0xFF88FF88);
+			startstop_view.setTextColor(0xFF118811);
 		}
 	}
 
