@@ -25,12 +25,16 @@ public class SimpleSSHDService extends Service {
 			if (activity != null) {
 				activity.update_startstop();
 			}
+/* XXX - maybe we should call startForeground(), but then we'd have to make a
+ * bogus notification... */
 			return START_STICKY;
 		} else {
 			stop_sshd();
 			if (activity != null) {
 				activity.update_startstop();
 			}
+			stopSelf();
+/* XXX - need stopForeground() too ? */
 			return START_NOT_STICKY;
 		}
 	}
