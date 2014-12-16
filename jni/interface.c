@@ -101,7 +101,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		if (port) {
 			argv[argc++] = "-p";
 			argv[argc] = malloc(20);
-			sprintf(argv[argc], "%d", (int)port);
+			sprintf(argv[argc], "0.0.0.0:%d", (int)port);
 			argc++;
 		}
 		fprintf(stderr, "starting dropbear\n");
