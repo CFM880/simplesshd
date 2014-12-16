@@ -30,15 +30,15 @@
 	    <EditText android:id="@+id/port"
 		android:layout_width="100dp"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/onboot_lab"
+		android:layout_below="@+id/port_lab"
 		android:layout_alignParentRight="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:singleLine="true"
 		android:inputType="numberDecimal" />
-	    <TextView android:id="@+is/path_lab"
+	    <TextView android:id="@+id/path_lab"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/port_lab"
+		android:layout_below="@+id/port"
 		android:text="Path to authorized_keys"
 		android:textAppearance="?android:attr/textAppearanceSmall" />
 	    <EditText android:id="@+id/path"
@@ -47,7 +47,7 @@
 		android:layout_below="@+id/path_lab"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:singleLine="true" />
-	    <TextView android:id="@+is/shell_lab"
+	    <TextView android:id="@+id/shell_lab"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/path"
@@ -59,7 +59,7 @@
 		android:layout_below="@+id/shell_lab"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:singleLine="true" />
-	    <TextView android:id="@+is/home_lab"
+	    <TextView android:id="@+id/home_lab"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/shell"
@@ -75,8 +75,7 @@
     </ScrollView>
     <Button android:id="@+id/startstop"
 	android:layout_width="fill_parent"
-	android:layout_height="1dp"
-	android:layout_weight="1"
+	android:layout_height="wrap_content"
 	android:text="Start"
 	android:textAppearance="?android:attr/textAppearanceLarge"
 	android:onClick="starstop_clicked" />
