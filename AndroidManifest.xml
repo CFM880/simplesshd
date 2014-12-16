@@ -12,6 +12,6 @@
             </intent-filter>
         </activity>
 	<service android:name="SimpleSSHDService"
-	    android:label="SimpleSSHDService">
+	    android:label="SimpleSSHDService" />
     </application>
 </manifest> 
