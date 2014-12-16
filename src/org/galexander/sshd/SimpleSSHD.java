@@ -73,7 +73,12 @@ public class SimpleSSHD extends Activity
 		SharedPreferences.Editor edit = prefs.edit();
 		boolean b = onboot_view.isChecked();
 		if (b != get_onboot(prefs)) { edit.putBoolean("onboot", b); }
-		int i = Integer.valueOf(onboot_view.getText().toString());
+		int i;
+		try {
+			i = Integer.valueOf(port_view.getText().toString());
+		} catch (Exception e) {
+			i = 0;
+		}
 		if (i != get_port(prefs)) { edit.putInt("port", i); }
 		String s = path_view.getText().toString();
 		if (!s.equals(get_path(prefs))) { edit.putString("path", s); }
