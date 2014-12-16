@@ -78,6 +78,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		int argc = 1;
 		char *logfn;
 		int logfd;
+		int retval;
 
 		logfn = malloc(strlen(conf_path)+20);
 		sprintf(logfn, "%s/dropbear.err", conf_path);
@@ -93,7 +94,9 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 			sprintf(argv[argc], "%d", (int)port);
 			argc++;
 		}
-		dropbear_main(1, argv);
+		fprintf(stderr, "starting dropbear\n");
+		retval = dropbear_main(1, argv);
+		fprintf(stderr, "dropbear finished (%d)\n", retval);
 	} else {
 		(*env)->SetStaticIntField(env, cl_simplesshdservice,
 					fid_sss_sshd_pid, pid);
