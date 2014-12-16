@@ -23,5 +23,7 @@
 
 
 #define DROPBEAR_SERVER 1
+#define DBMULTI_dropbear 1
+#define DROPBEAR_MULTI 1
 
 #endif /* __CONFIG_H__ */

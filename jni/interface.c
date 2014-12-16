@@ -11,6 +11,8 @@ static jclass cl_string;
 static jclass cl_simplesshdservice;
 static jfieldID fid_sss_sshd_pid;
 
+extern int dropbear_main(int argc, char **argv);
+
 static int
 jni_init(JNIEnv *env_)
 {
@@ -65,7 +67,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 
 	pid = fork();
 	if (pid == 0) {
-		/* XXX - call dropbear main() */
+		char *argv[2] = { "sshd", NULL };
+		dropbear_main(1, argv);
 	} else {
 		(*env)->SetStaticIntField(env, cl_simplesshdservice,
 					fid_sss_sshd_pid, pid);
