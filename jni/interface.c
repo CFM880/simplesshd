@@ -103,7 +103,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 			argc++;
 		}
 		fprintf(stderr, "starting dropbear\n");
-		retval = dropbear_main(1, argv);
+		retval = dropbear_main(argc, argv);
 		fprintf(stderr, "dropbear finished (%d)\n", retval);
 	} else {
 		(*env)->SetStaticIntField(env, cl_simplesshdservice,
