@@ -72,9 +72,9 @@ it uses select(), I'm not sure how I would honor Thread.interrupt() or
 whatever.  It's not guaranteed to interrupt select(), and I'm not keen on
 adding an arbitrary timeout/polling feature to it.
 
-XXX - allow user to specify extra commandline for dropbear
-XXX - convert UI to use proper preferences template
+XXX - implement extra commandline for dropbear
 XXX - main screen should show dropbear.err contents
+XXX - implement start on boot
 
 XXX - scp
 XXX - zlib
