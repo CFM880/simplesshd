@@ -23,7 +23,7 @@ public class Prefs {
 		return pref.getString("path", "/sdcard/ssh");
 	}
 	public static String get_shell() {
-		return pref.getString("shell", "/system/bin/sh -l");
+		return pref.getString("shell", "/system/bin/sh");
 	}
 	public static String get_home() {
 		return pref.getString("home", "/sdcard/ssh");
