@@ -2,30 +2,32 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
 	android:key="onboot"
-	android:title="Start on boot"
+	android:title="Start on Boot"
 	android:defaultValue="false" />
     <EditTextPreference
 	android:key="port"
-	android:title="Port number to listen on"
-	android:summary="must be greater than 1024"
+	android:title="Port Number"
+	android:summary="Must be greater than 1024."
 	android:numeric="integer"
 	android:defaultValue="2222" />
     <EditTextPreference
 	android:key="path"
-	android:title="Path to SSH files"
-	android:summary="put authorized_keys here"
+	android:title="SSH Path"
+	android:summary="Location of misc dropbear files (put authorized_keys here)."
 	android:defaultValue="/sdcard/ssh" />
     <EditTextPreference
 	android:key="shell"
-	android:title="Login shell"
+	android:title="Login Shell"
+	android:summary="Location of sh binary"
 	android:defaultValue="/system/bin/sh" />
     <EditTextPreference
 	android:key="home"
-	android:title="Home directory"
-	android:summary="put .profile here"
+	android:title="Home Directory"
+	android:summary="Default directory after login (put .profile here)"
 	android:defaultValue="/sdcard/ssh" />
     <EditTextPreference
 	android:key="extra"
-	android:title="Extra dropbear commandline options"
+	android:title="Extra Commandline"
+	android:summary="Commandline options for dropbear server"
 	android:defaultValue="" />
 </PreferenceScreen>
