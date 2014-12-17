@@ -134,10 +134,10 @@ static void svr_ensure_hostkey() {
 	if (link(fn_temp, fn) < 0) {
 		/* It's OK to get EEXIST - we probably just lost a race
 		with another connection to generate the key */
-		if (errno != EEXIST) {
+		/* fallback to rename() if the fs doesn't support link() */
+		if ((errno != EEXIST) && (rename(fn_temp, fn) < 0)) {
 			dropbear_log(LOG_ERR, "Failed moving key file to %s: %s", fn,
 				strerror(errno));
-			/* XXX fallback to non-atomic copy for some filesystems? */
 			goto out;
 		}
 	}
