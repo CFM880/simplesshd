@@ -9,6 +9,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Button;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.net.Uri;
 
 public class SimpleSSHD extends Activity
 {
@@ -40,6 +43,26 @@ public class SimpleSSHD extends Activity
 		SimpleSSHDService.activity = null;
 		save_prefs();
 		super.onPause();
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.settings:
+				/* XXX - launch settings activity */
+				return true;
+			case R.id.about: {
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
+				startActivity(i);
+			}	return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	public void update_startstop() {
