@@ -17,7 +17,13 @@ public class Prefs {
 		return pref.getBoolean("onboot", false);
 	}
 	public static int get_port() {
-		return pref.getInt("port", 2222);
+		int ret;
+		try {
+			ret = Integer.valueOf(pref.getString("port", "2222"));
+		} catch (Exception e) {
+			ret = 2222;
+		}
+		return ret;
 	}
 	public static String get_path() {
 		return pref.getString("path", "/sdcard/ssh");
