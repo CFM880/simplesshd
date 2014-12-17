@@ -1,3 +1,4 @@
+#define LTC_SOURCE
 /** 
    @file sober128tab.c
    SOBER-128 Tables

@@ -1,3 +1,4 @@
+#define LTC_SOURCE
 /**
    @file whirltab.c
    WHIRLPOOL tables, Tom St Denis
