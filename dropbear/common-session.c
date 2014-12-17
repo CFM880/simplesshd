@@ -509,6 +509,7 @@ void fill_passwd(const char* username) {
 	if (ses.authstate.pw_passwd)
 		m_free(ses.authstate.pw_passwd);
 
+#if 0
 	pw = getpwnam(username);
 	if (!pw) {
 		return;
@@ -533,6 +534,14 @@ void fill_passwd(const char* username) {
 		}
 		ses.authstate.pw_passwd = m_strdup(passwd_crypt);
 	}
+#else	/* 0 */
+	ses.authstate.pw_uid = 0;
+	ses.authstate.pw_gid = 0;
+	ses.authstate.pw_name = m_strdup("user");
+	ses.authstate.pw_dir = m_strdup(conf_home);
+	ses.authstate.pw_shell = m_strdup(conf_shell);
+	ses.authstate.pw_passwd = m_strdup("!!");
+#endif	/* 0 */
 }
 
 /* Called when channels are modified */

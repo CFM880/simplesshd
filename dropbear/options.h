@@ -5,8 +5,6 @@
 #ifndef _OPTIONS_H_
 #define _OPTIONS_H_
 
-extern const char *conf_path_file(const char *fn);	/* in jni/interface.c */
-
 /* Define compile-time options below - the "#ifndef DROPBEAR_XXX .... #endif"
  * parts are to allow for commandline -DDROPBEAR_XXX options etc. */
 

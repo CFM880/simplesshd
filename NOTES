@@ -73,7 +73,6 @@ whatever.  It's not guaranteed to interrupt select(), and I'm not keen on
 adding an arbitrary timeout/polling feature to it.
 
 XXX - disable utmp/wtmp
-XXX - disable /etc/passwd (accept all usernames the same, and use the explicitly-provided shell and home directories)
 XXX - visit XXX in jni/interface.c
 XXX - allow user to specify parameters for dropbear
 XXX - convert UI to use proper preferences templates, and have ...->settings instead of putting it on the home screen

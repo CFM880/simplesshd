@@ -28,4 +28,11 @@
 #define DBMULTI_dropbear 1
 #define DROPBEAR_MULTI 1
 
+
+extern const char *conf_path_file(const char *fn);	/* in jni/interface.c */
+extern const char *conf_path;
+extern const char *conf_shell;
+extern const char *conf_home;
+
+
 #endif /* __CONFIG_H__ */

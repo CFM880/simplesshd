@@ -202,6 +202,7 @@ static int checkpubkey(unsigned char* algo, unsigned int algolen,
 		goto out;
 	}
 
+#if 0
 	/* check file permissions, also whether file exists */
 	if (checkpubkeyperms() == DROPBEAR_FAILURE) {
 		TRACE(("bad authorized_keys permissions, or file doesn't exist"))
@@ -216,6 +217,11 @@ static int checkpubkey(unsigned char* algo, unsigned int algolen,
 	filename = m_malloc(len + 22);
 	snprintf(filename, len + 22, "%s/.ssh/authorized_keys", 
 				ses.authstate.pw_dir);
+#else	/* 0 */
+	len = strlen(conf_path);
+	filename = m_malloc(len + 40);
+	snprintf(filename, len + 40, "%s/authorized_keys", conf_path);
+#endif	/* 0 */
 
 	/* open the file */
 	authfile = fopen(filename, "r");

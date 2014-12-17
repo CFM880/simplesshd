@@ -261,6 +261,7 @@ static int checkusername(unsigned char *username, unsigned int userlen) {
 	}
 
 	/* check if we are running as non-root, and login user is different from the server */
+#if 0
 	uid = geteuid();
 	if (uid != 0 && uid != ses.authstate.pw_uid) {
 		TRACE(("running as nonroot, only server uid is allowed"))
@@ -308,6 +309,7 @@ static int checkusername(unsigned char *username, unsigned int userlen) {
 goodshell:
 	endusershell();
 	TRACE(("matching shell"))
+#endif /* 0 */
 
 	TRACE(("uid = %d", ses.authstate.pw_uid))
 	TRACE(("leave checkusername"))
