@@ -19,8 +19,6 @@ conf_path_file(const char *fn)
 	return ret;
 }
 
-/* XXX - do i need a function to generate host keys? DROPBEAR_DELAY_HOSTKEY */
-/* XXX - a C-callable interface to get property strings from the java side (paths, etc) */
 
 static JNIEnv *env;
 static jclass cl_string;
