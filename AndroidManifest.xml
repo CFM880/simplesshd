@@ -6,14 +6,14 @@
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <application android:label="@string/app_name" >
-        <activity android:name="SimpleSSHD"
-                  android:label="@string/app_name">
+    <application android:label="SimpleSSHD">
+        <activity android:name="SimpleSSHD" android:label="SimpleSSHD">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+	<activity android:name="Settings" android:label="Settings" />
 	<service android:name="SimpleSSHDService"
 	    android:label="SimpleSSHDService" />
     </application>

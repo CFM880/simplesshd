@@ -53,7 +53,7 @@ public class SimpleSSHD extends Activity
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.settings:
-				/* XXX - launch settings activity */
+				startActivity(new Intent(this, Settings.class));
 				return true;
 			case R.id.about: {
 				Intent i = new Intent(Intent.ACTION_VIEW);
