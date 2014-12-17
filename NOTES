@@ -72,7 +72,6 @@ it uses select(), I'm not sure how I would honor Thread.interrupt() or
 whatever.  It's not guaranteed to interrupt select(), and I'm not keen on
 adding an arbitrary timeout/polling feature to it.
 
-XXX - use ptmx
 XXX - disable utmp/wtmp
 XXX - disable /etc/passwd (accept all usernames the same, and use the explicitly-provided shell and home directories)
 XXX - visit XXX in jni/interface.c

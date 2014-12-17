@@ -18,6 +18,7 @@
 
 #define HAVE_BASENAME 1
 #define HAVE_NETINET_TCP_H 1
+#define USE_DEV_PTMX 1
 
 #define DISABLE_ZLIB 1
 #define DISABLE_SYSLOG 1
