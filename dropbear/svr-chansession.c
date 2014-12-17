@@ -306,10 +306,12 @@ static void closechansess(struct Channel *channel) {
 #endif
 
 	if (chansess->tty) {
+#if 0
 		/* write the utmp/wtmp login record */
 		li = chansess_login_alloc(chansess);
 		login_logout(li);
 		login_free_entry(li);
+#endif /* 0 */
 
 		pty_release(chansess->tty);
 		m_free(chansess->tty);
@@ -807,11 +809,13 @@ static int ptycommand(struct Channel *channel, struct ChanSess *chansess) {
 
 		close(chansess->slave);
 
+#if 0
 		/* write the utmp/wtmp login record - must be after changing the
 		 * terminal used for stdout with the dup2 above */
 		li = chansess_login_alloc(chansess);
 		login_login(li);
 		login_free_entry(li);
+#endif /* 0 */
 
 #ifdef DO_MOTD
 		if (svr_opts.domotd) {
