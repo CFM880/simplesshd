@@ -19,7 +19,7 @@ import java.io.BufferedReader;
 
 public class SimpleSSHD extends Activity
 {
-	private TextView log_view;
+	private EditText log_view;
 	private Button startstop_view;
 	public static SimpleSSHD curr = null;
 	private UpdaterThread updater = null;
@@ -28,7 +28,7 @@ public class SimpleSSHD extends Activity
 		super.onCreate(savedInstanceState);
 		Prefs.init(this);
 		setContentView(R.layout.main);
-		log_view = (TextView)findViewById(R.id.log);
+		log_view = (EditText)findViewById(R.id.log);
 		startstop_view = (Button)findViewById(R.id.startstop);
 	}
 
@@ -116,5 +116,6 @@ public class SimpleSSHD extends Activity
 			i %= lines.length;
 		} while (i != curr_line);
 		log_view.setText(output);
+		log_view.setSelection(output.length());
 	}
 }
