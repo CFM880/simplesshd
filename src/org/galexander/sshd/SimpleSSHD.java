@@ -22,6 +22,7 @@ public class SimpleSSHD extends Activity
 	private TextView log_view;
 	private Button startstop_view;
 	public static SimpleSSHD curr = null;
+	private UpdaterThread updater = null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,13 +34,15 @@ public class SimpleSSHD extends Activity
 
 	public void onResume() {
 		super.onResume();
-		update_startstop();
-		update_log();
 		curr = this;
+		update_startstop();
+		updater = new UpdaterThread();
+		updater.start();
 	}
 
 	public void onPause() {
 		curr = null;
+		updater.interrupt();
 		super.onPause();
 	}
 
