@@ -7,14 +7,19 @@ import android.content.SharedPreferences;
 import android.content.Intent;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Button;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.net.Uri;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class SimpleSSHD extends Activity
 {
+	private TextView log_view;
 	private Button startstop_view;
 	public static SimpleSSHD curr = null;
 
@@ -22,12 +27,14 @@ public class SimpleSSHD extends Activity
 		super.onCreate(savedInstanceState);
 		Prefs.init(this);
 		setContentView(R.layout.main);
+		log_view = (TextView)findViewById(R.id.log);
 		startstop_view = (Button)findViewById(R.id.startstop);
 	}
 
 	public void onResume() {
 		super.onResume();
 		update_startstop();
+		update_log();
 		curr = this;
 	}
 
@@ -72,5 +79,39 @@ public class SimpleSSHD extends Activity
 			i.putExtra("stop", true);
 		}
 		startService(i);
+	}
+
+	public void update_log() {
+		String[] lines = new String[50];
+		int curr_line = 0;
+		boolean wrapped = false;
+		try {
+			File f = new File(Prefs.get_path(), "dropbear.err");
+			if (f.exists()) {
+				BufferedReader r = new BufferedReader(
+							new FileReader(f));
+				try {
+					String l;
+					while ((l = r.readLine()) != null) {
+						lines[curr_line++] = l;
+						if (curr_line >= lines.length) {
+							curr_line = 0;
+							wrapped = true;
+						}
+					}
+				} finally {
+					r.close();
+				}
+			}
+		} catch (Exception e) { }
+		int i;
+		i = (wrapped ? curr_line : 0);
+		String output = "";
+		do {
+			output = output + lines[i] + "\n";
+			i++;
+			i %= lines.length;
+		} while (i != curr_line);
+		log_view.setText(output);
 	}
 }

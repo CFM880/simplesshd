@@ -3,6 +3,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+    <TextView android:id="@+id/log"
+	android:layout_width="fill_parent"
+	android:layout_height="1dp"
+	android:layout_weight="1"
+	android:ellipsize="start"
+	android:textAppearance="?android:attr/textAppearanceSmall"
+	android:typeface="monospace"
+	android:singleLine="false" />
     <Button android:id="@+id/startstop"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
