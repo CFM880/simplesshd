@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <ctype.h>
 
 const char *conf_path = "", *conf_shell = "", *conf_home = "";
 
@@ -52,6 +53,52 @@ jni_init(JNIEnv *env_)
 	return 1;
 }
 
+/* split str into argv entries, honoring " and \ (but nothing else) */
+static int
+process_extra(const char *in, char **argv, int max_argc)
+{
+	char curr[1000];
+	int curr_len = 0;
+	int in_quotes = 0;
+	int argc = 0;
+
+	if (!in) {
+		return 0;
+	}
+	while (1) {
+		char c = *in++;
+		if (!c || (curr_len+10 >= sizeof curr) ||
+		    (!in_quotes && isspace(c))) {
+			if (curr_len) {
+				curr[curr_len] = 0;
+				if (argc+1 >= max_argc) {
+					break;
+				}
+				argv[argc++] = strdup(curr);
+				curr_len = 0;
+			}
+			if (!c) {
+				break;
+			}
+		} else if (c == '"') {
+			in_quotes = !in_quotes;
+		} else {
+			if (c == '\\') {
+				c = *in++;
+				switch (c) {
+					case 'n': c = '\n'; break;
+					case 'r': c = '\r'; break;
+					case 'b': c = '\b'; break;
+					case 't': c = '\t'; break;
+					case 0: in--; break;
+				}
+			}
+			curr[curr_len++] = c;
+		}
+	}
+	return argc;
+}
+
 static const char *
 from_java_string(jobject s)
 {
@@ -68,9 +115,10 @@ from_java_string(jobject s)
 JNIEXPORT void JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jobject this,
-	jint port, jobject jpath, jobject jshell, jobject jhome)
+	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra)
 {
 	pid_t pid;
+	const char *extra;
 
 	if (!jni_init(env_)) {
 		return;
@@ -78,6 +126,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	conf_path = from_java_string(jpath);
 	conf_shell = from_java_string(jshell);
 	conf_home = from_java_string(jhome);
+	extra = from_java_string(jextra);
 
 	pid = fork();
 	if (pid == 0) {
@@ -103,6 +152,8 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 			sprintf(argv[argc], "0.0.0.0:%d", (int)port);
 			argc++;
 		}
+		argc += process_extra(extra, &argv[argc],
+				(sizeof argv / sizeof *argv) - argc);
 		fprintf(stderr, "starting dropbear\n");
 		retval = dropbear_main(argc, argv);
 		fprintf(stderr, "dropbear finished (%d)\n", retval);

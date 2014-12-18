@@ -34,6 +34,9 @@ public class Prefs {
 	public static String get_home() {
 		return pref.getString("home", "/sdcard/ssh");
 	}
+	public static String get_extra() {
+		return pref.getString("extra", "");
+	}
 
 	public static SharedPreferences.Editor edit() {
 		return pref.edit();

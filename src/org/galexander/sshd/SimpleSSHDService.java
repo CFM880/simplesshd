@@ -65,7 +65,7 @@ public class SimpleSSHDService extends Service {
 		}
 		start_sshd(Prefs.get_port(),
 			Prefs.get_path(), Prefs.get_shell(),
-			Prefs.get_home());
+			Prefs.get_home(), Prefs.get_extra());
 
 		if (sshd_pid != 0) {
 			final int pid = sshd_pid;
@@ -99,7 +99,7 @@ public class SimpleSSHDService extends Service {
 	}
 
 	private native void start_sshd(int port, String path,
-			String shell, String home);
+			String shell, String home, String extra);
 	private native void stop_sshd();
 	private static native int waitpid(int pid);
 	static {
