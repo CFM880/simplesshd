@@ -114,7 +114,7 @@ from_java_string(jobject s)
 
 JNIEXPORT void JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
-	jobject this,
+	jclass cl,
 	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra)
 {
 	pid_t pid;
@@ -164,7 +164,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 }
 
 JNIEXPORT void JNICALL
-Java_org_galexander_sshd_SimpleSSHDService_stop_1sshd(JNIEnv *env_, jobject this)
+Java_org_galexander_sshd_SimpleSSHDService_stop_1sshd(JNIEnv *env_, jclass cl)
 {
 	pid_t pid;
 	if (!jni_init(env_)) {

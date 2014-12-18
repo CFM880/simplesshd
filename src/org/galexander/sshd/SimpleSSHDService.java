@@ -98,9 +98,9 @@ public class SimpleSSHDService extends Service {
 		} catch (Exception e) { /* *shrug* */ }
 	}
 
-	private native void start_sshd(int port, String path,
+	private static native void start_sshd(int port, String path,
 			String shell, String home, String extra);
-	private native void stop_sshd();
+	private static native void stop_sshd();
 	private static native int waitpid(int pid);
 	static {
 		System.loadLibrary("simplesshd-jni");
