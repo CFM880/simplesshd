@@ -34,7 +34,7 @@ public class SimpleSSHDService extends Service {
 			return START_STICKY;
 		} else {
 			stop_sshd();
-			update_activity();
+			SimpleSSHD.update_startstop();
 			stopSelf();
 /* XXX - need stopForeground() too ? */
 			return START_NOT_STICKY;
@@ -75,21 +75,11 @@ public class SimpleSSHDService extends Service {
 					if (sshd_pid == pid) {
 						sshd_pid = 0;
 					}
-					update_activity();
+					SimpleSSHD.update_startstop();
 				}
 			}).start();
 		}
-		update_activity();
-	}
-
-	private static void update_activity() {
-		if (SimpleSSHD.curr != null) {
-			SimpleSSHD.curr.runOnUiThread(new Runnable() {
-				public void run() {
-					SimpleSSHD.curr.update_startstop();
-				}
-			});
-		}
+		SimpleSSHD.update_startstop();
 	}
 
 	private static void read_pidfile() {

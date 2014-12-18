@@ -18,11 +18,7 @@ public class UpdaterThread extends Thread {
 			long mod = f.lastModified();
 			long len = f.length();
 			if ((mod != lastmod) || (len != lastlen)) {
-				SimpleSSHD.curr.runOnUiThread(new Thread() {
-					public void run() {
-						SimpleSSHD.curr.update_log();
-					}
-				});
+				SimpleSSHD.update_log();
 				lastmod = mod;
 				lastlen = len;
 			}

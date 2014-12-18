@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 
 public class SimpleSSHD extends Activity
 {
+	private static final Object lock = new Object();
 	private EditText log_view;
 	private Button startstop_view;
 	public static SimpleSSHD curr = null;
@@ -34,14 +35,18 @@ public class SimpleSSHD extends Activity
 
 	public void onResume() {
 		super.onResume();
-		curr = this;
-		update_startstop();
+		synchronized (lock) {
+			curr = this;
+		}
+		update_startstop_prime();
 		updater = new UpdaterThread();
 		updater.start();
 	}
 
 	public void onPause() {
-		curr = null;
+		synchronized (lock) {
+			curr = null;
+		}
 		updater.interrupt();
 		super.onPause();
 	}
@@ -66,13 +71,30 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	public void update_startstop() {
+	private void update_startstop_prime() {
 		if (SimpleSSHDService.is_started()) {
 			startstop_view.setText("STOP");
 			startstop_view.setTextColor(0xFF881111);
 		} else {
 			startstop_view.setText("START");
 			startstop_view.setTextColor(0xFF118811);
+		}
+	}
+
+	public static void update_startstop() {
+		Thread t = new Thread() {
+			public void run() {
+				synchronized (lock) {
+					if (curr != null) {
+						curr.update_startstop_prime();
+					}
+				}
+			}
+		};
+		synchronized (lock) {
+			if (curr != null) {
+				curr.runOnUiThread(t);
+			}
 		}
 	}
 
@@ -84,7 +106,7 @@ public class SimpleSSHD extends Activity
 		startService(i);
 	}
 
-	public void update_log() {
+	private void update_log_prime() {
 		String[] lines = new String[50];
 		int curr_line = 0;
 		boolean wrapped = false;
@@ -117,5 +139,22 @@ public class SimpleSSHD extends Activity
 		} while (i != curr_line);
 		log_view.setText(output);
 		log_view.setSelection(output.length());
+	}
+
+	public static void update_log() {
+		Thread t = new Thread() {
+			public void run() {
+				synchronized (lock) {
+					if (curr != null) {
+						curr.update_log_prime();
+					}
+				}
+			}
+		};
+		synchronized (lock) {
+			if (curr != null) {
+				curr.runOnUiThread(t);
+			}
+		}
 	}
 }
