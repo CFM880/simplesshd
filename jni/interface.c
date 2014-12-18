@@ -149,7 +149,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		if (port) {
 			argv[argc++] = "-p";
 			argv[argc] = malloc(20);
-			sprintf(argv[argc], "0.0.0.0:%d", (int)port);
+			sprintf(argv[argc], "%d", (int)port);
 			argc++;
 		}
 		argc += process_extra(extra, &argv[argc],
