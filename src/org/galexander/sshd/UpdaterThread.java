@@ -7,6 +7,7 @@ public class UpdaterThread extends Thread {
 	public void run() {
 		File f = new File(Prefs.get_path(), "dropbear.err");
 		long lastmod = 0;
+		long lastlen = 0;
 System.out.println("sshd: updater start");
 		while (true) {
 			if (isInterrupted()) {
@@ -17,15 +18,27 @@ System.out.println("sshd: updater interrupted");
 System.out.println("sshd: activity stopped");
 				break;
 			}
-			long l = f.lastModified();
-			if (l != lastmod) {
-System.out.println("sshd: updating");
+			long mod = f.lastModified();
+			long len = f.length();
+			if (mod != lastmod) {
+System.out.println("sshd: updating for time");
 				SimpleSSHD.curr.runOnUiThread(new Thread() {
 					public void run() {
 						SimpleSSHD.curr.update_log();
 					}
 				});
-				lastmod = l;
+				lastmod = mod;
+				lastlen = len;
+			}
+			if (len != lastlen) {
+System.out.println("sshd: updating for len");
+				SimpleSSHD.curr.runOnUiThread(new Thread() {
+					public void run() {
+						SimpleSSHD.curr.update_log();
+					}
+				});
+				lastmod = mod;
+				lastlen = len;
 			}
 			try {
 				sleep(1000);
