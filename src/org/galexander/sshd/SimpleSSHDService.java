@@ -10,7 +10,6 @@ import java.io.FileReader;
 
 public class SimpleSSHDService extends Service {
 	public static int sshd_pid = 0;
-	public static SimpleSSHD activity = null;
 
 	public void onCreate() {
 		super.onCreate();
@@ -84,10 +83,10 @@ public class SimpleSSHDService extends Service {
 	}
 
 	private static void update_activity() {
-		if (activity != null) {
-			activity.runOnUiThread(new Runnable() {
+		if (SimpleSSHD.curr != null) {
+			SimpleSSHD.curr.runOnUiThread(new Runnable() {
 				public void run() {
-					activity.update_startstop();
+					SimpleSSHD.curr.update_startstop();
 				}
 			});
 		}

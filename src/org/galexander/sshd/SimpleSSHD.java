@@ -16,9 +16,9 @@ import android.net.Uri;
 public class SimpleSSHD extends Activity
 {
 	private Button startstop_view;
+	public static SimpleSSHD curr = null;
 
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Prefs.init(this);
 		setContentView(R.layout.main);
@@ -28,11 +28,11 @@ public class SimpleSSHD extends Activity
 	public void onResume() {
 		super.onResume();
 		update_startstop();
-		SimpleSSHDService.activity = this;
+		curr = this;
 	}
 
 	public void onPause() {
-		SimpleSSHDService.activity = null;
+		curr = null;
 		super.onPause();
 	}
 
