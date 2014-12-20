@@ -135,6 +135,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		const char *logfn;
 		int logfd;
 		int retval;
+		int i;
 
 		logfn = conf_path_file("dropbear.err");
 		unlink(logfn);
@@ -142,6 +143,11 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 		if (logfd != -1) {
 			/* replace stderr, so the output is preserved... */
 			dup2(logfd, 2);
+		}
+		for (i = 3; i < 255; i++) {
+			/* close all of the dozens of fds that android typically
+			 * leaves open */
+			close(i);
 		}
 
 		argv[argc++] = "-R";	/* enable DROPBEAR_DELAY_HOSTKEY */
