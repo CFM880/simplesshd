@@ -485,7 +485,24 @@ LOCAL_SRC_FILES := $(DROPBEAR_PATH)/scp.c \
 	$(DROPBEAR_PATH)/scpmisc.c \
 	$(DROPBEAR_PATH)/atomicio.c
 LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
-# LOCAL_LDLIBS    := 
+# LOCAL_LDLIBS    :=
+
+include $(BUILD_EXECUTABLE)
+
+
+# build separate sftp executable
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS    :=
+LOCAL_MODULE    := sftp-server
+
+OPENSSH_PATH := ../openssh
+LOCAL_SRC_FILES := $(OPENSSH_PATH)/sftp-server-main.c \
+	$(OPENSSH_PATH)/sftp-server.c \
+	$(OPENSSH_PATH)/sftp-common.c
+LOCAL_C_INCLUDES:= openssh
+# LOCAL_LDLIBS    :=
 
 include $(BUILD_EXECUTABLE)
 
@@ -514,6 +531,6 @@ LOCAL_SRC_FILES := $(LIBZ_PATH)/adler32.c \
 	$(LIBZ_PATH)/gzread.c \
 	$(LIBZ_PATH)/gzwrite.c
 LOCAL_C_INCLUDES:= libz
-# LOCAL_LDLIBS    := 
+# LOCAL_LDLIBS    :=
 
 include $(BUILD_STATIC_LIBRARY)
