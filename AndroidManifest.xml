@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <application android:label="SimpleSSHD">
+    <application android:label="SimpleSSHD" android:icon="@drawable/icon">
         <activity android:name="SimpleSSHD" android:label="SimpleSSHD">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
