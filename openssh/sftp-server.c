@@ -15,8 +15,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
-
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -25,9 +23,6 @@
 #endif
 #ifdef HAVE_SYS_MOUNT_H
 #include <sys/mount.h>
-#endif
-#ifdef HAVE_SYS_STATVFS_H
-#include <sys/statvfs.h>
 #endif
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -47,7 +42,6 @@
 
 #include "xmalloc.h"
 #include "buffer.h"
-#include "log.h"
 #include "misc.h"
 #include "match.h"
 #include "uidswap.h"
@@ -59,9 +53,6 @@
 #define get_int64()			buffer_get_int64(&iqueue);
 #define get_int()			buffer_get_int(&iqueue);
 #define get_string(lenp)		buffer_get_string(&iqueue, lenp);
-
-/* Our verbosity */
-static LogLevel log_level = SYSLOG_LEVEL_ERROR;
 
 /* Our client */
 static struct passwd *pw = NULL;
@@ -112,8 +103,6 @@ static void process_rename(u_int32_t id);
 static void process_readlink(u_int32_t id);
 static void process_symlink(u_int32_t id);
 static void process_extended_posix_rename(u_int32_t id);
-static void process_extended_statvfs(u_int32_t id);
-static void process_extended_fstatvfs(u_int32_t id);
 static void process_extended_hardlink(u_int32_t id);
 static void process_extended_fsync(u_int32_t id);
 static void process_extended(u_int32_t id);
@@ -153,8 +142,6 @@ struct sftp_handler handlers[] = {
 struct sftp_handler extended_handlers[] = {
 	{ "posix-rename", "posix-rename@openssh.com", 0,
 	   process_extended_posix_rename, 1 },
-	{ "statvfs", "statvfs@openssh.com", 0, process_extended_statvfs, 0 },
-	{ "fstatvfs", "fstatvfs@openssh.com", 0, process_extended_fstatvfs, 0 },
 	{ "hardlink", "hardlink@openssh.com", 0, process_extended_hardlink, 1 },
 	{ "fsync", "fsync@openssh.com", 0, process_extended_fsync, 1 },
 	{ NULL, NULL, 0, NULL, 0 }
@@ -450,32 +437,6 @@ handle_close(int handle)
 	return ret;
 }
 
-static void
-handle_log_close(int handle, char *emsg)
-{
-	if (handle_is_ok(handle, HANDLE_FILE)) {
-		logit("%s%sclose \"%s\" bytes read %llu written %llu",
-		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
-		    handle_to_name(handle),
-		    (unsigned long long)handle_bytes_read(handle),
-		    (unsigned long long)handle_bytes_write(handle));
-	} else {
-		logit("%s%sclosedir \"%s\"",
-		    emsg == NULL ? "" : emsg, emsg == NULL ? "" : " ",
-		    handle_to_name(handle));
-	}
-}
-
-static void
-handle_log_exit(void)
-{
-	u_int i;
-
-	for (i = 0; i < num_handles; i++)
-		if (handles[i].use != HANDLE_UNUSED)
-			handle_log_close(i, "forced");
-}
-
 static int
 get_handle(void)
 {
@@ -526,9 +487,6 @@ send_status(u_int32_t id, u_int32_t status)
 	Buffer msg;
 
 	debug3("request %u: sent status %u", id, status);
-	if (log_level > SYSLOG_LEVEL_VERBOSE ||
-	    (status != SSH2_FX_OK && status != SSH2_FX_EOF))
-		logit("sent status %s", status_to_message(status));
 	buffer_init(&msg);
 	buffer_put_char(&msg, SSH2_FXP_STATUS);
 	buffer_put_int(&msg, id);
@@ -606,32 +564,6 @@ send_attrib(u_int32_t id, const Attrib *a)
 	buffer_free(&msg);
 }
 
-static void
-send_statvfs(u_int32_t id, struct statvfs *st)
-{
-	Buffer msg;
-	u_int64_t flag;
-
-	flag = (st->f_flag & ST_RDONLY) ? SSH2_FXE_STATVFS_ST_RDONLY : 0;
-	flag |= (st->f_flag & ST_NOSUID) ? SSH2_FXE_STATVFS_ST_NOSUID : 0;
-
-	buffer_init(&msg);
-	buffer_put_char(&msg, SSH2_FXP_EXTENDED_REPLY);
-	buffer_put_int(&msg, id);
-	buffer_put_int64(&msg, st->f_bsize);
-	buffer_put_int64(&msg, st->f_frsize);
-	buffer_put_int64(&msg, st->f_blocks);
-	buffer_put_int64(&msg, st->f_bfree);
-	buffer_put_int64(&msg, st->f_bavail);
-	buffer_put_int64(&msg, st->f_files);
-	buffer_put_int64(&msg, st->f_ffree);
-	buffer_put_int64(&msg, st->f_favail);
-	buffer_put_int64(&msg, FSID_TO_ULONG(st->f_fsid));
-	buffer_put_int64(&msg, flag);
-	buffer_put_int64(&msg, st->f_namemax);
-	send_msg(&msg);
-	buffer_free(&msg);
-}
 
 /* parse incoming */
 
@@ -648,12 +580,6 @@ process_init(void)
 	/* POSIX rename extension */
 	buffer_put_cstring(&msg, "posix-rename@openssh.com");
 	buffer_put_cstring(&msg, "1"); /* version */
-	/* statvfs extension */
-	buffer_put_cstring(&msg, "statvfs@openssh.com");
-	buffer_put_cstring(&msg, "2"); /* version */
-	/* fstatvfs extension */
-	buffer_put_cstring(&msg, "fstatvfs@openssh.com");
-	buffer_put_cstring(&msg, "2"); /* version */
 	/* hardlink extension */
 	buffer_put_cstring(&msg, "hardlink@openssh.com");
 	buffer_put_cstring(&msg, "1"); /* version */
@@ -678,8 +604,6 @@ process_open(u_int32_t id)
 	a = get_attrib();
 	flags = flags_from_portable(pflags);
 	mode = (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ? a->perm : 0666;
-	logit("open \"%s\" flags %s mode 0%o",
-	    name, string_from_portable(pflags), mode);
 	if (readonly &&
 	    ((flags & O_ACCMODE) == O_WRONLY ||
 	    (flags & O_ACCMODE) == O_RDWR)) {
@@ -711,7 +635,6 @@ process_close(u_int32_t id)
 
 	handle = get_handle();
 	debug3("request %u: close handle %u", id, handle);
-	handle_log_close(handle, NULL);
 	ret = handle_close(handle);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -883,14 +806,11 @@ process_setstat(u_int32_t id)
 	a = get_attrib();
 	debug("request %u: setstat name \"%s\"", id, name);
 	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		logit("set \"%s\" size %llu",
-		    name, (unsigned long long)a->size);
 		ret = truncate(name, a->size);
 		if (ret == -1)
 			status = errno_to_portable(errno);
 	}
 	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		logit("set \"%s\" mode %04o", name, a->perm);
 		ret = chmod(name, a->perm & 07777);
 		if (ret == -1)
 			status = errno_to_portable(errno);
@@ -901,14 +821,11 @@ process_setstat(u_int32_t id)
 
 		strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
 		    localtime(&t));
-		logit("set \"%s\" modtime %s", name, buf);
 		ret = utimes(name, attrib_to_tv(a));
 		if (ret == -1)
 			status = errno_to_portable(errno);
 	}
 	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		logit("set \"%s\" owner %lu group %lu", name,
-		    (u_long)a->uid, (u_long)a->gid);
 		ret = chown(name, a->uid, a->gid);
 		if (ret == -1)
 			status = errno_to_portable(errno);
@@ -934,14 +851,11 @@ process_fsetstat(u_int32_t id)
 		char *name = handle_to_name(handle);
 
 		if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-			logit("set \"%s\" size %llu",
-			    name, (unsigned long long)a->size);
 			ret = ftruncate(fd, a->size);
 			if (ret == -1)
 				status = errno_to_portable(errno);
 		}
 		if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-			logit("set \"%s\" mode %04o", name, a->perm);
 #ifdef HAVE_FCHMOD
 			ret = fchmod(fd, a->perm & 07777);
 #else
@@ -951,12 +865,6 @@ process_fsetstat(u_int32_t id)
 				status = errno_to_portable(errno);
 		}
 		if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			char buf[64];
-			time_t t = a->mtime;
-
-			strftime(buf, sizeof(buf), "%Y%m%d-%H:%M:%S",
-			    localtime(&t));
-			logit("set \"%s\" modtime %s", name, buf);
 #ifdef HAVE_FUTIMES
 			ret = futimes(fd, attrib_to_tv(a));
 #else
@@ -966,8 +874,6 @@ process_fsetstat(u_int32_t id)
 				status = errno_to_portable(errno);
 		}
 		if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-			logit("set \"%s\" owner %lu group %lu", name,
-			    (u_long)a->uid, (u_long)a->gid);
 #ifdef HAVE_FCHOWN
 			ret = fchown(fd, a->uid, a->gid);
 #else
@@ -988,8 +894,6 @@ process_opendir(u_int32_t id)
 	int handle, status = SSH2_FX_FAILURE;
 
 	path = get_string(NULL);
-	debug3("request %u: opendir", id);
-	logit("opendir \"%s\"", path);
 	dirp = opendir(path);
 	if (dirp == NULL) {
 		status = errno_to_portable(errno);
@@ -1070,8 +974,6 @@ process_remove(u_int32_t id)
 	int ret;
 
 	name = get_string(NULL);
-	debug3("request %u: remove", id);
-	logit("remove name \"%s\"", name);
 	ret = unlink(name);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -1089,8 +991,6 @@ process_mkdir(u_int32_t id)
 	a = get_attrib();
 	mode = (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ?
 	    a->perm & 07777 : 0777;
-	debug3("request %u: mkdir", id);
-	logit("mkdir name \"%s\" mode 0%o", name, mode);
 	ret = mkdir(name, mode);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -1104,8 +1004,6 @@ process_rmdir(u_int32_t id)
 	int ret, status;
 
 	name = get_string(NULL);
-	debug3("request %u: rmdir", id);
-	logit("rmdir name \"%s\"", name);
 	ret = rmdir(name);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -1145,8 +1043,6 @@ process_rename(u_int32_t id)
 
 	oldpath = get_string(NULL);
 	newpath = get_string(NULL);
-	debug3("request %u: rename", id);
-	logit("rename old \"%s\" new \"%s\"", oldpath, newpath);
 	status = SSH2_FX_FAILURE;
 	if (lstat(oldpath, &sb) == -1)
 		status = errno_to_portable(errno);
@@ -1225,8 +1121,6 @@ process_symlink(u_int32_t id)
 
 	oldpath = get_string(NULL);
 	newpath = get_string(NULL);
-	debug3("request %u: symlink", id);
-	logit("symlink old \"%s\" new \"%s\"", oldpath, newpath);
 	/* this will fail if 'newpath' exists */
 	ret = symlink(oldpath, newpath);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
@@ -1243,49 +1137,11 @@ process_extended_posix_rename(u_int32_t id)
 
 	oldpath = get_string(NULL);
 	newpath = get_string(NULL);
-	debug3("request %u: posix-rename", id);
-	logit("posix-rename old \"%s\" new \"%s\"", oldpath, newpath);
 	ret = rename(oldpath, newpath);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
 	free(oldpath);
 	free(newpath);
-}
-
-static void
-process_extended_statvfs(u_int32_t id)
-{
-	char *path;
-	struct statvfs st;
-
-	path = get_string(NULL);
-	debug3("request %u: statvfs", id);
-	logit("statvfs \"%s\"", path);
-
-	if (statvfs(path, &st) != 0)
-		send_status(id, errno_to_portable(errno));
-	else
-		send_statvfs(id, &st);
-        free(path);
-}
-
-static void
-process_extended_fstatvfs(u_int32_t id)
-{
-	int handle, fd;
-	struct statvfs st;
-
-	handle = get_handle();
-	debug("request %u: fstatvfs \"%s\" (handle %u)",
-	    id, handle_to_name(handle), handle);
-	if ((fd = handle_to_fd(handle)) < 0) {
-		send_status(id, SSH2_FX_FAILURE);
-		return;
-	}
-	if (fstatvfs(fd, &st) != 0)
-		send_status(id, errno_to_portable(errno));
-	else
-		send_statvfs(id, &st);
 }
 
 static void
@@ -1296,8 +1152,6 @@ process_extended_hardlink(u_int32_t id)
 
 	oldpath = get_string(NULL);
 	newpath = get_string(NULL);
-	debug3("request %u: hardlink", id);
-	logit("hardlink old \"%s\" new \"%s\"", oldpath, newpath);
 	ret = link(oldpath, newpath);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -1417,43 +1271,20 @@ process(void)
 void
 sftp_server_cleanup_exit(int i)
 {
-	if (pw != NULL && client_addr != NULL) {
-		handle_log_exit();
-		logit("session closed for local user %s from [%s]",
-		    pw->pw_name, client_addr);
-	}
 	_exit(i);
-}
-
-static void
-sftp_server_usage(void)
-{
-	extern char *__progname;
-
-	fprintf(stderr,
-	    "usage: %s [-ehR] [-d start_directory] [-f log_facility] "
-	    "[-l log_level]\n\t[-P blacklisted_requests] "
-	    "[-p whitelisted_requests] [-u umask]\n"
-	    "       %s -Q protocol_feature\n",
-	    __progname, __progname);
-	exit(1);
 }
 
 int
 sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 {
-	fd_set *rset, *wset;
-	int i, in, out, max, ch, skipargs = 0, log_stderr = 0;
-	ssize_t len, olen, set_size;
-	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
+	fd_set rsetx, wsetx;
+	fd_set *rset = &rsetx, *wset = &wsetx;
+	int i, in, out, max, ch, skipargs = 0;
+	ssize_t len, olen;
 	char *cp, *homedir = NULL, buf[4*4096];
 	long mask;
 
 	extern char *optarg;
-	extern char *__progname;
-
-	__progname = ssh_get_progname(argv[0]);
-	log_init(__progname, log_level, log_facility, log_stderr);
 
 	pw = pwcopy(user_pw);
 
@@ -1480,19 +1311,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 			 * shell using "sftp-server -c command"
 			 */
 			skipargs = 1;
-			break;
-		case 'e':
-			log_stderr = 1;
-			break;
-		case 'l':
-			log_level = log_level_number(optarg);
-			if (log_level == SYSLOG_LEVEL_NOT_SET)
-				error("Invalid log level \"%s\"", optarg);
-			break;
-		case 'f':
-			log_facility = log_facility_number(optarg);
-			if (log_facility == SYSLOG_FACILITY_NOT_SET)
-				error("Invalid log facility \"%s\"", optarg);
 			break;
 		case 'd':
 			cp = tilde_expand_filename(optarg, user_pw->pw_uid);
@@ -1524,8 +1342,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		}
 	}
 
-	log_init(__progname, log_level, log_facility, log_stderr);
-
 #if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
 	/*
 	 * On Linux, we should try to avoid making /proc/self/{mem,maps}
@@ -1548,9 +1364,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	} else
 		client_addr = xstrdup("UNKNOWN");
 
-	logit("session opened for local user %s from [%s]",
-	    pw->pw_name, client_addr);
-
 	in = STDIN_FILENO;
 	out = STDOUT_FILENO;
 
@@ -1568,10 +1381,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	buffer_init(&iqueue);
 	buffer_init(&oqueue);
 
-	set_size = howmany(max + 1, NFDBITS) * sizeof(fd_mask);
-	rset = (fd_set *)xmalloc(set_size);
-	wset = (fd_set *)xmalloc(set_size);
-
 	if (homedir != NULL) {
 		if (chdir(homedir) != 0) {
 			error("chdir to \"%s\" failed: %s", homedir,
@@ -1580,8 +1389,8 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	}
 
 	for (;;) {
-		memset(rset, 0, set_size);
-		memset(wset, 0, set_size);
+		FD_ZERO(rset);
+		FD_ZERO(wset);
 
 		/*
 		 * Ensure that we can read a full buffer and handle
