@@ -500,7 +500,19 @@ LOCAL_MODULE    := sftp-server
 OPENSSH_PATH := ../openssh
 LOCAL_SRC_FILES := $(OPENSSH_PATH)/sftp-server-main.c \
 	$(OPENSSH_PATH)/sftp-server.c \
-	$(OPENSSH_PATH)/sftp-common.c
+	$(OPENSSH_PATH)/sftp-common.c \
+	$(OPENSSH_PATH)/buffer.c \
+	$(OPENSSH_PATH)/bufaux.c \
+	$(OPENSSH_PATH)/sshbuf.c \
+	$(OPENSSH_PATH)/sshbuf-getput-basic.c \
+	$(OPENSSH_PATH)/ssherr.c \
+	$(OPENSSH_PATH)/misc.c \
+	$(OPENSSH_PATH)/match.c \
+	$(OPENSSH_PATH)/xmalloc.c \
+	$(OPENSSH_PATH)/openbsd-compat/fmt_scaled.c \
+	$(OPENSSH_PATH)/openbsd-compat/getopt_long.c \
+	$(OPENSSH_PATH)/openbsd-compat/pwcache.c \
+	$(OPENSSH_PATH)/openbsd-compat/strmode.c
 LOCAL_C_INCLUDES:= openssh
 # LOCAL_LDLIBS    :=
 
