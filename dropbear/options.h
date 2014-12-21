@@ -263,7 +263,7 @@ much traffic. */
  * "-q" for quiet */
 #undef XAUTH_COMMAND
 
-#undef SFTPSERVER_PATH
+#define SFTPSERVER_PATH NDK_EXECUTABLES_PATH "/libsftp-server.so"
 
 /* This is used by the scp binary when used as a client binary. If you're
  * not using the Dropbear client, you'll need to change it */
