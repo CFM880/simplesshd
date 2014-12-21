@@ -33,11 +33,9 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <pwd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <pwd.h>
 #include <time.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -56,7 +54,6 @@
 #define get_string(lenp)		buffer_get_string(&iqueue, lenp);
 
 /* Our client */
-static struct passwd *pw = NULL;
 static char *client_addr = NULL;
 
 /* input and output queue */
@@ -1182,8 +1179,7 @@ process(void)
 	cp = buffer_ptr(&iqueue);
 	msg_len = get_u32(cp);
 	if (msg_len > SFTP_MAX_MSG_LENGTH) {
-		error("bad message from %s local user %s",
-		    client_addr, pw->pw_name);
+		error("bad message from %s", client_addr);
 		sftp_server_cleanup_exit(11);
 	}
 	if (buf_len < msg_len + 4)
@@ -1243,7 +1239,7 @@ sftp_server_cleanup_exit(int i)
 }
 
 int
-sftp_server_main(int argc, char **argv, struct passwd *user_pw)
+sftp_server_main(int argc, char **argv)
 {
 	fd_set rsetx, wsetx;
 	fd_set *rset = &rsetx, *wset = &wsetx;
@@ -1253,8 +1249,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	long mask;
 
 	extern char *optarg;
-
-	pw = pwcopy(user_pw);
 
 	while (!skipargs && (ch = getopt(argc, argv,
 	    "d:f:l:P:p:Q:u:cehR")) != -1) {
@@ -1279,12 +1273,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 			 * shell using "sftp-server -c command"
 			 */
 			skipargs = 1;
-			break;
-		case 'd':
-			cp = tilde_expand_filename(optarg, user_pw->pw_uid);
-			homedir = percent_expand(cp, "d", user_pw->pw_dir,
-			    "u", user_pw->pw_name, (char *)NULL);
-			free(cp);
 			break;
 		case 'p':
 			if (request_whitelist != NULL)
