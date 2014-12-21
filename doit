@@ -1,1 +1,1 @@
-ndk-build -j8 && ant debug && cat bin/SimpleSSHD-debug.apk | ssh roach 'cat > /sdcard/buh.apk; source .profile; pm install -r /sdcard/buh.apk'
+ndk-build -j8 && mv libs/armeabi/scp libs/armeabi/libscp.so && ant debug && cat bin/SimpleSSHD-debug.apk | ssh roach 'cat > /sdcard/buh.apk; source .profile; pm install -r /sdcard/buh.apk'

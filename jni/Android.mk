@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_CFLAGS    :=
 LOCAL_MODULE    := simplesshd-jni
 
-DROPBEAR_PATH := ../dropbear/
+DROPBEAR_PATH := ../dropbear
 DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/bignum.c \
 	$(DROPBEAR_PATH)/buffer.c \
@@ -449,8 +449,6 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/progressmeter.c \
 	$(DROPBEAR_PATH)/queue.c \
 	$(DROPBEAR_PATH)/rsa.c \
-	$(DROPBEAR_PATH)/scp.c \
-	$(DROPBEAR_PATH)/scpmisc.c \
 	$(DROPBEAR_PATH)/signkey.c \
 	$(DROPBEAR_PATH)/sshpty.c \
 	$(DROPBEAR_PATH)/svr-agentfwd.c \
@@ -473,3 +471,20 @@ LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
 # LOCAL_LDLIBS    := 
 
 include $(BUILD_SHARED_LIBRARY)
+
+
+# build separate scp executable
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS    :=
+LOCAL_MODULE    := scp
+
+DROPBEAR_PATH := ../dropbear
+LOCAL_SRC_FILES := $(DROPBEAR_PATH)/scp.c \
+	$(DROPBEAR_PATH)/scpmisc.c \
+	$(DROPBEAR_PATH)/atomicio.c
+LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
+# LOCAL_LDLIBS    := 
+
+include $(BUILD_EXECUTABLE)

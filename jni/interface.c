@@ -54,7 +54,7 @@ jni_init(JNIEnv *env_)
 }
 
 /* split str into argv entries, honoring " and \ (but nothing else) */
-int
+static int
 split_cmd(const char *in, char **argv, int max_argc)
 {
 	char curr[1000];

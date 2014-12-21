@@ -574,28 +574,18 @@ int spawn_command(void(*exec_fn)(void *user_data), void *exec_data,
  * re-enabled SIGPIPE. If cmd is NULL, will run a login shell.
  */
 void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
-	char * argv[100];
+	char * argv[4];
 	char * baseshell = NULL;
 	unsigned int i;
 
-	/* Re-enable SIGPIPE for the executed process */
-	if (signal(SIGPIPE, SIG_DFL) == SIG_ERR) {
-		dropbear_exit("signal() error");
-	}
-
-	/* close file descriptors except stdin/stdout/stderr
-	 * Need to be sure FDs are closed here to avoid reading files as root */
-	for (i = 3; i <= maxfd; i++) {
-		m_close(i);
-	}
+	baseshell = basename(usershell);
 
 	if (cmd && !strncmp(cmd, "scp ", 4)) {
-		int argc = split_cmd(cmd, argv, sizeof argv/sizeof argv[0]);
-		scp_main(argc, argv);
-		exit(0);
+		char *t = malloc(strlen(cmd)+strlen(NDK_EXECUTABLES_PATH)+80);
+		sprintf(t, "%s/lib%s.so %s", NDK_EXECUTABLES_PATH, "scp",
+				cmd+4);
+		cmd = t;
 	}
-
-	baseshell = basename(usershell);
 
 	if (cmd != NULL) {
 		argv[0] = baseshell;
@@ -613,6 +603,17 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 	} else {
 		/* construct a shell of the form "-bash" etc */
 		argv[1] = NULL;
+	}
+
+	/* Re-enable SIGPIPE for the executed process */
+	if (signal(SIGPIPE, SIG_DFL) == SIG_ERR) {
+		dropbear_exit("signal() error");
+	}
+
+	/* close file descriptors except stdin/stdout/stderr
+	 * Need to be sure FDs are closed here to avoid reading files as root */
+	for (i = 3; i <= maxfd; i++) {
+		m_close(i);
 	}
 
 	execv(usershell, argv);

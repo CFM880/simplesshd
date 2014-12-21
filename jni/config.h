@@ -19,6 +19,7 @@
 
 #define HAVE_BASENAME 1
 #define HAVE_NETINET_TCP_H 1
+#define HAVE_LIBGEN_H 1
 #define USE_DEV_PTMX 1
 
 #define DISABLE_ZLIB 1
@@ -27,8 +28,9 @@
 
 #define DROPBEAR_SERVER 1
 #define DBMULTI_dropbear 1
-#define DBMULTI_scp 1
 #define DROPBEAR_MULTI 1
+
+#define NDK_EXECUTABLES_PATH "/data/data/org.galexander.sshd/lib"
 
 
 /* in jni/interface.c: */
@@ -36,8 +38,6 @@ extern const char *conf_path;
 extern const char *conf_shell;
 extern const char *conf_home;
 const char *conf_path_file(const char *fn);
-int split_cmd(const char *in, char **argv, int max_argc);
-
 
 
 #endif /* __CONFIG_H__ */
