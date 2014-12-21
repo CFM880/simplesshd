@@ -468,7 +468,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 
 LOCAL_SRC_FILES := interface.c $(DROPBEAR_SRCS)
 LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
-# LOCAL_LDLIBS    := 
+LOCAL_LDLIBS    := -lz
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -488,3 +488,32 @@ LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
 # LOCAL_LDLIBS    := 
 
 include $(BUILD_EXECUTABLE)
+
+
+# build separate libz static library
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS    :=
+LOCAL_MODULE    := z
+
+LIBZ_PATH := ../libz
+LOCAL_SRC_FILES := $(LIBZ_PATH)/adler32.c \
+	$(LIBZ_PATH)/crc32.c \
+	$(LIBZ_PATH)/deflate.c \
+	$(LIBZ_PATH)/infback.c \
+	$(LIBZ_PATH)/inffast.c \
+	$(LIBZ_PATH)/inflate.c \
+	$(LIBZ_PATH)/inftrees.c \
+	$(LIBZ_PATH)/trees.c \
+	$(LIBZ_PATH)/zutil.c \
+	$(LIBZ_PATH)/compress.c \
+	$(LIBZ_PATH)/uncompr.c \
+	$(LIBZ_PATH)/gzclose.c \
+	$(LIBZ_PATH)/gzlib.c \
+	$(LIBZ_PATH)/gzread.c \
+	$(LIBZ_PATH)/gzwrite.c
+LOCAL_C_INCLUDES:= libz
+# LOCAL_LDLIBS    := 
+
+include $(BUILD_STATIC_LIBRARY)
