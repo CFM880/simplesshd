@@ -59,7 +59,8 @@
  * getopt opterr optind optopt optreset optarg are all in defines.h which is
  * pulled in by includes.h.
  */
-#define warnx		logit
+
+#define warnx(fmt,...) fprintf(stderr, fmt, ##__VA_ARGS__)
 
 #if 0
 #include <err.h>
@@ -69,8 +70,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-
-#include "log.h"
 
 int	opterr = 1;		/* if error message should be printed */
 int	optind = 1;		/* index into parent argv vector */

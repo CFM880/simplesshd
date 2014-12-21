@@ -43,7 +43,6 @@
 
 #include "xmalloc.h"
 #include "buffer.h"
-#include "log.h"
 
 #include "sftp.h"
 #include "sftp-common.h"
@@ -128,7 +127,6 @@ decode_attrib(Buffer *b)
 		for (i = 0; i < count; i++) {
 			type = buffer_get_string(b, NULL);
 			data = buffer_get_string(b, NULL);
-			debug3("Got file attribute \"%s\"", type);
 			free(type);
 			free(data);
 		}

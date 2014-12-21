@@ -15,6 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "includes.h"
+
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -44,7 +46,6 @@
 #include "buffer.h"
 #include "misc.h"
 #include "match.h"
-#include "uidswap.h"
 
 #include "sftp.h"
 #include "sftp-common.h"
@@ -153,23 +154,19 @@ request_permitted(struct sftp_handler *h)
 	char *result;
 
 	if (readonly && h->does_write) {
-		verbose("Refusing %s request in read-only mode", h->name);
 		return 0;
 	}
 	if (request_blacklist != NULL &&
 	    ((result = match_list(h->name, request_blacklist, NULL))) != NULL) {
 		free(result);
-		verbose("Refusing blacklisted %s request", h->name);
 		return 0;
 	}
 	if (request_whitelist != NULL &&
 	    ((result = match_list(h->name, request_whitelist, NULL))) != NULL) {
 		free(result);
-		debug2("Permitting whitelisted %s request", h->name);
 		return 1;
 	}
 	if (request_whitelist != NULL) {
-		verbose("Refusing non-whitelisted %s request", h->name);
 		return 0;
 	}
 	return 1;
@@ -486,7 +483,6 @@ send_status(u_int32_t id, u_int32_t status)
 {
 	Buffer msg;
 
-	debug3("request %u: sent status %u", id, status);
 	buffer_init(&msg);
 	buffer_put_char(&msg, SSH2_FXP_STATUS);
 	buffer_put_int(&msg, id);
@@ -514,7 +510,6 @@ send_data_or_handle(char type, u_int32_t id, const char *data, int dlen)
 static void
 send_data(u_int32_t id, const char *data, int dlen)
 {
-	debug("request %u: sent data len %d", id, dlen);
 	send_data_or_handle(SSH2_FXP_DATA, id, data, dlen);
 }
 
@@ -525,7 +520,6 @@ send_handle(u_int32_t id, int handle)
 	int hlen;
 
 	handle_to_string(handle, &string, &hlen);
-	debug("request %u: sent handle handle %d", id, handle);
 	send_data_or_handle(SSH2_FXP_HANDLE, id, string, hlen);
 	free(string);
 }
@@ -540,7 +534,6 @@ send_names(u_int32_t id, int count, const Stat *stats)
 	buffer_put_char(&msg, SSH2_FXP_NAME);
 	buffer_put_int(&msg, id);
 	buffer_put_int(&msg, count);
-	debug("request %u: sent names count %d", id, count);
 	for (i = 0; i < count; i++) {
 		buffer_put_cstring(&msg, stats[i].name);
 		buffer_put_cstring(&msg, stats[i].long_name);
@@ -555,7 +548,6 @@ send_attrib(u_int32_t id, const Attrib *a)
 {
 	Buffer msg;
 
-	debug("request %u: sent attrib have 0x%x", id, a->flags);
 	buffer_init(&msg);
 	buffer_put_char(&msg, SSH2_FXP_ATTRS);
 	buffer_put_int(&msg, id);
@@ -573,7 +565,6 @@ process_init(void)
 	Buffer msg;
 
 	version = get_int();
-	verbose("received client version %u", version);
 	buffer_init(&msg);
 	buffer_put_char(&msg, SSH2_FXP_VERSION);
 	buffer_put_int(&msg, SSH2_FILEXFER_VERSION);
@@ -600,14 +591,12 @@ process_open(u_int32_t id)
 
 	name = get_string(NULL);
 	pflags = get_int();		/* portable flags */
-	debug3("request %u: open flags %d", id, pflags);
 	a = get_attrib();
 	flags = flags_from_portable(pflags);
 	mode = (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) ? a->perm : 0666;
 	if (readonly &&
 	    ((flags & O_ACCMODE) == O_WRONLY ||
 	    (flags & O_ACCMODE) == O_RDWR)) {
-		verbose("Refusing open request in read-only mode");
 	  	status = SSH2_FX_PERMISSION_DENIED;
 	} else {
 		fd = open(name, flags, mode);
@@ -634,7 +623,6 @@ process_close(u_int32_t id)
 	int handle, ret, status = SSH2_FX_FAILURE;
 
 	handle = get_handle();
-	debug3("request %u: close handle %u", id, handle);
 	ret = handle_close(handle);
 	status = (ret == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	send_status(id, status);
@@ -652,11 +640,8 @@ process_read(u_int32_t id)
 	off = get_int64();
 	len = get_int();
 
-	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 	if (len > sizeof buf) {
 		len = sizeof buf;
-		debug2("read change len %d", len);
 	}
 	fd = handle_to_fd(handle);
 	if (fd >= 0) {
@@ -692,8 +677,6 @@ process_write(u_int32_t id)
 	off = get_int64();
 	data = get_string(&len);
 
-	debug("request %u: write \"%s\" (handle %d) off %llu len %d",
-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 	fd = handle_to_fd(handle);
 	
 	if (fd < 0)
@@ -713,7 +696,6 @@ process_write(u_int32_t id)
 				status = SSH2_FX_OK;
 				handle_update_write(handle, ret);
 			} else {
-				debug2("nothing at all written");
 				status = SSH2_FX_FAILURE;
 			}
 		}
@@ -731,8 +713,6 @@ process_do_stat(u_int32_t id, int do_lstat)
 	int ret, status = SSH2_FX_FAILURE;
 
 	name = get_string(NULL);
-	debug3("request %u: %sstat", id, do_lstat ? "l" : "");
-	verbose("%sstat name \"%s\"", do_lstat ? "l" : "", name);
 	ret = do_lstat ? lstat(name, &st) : stat(name, &st);
 	if (ret < 0) {
 		status = errno_to_portable(errno);
@@ -766,8 +746,6 @@ process_fstat(u_int32_t id)
 	int fd, ret, handle, status = SSH2_FX_FAILURE;
 
 	handle = get_handle();
-	debug("request %u: fstat \"%s\" (handle %u)",
-	    id, handle_to_name(handle), handle);
 	fd = handle_to_fd(handle);
 	if (fd >= 0) {
 		ret = fstat(fd, &st);
@@ -804,7 +782,6 @@ process_setstat(u_int32_t id)
 
 	name = get_string(NULL);
 	a = get_attrib();
-	debug("request %u: setstat name \"%s\"", id, name);
 	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
 		ret = truncate(name, a->size);
 		if (ret == -1)
@@ -843,7 +820,6 @@ process_fsetstat(u_int32_t id)
 
 	handle = get_handle();
 	a = get_attrib();
-	debug("request %u: fsetstat handle %d", id, handle);
 	fd = handle_to_fd(handle);
 	if (fd < 0)
 		status = SSH2_FX_FAILURE;
@@ -921,8 +897,6 @@ process_readdir(u_int32_t id)
 	int handle;
 
 	handle = get_handle();
-	debug("request %u: readdir \"%s\" (handle %d)", id,
-	    handle_to_name(handle), handle);
 	dirp = handle_to_dir(handle);
 	path = handle_to_name(handle);
 	if (dirp == NULL || path == NULL) {
@@ -1021,8 +995,6 @@ process_realpath(u_int32_t id)
 		free(path);
 		path = xstrdup(".");
 	}
-	debug3("request %u: realpath", id);
-	verbose("realpath \"%s\"", path);
 	if (realpath(path, resolvedname) == NULL) {
 		send_status(id, errno_to_portable(errno));
 	} else {
@@ -1098,8 +1070,6 @@ process_readlink(u_int32_t id)
 	char *path;
 
 	path = get_string(NULL);
-	debug3("request %u: readlink", id);
-	verbose("readlink \"%s\"", path);
 	if ((len = readlink(path, buf, sizeof(buf) - 1)) == -1)
 		send_status(id, errno_to_portable(errno));
 	else {
@@ -1165,8 +1135,6 @@ process_extended_fsync(u_int32_t id)
 	int handle, fd, ret, status = SSH2_FX_OP_UNSUPPORTED;
 
 	handle = get_handle();
-	debug3("request %u: fsync (handle %u)", id, handle);
-	verbose("fsync \"%s\"", handle_to_name(handle));
 	if ((fd = handle_to_fd(handle)) < 0)
 		status = SSH2_FX_NO_SUCH_FILE;
 	else if (handle_is_ok(handle, HANDLE_FILE)) {
@@ -1336,9 +1304,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 				fatal("Invalid umask \"%s\"", optarg);
 			(void)umask((mode_t)mask);
 			break;
-		case 'h':
-		default:
-			sftp_server_usage();
 		}
 	}
 
@@ -1416,7 +1381,6 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		if (FD_ISSET(in, rset)) {
 			len = read(in, buf, sizeof buf);
 			if (len == 0) {
-				debug("read eof");
 				sftp_server_cleanup_exit(0);
 			} else if (len < 0) {
 				error("read: %s", strerror(errno));

@@ -22,6 +22,8 @@
 #define _GNU_SOURCE /* activate extra prototypes for glibc */
 #endif
 
+#include <sys/time.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/socket.h> /* For CMSG_* */
 
@@ -168,10 +170,6 @@
 
 #include "defines.h"
 
-#include "platform.h"
 #include "openbsd-compat/openbsd-compat.h"
-#include "openbsd-compat/bsd-nextstep.h"
-
-#include "entropy.h"
 
 #endif /* INCLUDES_H */

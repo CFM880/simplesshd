@@ -23,7 +23,6 @@
 #include <sys/types.h>
 
 #include "buffer.h"
-#include "log.h"
 #include "ssherr.h"
 
 void

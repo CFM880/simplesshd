@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "log.h"
 #include "sftp.h"
 #include "misc.h"
 

@@ -35,16 +35,7 @@
 #include <pwd.h>
 
 #include <sys/socket.h>
-
-/* OpenBSD function replacements */
-#include "base64.h"
-#include "sigact.h"
-#include "glob.h"
-#include "readpassphrase.h"
-#include "vis.h"
-#include "getrrsetbyname.h"
-#include "sha2.h"
-#include "blf.h"
+#include <stdio.h>
 
 #ifndef HAVE_BASENAME
 char *basename(const char *path);
@@ -153,13 +144,6 @@ int BSDgetopt(int argc, char * const *argv, const char *opts);
 int writev(int, struct iovec *, int);
 #endif
 
-/* Home grown routines */
-#include "bsd-misc.h"
-#include "bsd-setres_id.h"
-#include "bsd-statvfs.h"
-#include "bsd-waitpid.h"
-#include "bsd-poll.h"
-
 #ifndef HAVE_GETPEEREID
 int getpeereid(int , uid_t *, gid_t *);
 #endif
@@ -253,20 +237,6 @@ void explicit_bzero(void *p, size_t n);
 void *xmmap(size_t size);
 char *xcrypt(const char *password, const char *salt);
 char *shadow_pw(struct passwd *pw);
-
-/* rfc2553 socket API replacements */
-#include "fake-rfc2553.h"
-
-/* Routines for a single OS platform */
-#include "bsd-cray.h"
-#include "bsd-cygwin_util.h"
-
-#include "port-aix.h"
-#include "port-irix.h"
-#include "port-linux.h"
-#include "port-solaris.h"
-#include "port-tun.h"
-#include "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
 #if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)

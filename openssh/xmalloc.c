@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include "xmalloc.h"
-#include "log.h"
 
 void *
 xmalloc(size_t size)
