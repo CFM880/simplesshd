@@ -54,8 +54,8 @@ jni_init(JNIEnv *env_)
 }
 
 /* split str into argv entries, honoring " and \ (but nothing else) */
-static int
-process_extra(const char *in, char **argv, int max_argc)
+int
+split_cmd(const char *in, char **argv, int max_argc)
 {
 	char curr[1000];
 	int curr_len = 0;
@@ -63,6 +63,7 @@ process_extra(const char *in, char **argv, int max_argc)
 	int argc = 0;
 
 	if (!in) {
+		argv[argc] = NULL;
 		return 0;
 	}
 	while (1) {
@@ -71,7 +72,7 @@ process_extra(const char *in, char **argv, int max_argc)
 		    (!in_quotes && isspace(c))) {
 			if (curr_len) {
 				curr[curr_len] = 0;
-				if (argc+1 >= max_argc) {
+				if (argc+2 >= max_argc) {
 					break;
 				}
 				argv[argc++] = strdup(curr);
@@ -96,6 +97,7 @@ process_extra(const char *in, char **argv, int max_argc)
 			curr[curr_len++] = c;
 		}
 	}
+	argv[argc] = NULL;
 	return argc;
 }
 
@@ -158,7 +160,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 			sprintf(argv[argc], "%d", (int)port);
 			argc++;
 		}
-		argc += process_extra(extra, &argv[argc],
+		argc += split_cmd(extra, &argv[argc],
 				(sizeof argv / sizeof *argv) - argc);
 		fprintf(stderr, "starting dropbear\n");
 		retval = dropbear_main(argc, argv);

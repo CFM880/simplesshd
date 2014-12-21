@@ -15,6 +15,7 @@
 #define HAVE_GETADDRINFO 1
 #define HAVE_FREEADDRINFO 1
 #define HAVE_GETNAMEINFO 1
+#define HAVE_FORK 1
 
 #define HAVE_BASENAME 1
 #define HAVE_NETINET_TCP_H 1
@@ -26,13 +27,17 @@
 
 #define DROPBEAR_SERVER 1
 #define DBMULTI_dropbear 1
+#define DBMULTI_scp 1
 #define DROPBEAR_MULTI 1
 
 
-extern const char *conf_path_file(const char *fn);	/* in jni/interface.c */
+/* in jni/interface.c: */
 extern const char *conf_path;
 extern const char *conf_shell;
 extern const char *conf_home;
+const char *conf_path_file(const char *fn);
+int split_cmd(const char *in, char **argv, int max_argc);
+
 
 
 #endif /* __CONFIG_H__ */
