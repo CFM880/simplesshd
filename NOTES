@@ -118,9 +118,7 @@ executable, I just need to find some -pre-package step where I can do
 a target with a "." in it directly.
 
 
-XXX - fix scp "protocol error"
-XXX - honor scp wildcards somehow
-XXX - zlib
+XXX - sftp (?)
 XXX - rsync
 
 XXX - draw icon and 1024x512 display image
