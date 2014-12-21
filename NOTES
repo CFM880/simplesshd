@@ -72,6 +72,36 @@ it uses select(), I'm not sure how I would honor Thread.interrupt() or
 whatever.  It's not guaranteed to interrupt select(), and I'm not keen on
 adding an arbitrary timeout/polling feature to it.
 
+
+December 20, 2014.
+
+So, I added a builtin scp endpoint.  It was pretty straight forward,
+except dropbear defaults to vfork(), which blocks the parent until the
+child runs execve()!!
+
+Anyways, I noticed that scp doesn't quote it's arguments to the remote
+scp. That means youcan't conveniently copy a remote file with a space in
+its name (it becomes two files).  But the upside is that this is where
+wildcards are handled -- by the shell!
+
+So I need to either run it as a separate executable launched through the
+shell, or make my own implementation of wildcards.
+
+It is easy, using a $(BUILD_EXECUTABLE) script, to get ndk to build an
+executable.  But it is only packaged up if it is named "gdbserver" (and
+debug apk), or "libfoo.so".  The good news is that libfoo.so can be
+executed in /data/data/org.galexander.sshd/lib/libfoo.so, so that is a
+viable option.
+
+Doing the expansion myself is not necessarily hard either, though.  I
+need a library function called glob(), which is apparently not part of
+bionic.  But I have the idea some cut and paste would resolve that with
+very little extra work on my part.
+
+
+
+XXX - fix scp "protocol error"
+XXX - honor scp wildcards somehow
 XXX - zlib
 XXX - rsync
 
