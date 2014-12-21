@@ -79,8 +79,8 @@ So, I added a builtin scp endpoint.  It was pretty straight forward,
 except dropbear defaults to vfork(), which blocks the parent until the
 child runs execve()!!
 
-Anyways, I noticed that scp doesn't quote it's arguments to the remote
-scp. That means youcan't conveniently copy a remote file with a space in
+Anyways, I noticed that scp doesn't quote its arguments to the remote
+scp. That means you can't conveniently copy a remote file with a space in
 its name (it becomes two files).  But the upside is that this is where
 wildcards are handled -- by the shell!
 
@@ -98,6 +98,24 @@ need a library function called glob(), which is apparently not part of
 bionic.  But I have the idea some cut and paste would resolve that with
 very little extra work on my part.
 
+
+December 21, 2014.
+
+Well, bionic libc *does* provide fnmatch(), and even scandir() (a
+shortcut for readdir).  In the best case, though, that still leaves me
+with a bit of a path parsing conundrum (I have to tell scandir which
+directory to operate on).  And also a bit of an escape character
+conundrum -- \* and "*" should not act like wildcards.
+
+Those are not insurmountable but I think I've talked myself out of it.
+So then the question is, do I figure out how to ship an executable, or
+do I do some hack like open a pipe to "/system/bin/sh echo filespec" and
+use the shell solely for expansion?
+
+I'm developing the idea that it's actually pretty easy to ship an
+executable, I just need to find some -pre-package step where I can do
+"mv scp libscp.so" and then it will ship.  ndk-build will not let me make
+a target with a "." in it directly.
 
 
 XXX - fix scp "protocol error"
