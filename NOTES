@@ -118,7 +118,6 @@ executable, I just need to find some -pre-package step where I can do
 a target with a "." in it directly.
 
 
-XXX - sftp (?)
 XXX - rsync
 
 XXX - document (ga.org/software/simplesshd/)
