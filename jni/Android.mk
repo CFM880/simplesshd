@@ -608,9 +608,18 @@ LOCAL_SRC_FILES := $(RSYNC_PATH)/flist.c \
 	$(RSYNC_PATH)/popt/popt.c \
 	$(RSYNC_PATH)/popt/poptconfig.c \
 	$(RSYNC_PATH)/popt/popthelp.c \
-	$(RSYNC_PATH)/popt/poptparse.c
+	$(RSYNC_PATH)/popt/poptparse.c \
+	$(RSYNC_PATH)/zlib/deflate.c \
+	$(RSYNC_PATH)/zlib/inffast.c \
+	$(RSYNC_PATH)/zlib/inflate.c \
+	$(RSYNC_PATH)/zlib/inftrees.c \
+	$(RSYNC_PATH)/zlib/trees.c \
+	$(RSYNC_PATH)/zlib/zutil.c \
+	$(RSYNC_PATH)/zlib/adler32.c \
+	$(RSYNC_PATH)/zlib/compress.c \
+	$(RSYNC_PATH)/zlib/crc32.c
 
-LOCAL_C_INCLUDES:= rsync rsync/popt
-LOCAL_LDLIBS    := -lz
+LOCAL_C_INCLUDES:= rsync rsync/popt rsync/zlib
+LOCAL_LDLIBS    :=
 
 include $(BUILD_EXECUTABLE)

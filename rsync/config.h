@@ -31,7 +31,6 @@
 #define RSYNC_VERSION "3.1.1"
 #define RSYNC_PATH "rsync"
 #define SIZEOF_OFF_T 4
-#define EXTERNAL_ZLIB 1
 #define RSYNCD_SYSCONF "/sdcard/ssh/rsyncd.conf"
 #define HAVE_NETDB_H 1
 #define HAVE_STRUCT_ADDRINFO 1
