@@ -125,6 +125,3 @@ does fail at -z because it needs it's own custom zlib...The stock
 another commandline option for the new (deflate?) technique, but I think
 the normal -z ought to work too.  But that is literally the last feature!
 Then just release details.
-
-XXX - document (ga.org/software/simplesshd/)
-XXX - upload
