@@ -546,3 +546,71 @@ LOCAL_C_INCLUDES:= libz
 # LOCAL_LDLIBS    :=
 
 include $(BUILD_STATIC_LIBRARY)
+
+
+# build separate rsync executable
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS    :=
+LOCAL_MODULE    := rsync
+
+RSYNC_PATH := ../rsync
+LOCAL_SRC_FILES := $(RSYNC_PATH)/flist.c \
+	$(RSYNC_PATH)/rsync.c \
+	$(RSYNC_PATH)/generator.c \
+	$(RSYNC_PATH)/receiver.c \
+	$(RSYNC_PATH)/cleanup.c \
+	$(RSYNC_PATH)/sender.c \
+	$(RSYNC_PATH)/exclude.c \
+	$(RSYNC_PATH)/util.c \
+	$(RSYNC_PATH)/util2.c \
+	$(RSYNC_PATH)/main.c \
+	$(RSYNC_PATH)/checksum.c \
+	$(RSYNC_PATH)/match.c \
+	$(RSYNC_PATH)/syscall.c \
+	$(RSYNC_PATH)/log.c \
+	$(RSYNC_PATH)/backup.c \
+	$(RSYNC_PATH)/delete.c \
+	$(RSYNC_PATH)/options.c \
+	$(RSYNC_PATH)/io.c \
+	$(RSYNC_PATH)/compat.c \
+	$(RSYNC_PATH)/hlink.c \
+	$(RSYNC_PATH)/token.c \
+	$(RSYNC_PATH)/uidlist.c \
+	$(RSYNC_PATH)/socket.c \
+	$(RSYNC_PATH)/hashtable.c \
+	$(RSYNC_PATH)/fileio.c \
+	$(RSYNC_PATH)/batch.c \
+	$(RSYNC_PATH)/clientname.c \
+	$(RSYNC_PATH)/chmod.c \
+	$(RSYNC_PATH)/acls.c \
+	$(RSYNC_PATH)/xattrs.c \
+	$(RSYNC_PATH)/progress.c \
+	$(RSYNC_PATH)/pipe.c \
+	$(RSYNC_PATH)/params.c \
+	$(RSYNC_PATH)/loadparm.c \
+	$(RSYNC_PATH)/clientserver.c \
+	$(RSYNC_PATH)/access.c \
+	$(RSYNC_PATH)/connection.c \
+	$(RSYNC_PATH)/authenticate.c \
+	$(RSYNC_PATH)/lib/wildmatch.c \
+	$(RSYNC_PATH)/lib/compat.c \
+	$(RSYNC_PATH)/lib/snprintf.c \
+	$(RSYNC_PATH)/lib/mdfour.c \
+	$(RSYNC_PATH)/lib/md5.c \
+	$(RSYNC_PATH)/lib/permstring.c \
+	$(RSYNC_PATH)/lib/pool_alloc.c \
+	$(RSYNC_PATH)/lib/sysacls.c \
+	$(RSYNC_PATH)/lib/sysxattrs.c \
+	$(RSYNC_PATH)/lib/getpass.c \
+	$(RSYNC_PATH)/popt/findme.c \
+	$(RSYNC_PATH)/popt/popt.c \
+	$(RSYNC_PATH)/popt/poptconfig.c \
+	$(RSYNC_PATH)/popt/popthelp.c \
+	$(RSYNC_PATH)/popt/poptparse.c
+
+LOCAL_C_INCLUDES:= rsync rsync/popt
+LOCAL_LDLIBS    := -lz
+
+include $(BUILD_EXECUTABLE)

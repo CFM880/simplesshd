@@ -588,6 +588,7 @@ static int rsync_module(int f_in, int f_out, int i, const char *addr, const char
 	uid = MY_UID();
 	am_root = (uid == 0);
 
+#if 0
 	p = *lp_uid(i) ? lp_uid(i) : am_root ? NOBODY_USER : NULL;
 	if (p) {
 		if (!user_to_uid(p, &uid, True)) {
@@ -597,6 +598,7 @@ static int rsync_module(int f_in, int f_out, int i, const char *addr, const char
 		}
 		set_uid = 1;
 	} else
+#endif /* 0 */
 		set_uid = 0;
 
 	p = *lp_gid(i) ? strtok(lp_gid(i), ", ") : NULL;
@@ -627,9 +629,11 @@ static int rsync_module(int f_in, int f_out, int i, const char *addr, const char
 			if (add_a_group(f_out, p) < 0)
 				return -1;
 		}
+#if 0
 	} else if (am_root) {
 		if (add_a_group(f_out, NOBODY_GROUP) < 0)
 			return -1;
+#endif /* 0 */
 	}
 
 	module_dir = lp_path(i);
@@ -1030,9 +1034,11 @@ static void send_listing(int fd)
 static int load_config(int globals_only)
 {
 	if (!config_file) {
+#if 0
 		if (am_server && am_root <= 0)
 			config_file = RSYNCD_USERCONF;
 		else
+#endif /* 0 */
 			config_file = RSYNCD_SYSCONF;
 	}
 	return lp_load(config_file, globals_only);

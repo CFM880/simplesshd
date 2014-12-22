@@ -374,7 +374,9 @@ static void do_delete_pass(void)
 		 || !S_ISDIR(st.st_mode))
 			continue;
 
-		delete_in_dir(fbuf, file, &st.st_dev);
+		{ dev_t t = st.st_dev;
+		delete_in_dir(fbuf, file, &t);
+		}
 	}
 	delete_in_dir(NULL, NULL, &dev_zero);
 
@@ -1463,7 +1465,9 @@ static void recv_generator(char *fname, struct file_struct *file, int ndx,
 		else if (delete_during && f_out != -1 && !phase
 		    && !(file->flags & FLAG_MISSING_DIR)) {
 			if (file->flags & FLAG_CONTENT_DIR)
-				delete_in_dir(fname, file, &real_sx.st.st_dev);
+				{ dev_t t = real_sx.st.st_dev;
+				delete_in_dir(fname, file, &t);
+				}
 			else
 				change_local_filter_dir(fname, strlen(fname), F_DEPTH(file));
 		}
