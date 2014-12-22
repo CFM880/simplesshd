@@ -117,8 +117,16 @@ executable, I just need to find some -pre-package step where I can do
 "mv scp libscp.so" and then it will ship.  ndk-build will not let me make
 a target with a "." in it directly.
 
+...
 
-XXX - rsync
+Now scp, sftp-server, and rsync work as separate executables... rsync
+does fail at -z because it needs it's own custom zlib...The stock
+"external" one seems to lack the "old-style compress" method.  There is
+another commandline option for the new (deflate?) technique, but I think
+the normal -z ought to work too.  But that is literally the last feature!
+Then just release details.
+
+XXX - rsync should use its builtin zlib...
 
 XXX - document (ga.org/software/simplesshd/)
 XXX - upload
