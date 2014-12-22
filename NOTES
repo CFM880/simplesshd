@@ -126,7 +126,5 @@ another commandline option for the new (deflate?) technique, but I think
 the normal -z ought to work too.  But that is literally the last feature!
 Then just release details.
 
-XXX - rsync should be  able to receive a directory -- why does it say symlinks not supported and hang up?
-
 XXX - document (ga.org/software/simplesshd/)
 XXX - upload

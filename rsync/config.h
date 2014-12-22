@@ -48,5 +48,19 @@
 #define HAVE_CHMOD 1
 #define HAVE_SIGACTION 1
 #define HAVE_SIGPROCMASK 1
+#define SUPPORT_LINKS 1
+#define SUPPORT_HARD_LINKS 1
+#define HAVE_LINK 1
+#define HAVE_FTRUNCATE 1
+#define HAVE_MKFIFO 1
+#define HAVE_LCHOWN 1
+#define HAVE_SOCKADDR_UN_LEN 1
+#define HAVE_MKNOD 1
+#define HAVE_FCHMOD 1
+#define HAVE_SETMODE 1
+#define HAVE_LSEEK64 1
+#define HAVE_UTIMES 1
+#define SIZEOF_OFF64_T 8
+#define HAVE_READLINK 1
 
 #endif /* __RSYNC_CONFIG_H */
