@@ -3,4 +3,4 @@ mv libs/armeabi/scp libs/armeabi/libscp.so &&
 mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
 mv libs/armeabi/rsync libs/armeabi/librsync.so &&
 ant debug &&
-cat bin/SimpleSSHD-debug.apk | ssh roach 'cat > /sdcard/buh.apk; source .profile; pm install -r /sdcard/buh.apk'
+cat bin/SimpleSSHD-debug.apk | ssh roach 'cat > /sdcard/buh.apk; source .profile; am start --user 0 -d file:///sdcard/buh.apk'
