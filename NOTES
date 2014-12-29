@@ -126,4 +126,35 @@ another commandline option for the new (deflate?) technique, but I think
 the normal -z ought to work too.  But that is literally the last feature!
 Then just release details.
 
+
+December 29, 2014.
+
+First problem report from a user.  Lollipop (Android 5.0) requires "PIE"
+executables -- position independent code.  I think that is a modern
+equivalent to -fpic that Android is now requiring so that it can
+randomize addresses to try to obscure stack smashing attacks that rely on
+fixed addresses.  It is epicly lame.
+
+Anyways, the big fuck-you from Google is that Ice Cream Sandwich (Android
+4.1) and earlier require fixed-position code.  So one binary will not
+generally work on both.
+
+Here is a good summary:
+   https://code.google.com/p/android-developer-preview/issues/detail?id=888
+
+There is something called "run_pie" which you can wrap your executables
+in that lets older Android run PIE executables.  It would require a
+relatively small change to the exec() call to prepend it with "run_pie".
+That seems like a hack.
+
+The suggested remedy is to build two different apks!  Yuck!
+
+Anyways, it is only executables (not libraries -- they are position
+independent already) that are affected.  And apparently static
+executables don't care one way or the other.
+
+So that is my remedy -- static executables for the moment.  I tested them
+and it is only a little bit bigger -- 904kB of binaries instead of 668kB.
+
+
 XXX - support password-based logins?
