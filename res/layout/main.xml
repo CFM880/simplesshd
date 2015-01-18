@@ -10,6 +10,7 @@
 	android:typeface="monospace"
 	android:singleLine="true"
 	android:background="#ff112266"
+	android:scrollHorizontally="true"
 	android:text="IP: XXX" />
     <EditText android:id="@+id/log"
 	android:layout_width="fill_parent"

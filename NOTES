@@ -157,6 +157,20 @@ So that is my remedy -- static executables for the moment.  I tested them
 and it is only a little bit bigger -- 904kB of binaries instead of 668kB.
 
 
+January 18, 2015.
+
+Markus Ethen suggested it display the current IP address so you know
+where to ssh to, in case it isn't convenient to use static dhcp or to
+remember the address.  That seems to be easier said than done.  You can
+use WifiManager, but that won't give your IP address unless you're on
+wifi.  That is probably "good enough", but it is certainly not ideal.
+There is also java.net.NetworkInterface, which seems to return a random
+ipv6 address.
+
+Ah-hah!  It is fe80::macaddr, which is a bogus "local-connection only"
+ipv6 address, like 192.168, but automatically-generated without dhcp.
+So if I skip that, it finds the proper ipv4 address!
+
 XXX - display the phone's IP address
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?

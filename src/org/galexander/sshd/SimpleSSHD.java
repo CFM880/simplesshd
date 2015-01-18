@@ -171,8 +171,14 @@ public class SimpleSSHD extends Activity
 			for (NetworkInterface intf : interfaces) {
 				List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
 				for (InetAddress addr : addrs) {
-					if (!addr.isLoopbackAddress()) {
-						return addr.getHostAddress();
+					String ip = addr.getHostAddress();
+					if (!addr.isLoopbackAddress() &&
+					    !ip.startsWith("fe80")) {
+						int i = ip.indexOf('%');
+						if (i != -1) {
+							ip = ip.substring(0,i);
+						}
+						return ip;
 					}
 				}
 			}
