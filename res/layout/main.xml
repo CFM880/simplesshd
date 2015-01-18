@@ -3,6 +3,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+    <TextView android:id="@+id/ip"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:textAppearance="?android:attr/textAppearanceMedium"
+	android:typeface="monospace"
+	android:singleLine="true"
+	android:background="#ff112266"
+	android:text="IP: XXX" />
     <EditText android:id="@+id/log"
 	android:layout_width="fill_parent"
 	android:layout_height="1dp"

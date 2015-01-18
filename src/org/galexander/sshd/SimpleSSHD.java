@@ -16,12 +16,15 @@ import android.net.Uri;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
 
 public class SimpleSSHD extends Activity
 {
 	private static final Object lock = new Object();
 	private EditText log_view;
 	private Button startstop_view;
+	private TextView ip_view;
 	public static SimpleSSHD curr = null;
 	private UpdaterThread updater = null;
 
@@ -31,6 +34,7 @@ public class SimpleSSHD extends Activity
 		setContentView(R.layout.main);
 		log_view = (EditText)findViewById(R.id.log);
 		startstop_view = (Button)findViewById(R.id.startstop);
+		ip_view = (TextView)findViewById(R.id.ip);
 	}
 
 	public void onResume() {
@@ -41,6 +45,7 @@ public class SimpleSSHD extends Activity
 		update_startstop_prime();
 		updater = new UpdaterThread();
 		updater.start();
+		ip_view.setText("IP: "+get_ip());
 	}
 
 	public void onPause() {
@@ -156,5 +161,16 @@ public class SimpleSSHD extends Activity
 				curr.runOnUiThread(t);
 			}
 		}
+	}
+
+	public String get_ip() {
+		WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		WifiInfo wi = wm.getConnectionInfo();
+		int ip = wi.getIpAddress();
+		return
+			String.valueOf((ip>>0)&0xff) + "." +
+			String.valueOf((ip>>8)&0xff) + "." +
+			String.valueOf((ip>>16)&0xff) + "." +
+			String.valueOf((ip>>24)&0xff);
 	}
 }
