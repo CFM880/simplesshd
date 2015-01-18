@@ -171,6 +171,10 @@ Ah-hah!  It is fe80::macaddr, which is a bogus "local-connection only"
 ipv6 address, like 192.168, but automatically-generated without dhcp.
 So if I skip that, it finds the proper ipv4 address!
 
-XXX - display the phone's IP address
+Pfew!  I was thinking I'd have to directly use /proc/net/dev and
+SIOCGIFCONF, just like ifconfig does, but it works fine with
+java.net.NetworkInterface.
+
+
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
