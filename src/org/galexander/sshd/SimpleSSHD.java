@@ -47,7 +47,7 @@ public class SimpleSSHD extends Activity
 		update_startstop_prime();
 		updater = new UpdaterThread();
 		updater.start();
-		ip_view.setText("IP: "+get_ip());
+		ip_view.setText(get_ip());
 	}
 
 	public void onPause() {
@@ -166,6 +166,7 @@ public class SimpleSSHD extends Activity
 	}
 
 	public static String get_ip() {
+		String ret = "";
 		try {
 			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 			for (NetworkInterface intf : interfaces) {
@@ -178,11 +179,14 @@ public class SimpleSSHD extends Activity
 						if (i != -1) {
 							ip = ip.substring(0,i);
 						}
-						return ip;
+						if (!ret.equals("")) {
+							ret += "\n";
+						}
+						ret += "IP: "+ ip;
 					}
 				}
 			}
 		} catch (Exception ex) { } // for now eat exceptions
-		return "";
+		return ret;
 	}
 }
