@@ -16,8 +16,10 @@ import android.net.Uri;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiInfo;
+import java.net.NetworkInterface;
+import java.net.InetAddress;
+import java.util.Collections;
+import java.util.List;
 
 public class SimpleSSHD extends Activity
 {
@@ -163,14 +165,18 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	public String get_ip() {
-		WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		WifiInfo wi = wm.getConnectionInfo();
-		int ip = wi.getIpAddress();
-		return
-			String.valueOf((ip>>0)&0xff) + "." +
-			String.valueOf((ip>>8)&0xff) + "." +
-			String.valueOf((ip>>16)&0xff) + "." +
-			String.valueOf((ip>>24)&0xff);
+	public static String get_ip() {
+		try {
+			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+			for (NetworkInterface intf : interfaces) {
+				List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+				for (InetAddress addr : addrs) {
+					if (!addr.isLoopbackAddress()) {
+						return addr.getHostAddress();
+					}
+				}
+			}
+		} catch (Exception ex) { } // for now eat exceptions
+		return "";
 	}
 }
