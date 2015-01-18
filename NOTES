@@ -157,4 +157,6 @@ So that is my remedy -- static executables for the moment.  I tested them
 and it is only a little bit bigger -- 904kB of binaries instead of 668kB.
 
 
+XXX - display the phone's IP address
+XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
