@@ -176,5 +176,25 @@ SIOCGIFCONF, just like ifconfig does, but it works fine with
 java.net.NetworkInterface.
 
 
+June 20, 2015.
+
+At some points, rsync is only write()ing, and assumes that the other end
+will receive it all.  The other end does a little bit of write()ing of
+its own, and then is happy to read() all it wants.  So this written stuff
+may sit in a buffer somewhere indefinitely.  If that happens, an
+infelicity in the design of SuperSU causes everything to wedge.
+
+Of course, this is only if you set the shell to /system/xbin/su as a way
+of having root access for rsync.
+
+Anyways, I made a new program, "buffersu", which is just a
+stdin/stdout-buffering wrapper for rsync() that is guaranteed to always
+perform any read() that is possible at any time, no matter how many
+write()s are outstanding.  That seems to do the trick.
+
+
+XXX - document rsync buffer and supersu integration
+XXX - new release
+
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?

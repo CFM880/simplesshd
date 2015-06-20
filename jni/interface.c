@@ -10,6 +10,7 @@
 #include <ctype.h>
 
 const char *conf_path = "", *conf_shell = "", *conf_home = "";
+int conf_rsyncbuffer = 0;
 
 /* NB - this will leak memory like crazy if called often.... */
 const char *
@@ -117,7 +118,8 @@ from_java_string(jobject s)
 JNIEXPORT void JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
-	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra)
+	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra,
+	jint rsyncbuffer)
 {
 	pid_t pid;
 	const char *extra;
@@ -129,6 +131,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	conf_shell = from_java_string(jshell);
 	conf_home = from_java_string(jhome);
 	extra = from_java_string(jextra);
+	conf_rsyncbuffer = rsyncbuffer;
 
 	pid = fork();
 	if (pid == 0) {

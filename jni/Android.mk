@@ -597,3 +597,17 @@ LOCAL_LDLIBS    :=
 LOCAL_LDFLAGS   := -static
 
 include $(BUILD_EXECUTABLE)
+
+
+# build separate sftp executable
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS    :=
+LOCAL_MODULE    := buffersu
+
+LOCAL_SRC_FILES := buffersu.c
+# LOCAL_LDLIBS    :=
+LOCAL_LDFLAGS   := -static
+
+include $(BUILD_EXECUTABLE)

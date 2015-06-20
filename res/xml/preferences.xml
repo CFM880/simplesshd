@@ -20,6 +20,10 @@
 	android:title="Login Shell"
 	android:summary="Location of sh binary"
 	android:defaultValue="/system/bin/sh" />
+    <CheckBoxPreference
+	android:key="rsyncbuffer"
+	android:title="Buffer hack for rsync+SuperSU"
+	android:defaultValue="false" />
     <EditTextPreference
 	android:key="home"
 	android:title="Home Directory"

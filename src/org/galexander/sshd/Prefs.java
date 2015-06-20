@@ -16,6 +16,9 @@ public class Prefs {
 	public static boolean get_onboot() {
 		return pref.getBoolean("onboot", false);
 	}
+	public static boolean get_rsyncbuffer() {
+		return pref.getBoolean("rsyncbuffer", false);
+	}
 	public static int get_port() {
 		int ret;
 		try {

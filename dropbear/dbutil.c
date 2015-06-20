@@ -587,7 +587,11 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 		cmd = t;
 	} else if (cmd && !strncmp(cmd, "rsync ", 6)) {
 		char *t = malloc(strlen(cmd)+strlen(NDK_EXECUTABLES_PATH)+80);
-		sprintf(t, "%s/lib%s.so %s", NDK_EXECUTABLES_PATH, "rsync",
+		char *x = "rsync";
+		if (conf_rsyncbuffer) {
+			x = "buffersu";
+		}
+		sprintf(t, "%s/lib%s.so %s", NDK_EXECUTABLES_PATH, x,
 				cmd+6);
 		cmd = t;
 	}
