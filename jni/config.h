@@ -1,3 +1,4 @@
+/* config for dropbear embedded in SimpleSSHD */
 #ifndef __CONFIG_H__
 #define __CONFIG_H__ 1
 
@@ -16,6 +17,7 @@
 #define HAVE_FREEADDRINFO 1
 #define HAVE_GETNAMEINFO 1
 #define HAVE_FORK 1
+#define HAVE_GAI_STRERROR 1
 
 #define HAVE_BASENAME 1
 #define HAVE_NETINET_TCP_H 1
