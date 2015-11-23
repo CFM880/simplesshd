@@ -1,10 +1,12 @@
 package org.galexander.sshd;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -68,10 +70,26 @@ public class SimpleSSHD extends Activity
 			case R.id.settings:
 				startActivity(new Intent(this, Settings.class));
 				return true;
-			case R.id.about: {
+			case R.id.doc: {
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
 				startActivity(i);
+			}	return true;
+			case R.id.about: {
+				AlertDialog.Builder b = new AlertDialog.Builder(this);
+				b.setCancelable(true);
+				b.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface di, int which) { }
+					});
+				b.setIcon(android.R.drawable.ic_dialog_info);
+				b.setTitle("About");
+				b.setMessage(
+"SimpleSSHD version " + my_version() +
+"\ndropbear 2014.66" +
+"\nscp/sftp from OpenSSH 6.7p1" +
+"\nrsync 3.1.1");
+				b.show();
 			}	return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -188,5 +206,13 @@ public class SimpleSSHD extends Activity
 			}
 		} catch (Exception ex) { } // for now eat exceptions
 		return ret;
+	}
+
+	public String my_version() {
+		try {
+			return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+		} catch (Exception e) {
+			return "UNKNOWN";
+		}
 	}
 }
