@@ -698,7 +698,9 @@ void getaddrstring(struct sockaddr_storage* addr,
 			return;
 		} else {
 			/* if we can't do a numeric lookup, something's gone terribly wrong */
-			dropbear_exit("Failed lookup: %s", gai_strerror(ret));
+			dropbear_log(LOG_WARNING, "Failed lookup: %s", gai_strerror(ret));
+			sprintf(host, "unknown%u", ((struct sockaddr *)addr)->sa_family);
+			strcpy(serv, "unknown");
 		}
 	}
 
