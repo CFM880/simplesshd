@@ -9,6 +9,7 @@
 
 #define WRAPPED_CMD "/data/data/org.galexander.sshd/lib/librsync.so"
 #define WRAPPED_ARG0 "rsync"
+#define MAX_BUFSZ (1024*1024)
 
 
 static void
@@ -49,6 +50,17 @@ struct buf {
 	struct block *head;	/* read here */
 	struct block *tail;	/* write here */
 };
+
+static int
+buf_length(struct buf *b)
+{
+	struct block *p;
+	int ret = 0;
+	for (p = b->head; p; p = p->next) {
+		ret += p->len;
+	}
+	return ret;
+}
 
 static int
 buf_waiting(struct buf *b)
@@ -153,8 +165,12 @@ main(int argc, char **argv)
 		while (1) {
 			int s;
 			FD_ZERO(&ifds);
-			FD_SET(0, &ifds);
-			FD_SET(child_stdout, &ifds);
+			if (buf_length(&buf0) < MAX_BUFSZ) {
+				FD_SET(0, &ifds);
+			}
+			if (buf_length(&buf1) < MAX_BUFSZ) {
+				FD_SET(child_stdout, &ifds);
+			}
 			FD_ZERO(&ofds);
 			if (buf_waiting(&buf1)) {
 				FD_SET(1, &ofds);
