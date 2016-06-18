@@ -62,5 +62,8 @@
 #define HAVE_UTIMES 1
 #define SIZEOF_OFF64_T 8
 #define HAVE_READLINK 1
+#define HAVE_SECURE_MKSTEMP 1
+#define HAVE_FCHMOD 1
+#define HAVE_SETMODE 1
 
 #endif /* __RSYNC_CONFIG_H */
