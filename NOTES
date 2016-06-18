@@ -219,5 +219,7 @@ perform any read() that is possible at any time, no matter how many
 write()s are outstanding.  That seems to do the trick.
 
 
+XXX - add a settings dialog to help you create authorized_keys, and also to download from a website
+
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
