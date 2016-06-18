@@ -14,6 +14,7 @@
  */
 
 #include "includes.h"
+#include "sftp.h"
 
 #include <sys/param.h>
 #include <stdarg.h>

@@ -25,6 +25,7 @@
  */
 
 #include "includes.h"
+#include "sftp.h"
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
