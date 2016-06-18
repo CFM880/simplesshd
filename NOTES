@@ -2,18 +2,21 @@ BUILD INSTRUCTIONS:
 
 
 To build this, you'll need to remove my key.* settings in ant.properties.
-Then follow the steps in the "doit" script:
+You'll have to build a "debug" apk instead of a "release" one.  Android
+will not let you install a debug apk on top of a release one, so you have
+to remove stock SimpleSSHD first before installing the debug build.
+
+Then follow these steps (roughly the "doit" script):
 
    ndk-build -j8 &&
    mv libs/armeabi/scp libs/armeabi/libscp.so &&
    mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
    mv libs/armeabi/rsync libs/armeabi/librsync.so &&
    mv libs/armeabi/buffersu libs/armeabi/libbuffersu.so &&
-   ant release
+   ant debug
 
-(you can ignore the xxinst step, that just copies the apk to my phone)
-The mv steps are very important, because "ant release" will only package
-the necessary binaries if they have a .so extension (even though they are
+The mv steps are very important, because ant will only package the
+necessary binaries if they have a .so extension (even though they are
 stand alone executables).
 
 
