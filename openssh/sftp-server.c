@@ -227,6 +227,7 @@ flags_from_portable(int pflags)
 	return flags;
 }
 
+#if 0 /* unused */
 static const char *
 string_from_portable(int pflags)
 {
@@ -255,6 +256,7 @@ string_from_portable(int pflags)
 
 	return ret;
 }
+#endif /* 0 */
 
 static Attrib *
 get_attrib(void)
@@ -396,6 +398,7 @@ handle_update_write(int handle, ssize_t bytes)
 		handles[handle].bytes_write += bytes;
 }
 
+#if 0 /* unused */
 static u_int64_t
 handle_bytes_read(int handle)
 {
@@ -411,6 +414,7 @@ handle_bytes_write(int handle)
 		return (handles[handle].bytes_write);
 	return 0;
 }
+#endif /* 0 */
 
 static int
 handle_close(int handle)
