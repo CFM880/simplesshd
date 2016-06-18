@@ -912,6 +912,10 @@ static void execchild(void *user_data) {
 	/* clear environment */
 	/* if we're debugging using valgrind etc, we need to keep the LD_PRELOAD
 	 * etc. This is hazardous, so should only be used for debugging. */
+#if 0
+	/* don't clear the environment so that we inherit all of the android
+	 * system environment, which lets utilities like am (android manager?)
+	 * and pm (package manager?) run */
 #ifndef DEBUG_VALGRIND
 #ifdef HAVE_CLEARENV
 	clearenv();
@@ -922,6 +926,7 @@ static void execchild(void *user_data) {
 	}
 #endif /* HAVE_CLEARENV */
 #endif /* DEBUG_VALGRIND */
+#endif
 
 #if 0
 	/* We can only change uid/gid as root ... */
