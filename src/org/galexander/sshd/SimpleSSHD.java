@@ -70,6 +70,9 @@ public class SimpleSSHD extends Activity
 			case R.id.settings:
 				startActivity(new Intent(this, Settings.class));
 				return true;
+			case R.id.authkeys:
+				startActivity(new Intent(this, AuthKeys.class));
+				return true;
 			case R.id.doc: {
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));

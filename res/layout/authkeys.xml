@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <EditText android:id="@+id/authtext"
+	android:layout_width="fill_parent"
+	android:layout_height="1dp"
+	android:layout_weight="1"
+	android:ellipsize="start"
+	android:textAppearance="?android:attr/textAppearanceSmall"
+	android:typeface="monospace"
+	android:gravity="top"
+	android:singleLine="false"
+	android:background="#00000000" />
+    <LinearLayout
+	android:orientation="horizontal"
+	android_layout_width="fill_parent"
+	android:layout_height="wrap_content">
+	<Button android:id="@+id/fetch_auth"
+	    android:layout_width="1dp"
+	    android:layout_weight="1"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:text="Fetch"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:onClick="fetch_clicked" />
+	<Button android:id="@+id/cancel_auth"
+	    android:layout_width="1dp"
+	    android:layout_weight="1"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:text="Cancel"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:onClick="cancel_clicked" />
+	<Button android:id="@+id/save_auth"
+	    android:layout_width="1dp"
+	    android:layout_weight="1"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:text="Save"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:onClick="save_clicked" />
+   </LinearLayout>
+</LinearLayout>
