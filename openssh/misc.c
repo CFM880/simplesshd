@@ -76,6 +76,8 @@ chop(char *s)
 
 }
 
+#if 0 /* unused, and calls undefined debug() */
+
 /* set/unset filedescriptor to non-blocking */
 int
 set_nonblock(int fd)
@@ -697,6 +699,8 @@ tun_open(int tun, int mode)
 #endif
 }
 
+#endif /* 0 */
+
 void
 sanitise_stdfd(void)
 {
@@ -719,6 +723,8 @@ sanitise_stdfd(void)
 	if (nullfd > 2)
 		close(nullfd);
 }
+
+#if 0 /* unused, and calls undefined debug() */
 
 char *
 tohex(const void *vp, size_t l)
@@ -756,6 +762,8 @@ get_u64(const void *vp)
 
 	return (v);
 }
+
+#endif /* 0 */
 
 u_int32_t
 get_u32(const void *vp)
@@ -842,6 +850,8 @@ put_u16(void *vp, u_int16_t v)
 	p[0] = (u_char)(v >> 8) & 0xff;
 	p[1] = (u_char)v & 0xff;
 }
+
+#if 0 /* unused, and calls undefined debug() */
 
 void
 ms_subtract_diff(struct timeval *start, int *ms)
@@ -1097,3 +1107,4 @@ sock_set_v6only(int s)
 		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
 #endif
 }
+#endif /* 0 */
