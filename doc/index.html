@@ -22,10 +22,10 @@ either cut and paste an SSH public key or "Fetch" one via HTTP.
 <li> On any computer which will connect to your Android device, set the
 port to 2222. With OpenSSH, this can be done by putting these lines in
 <tt>~/.ssh/config</tt>:
-<pre>
+<blockquote><pre>
 Host myphone
 Port 2222
-</pre>
+</pre></blockquote>
 <li> Launch SimpleSSHD, and in Settings enable "Start on Boot", and
 manually start it for the first time.
 <li> You might want to put a <tt>.profile</tt> in <tt>/sdcard/ssh</tt>,
@@ -62,10 +62,11 @@ SuperSU.</p>
 to <tt>/sdcard/ssh</tt>.  This is where your ssh session starts out, and is
 where <tt>.profile</tt> will be found if it is present.</p>
 
-<p>There is also a place where you can put commandline options for
-dropbear server.  The options which are hardcoded are: <tt>-R -F -p
-:portno</tt>.  You can use <tt>\</tt> or <tt>"</tt> to escape characters
-in this commandline.</p>
+<p>There is also a place where you can put additional commandline options
+for dropbear server.  The options which are hardcoded are:
+<tt>-R -F -p :portno</tt>.
+You can use <tt>\</tt> or <tt>"</tt> to escape characters in this
+commandline.</p>
 
 <h2>Change Log</h2>
 
