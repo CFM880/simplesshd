@@ -31,6 +31,7 @@ public class SimpleSSHD extends Activity
 	private TextView ip_view;
 	public static SimpleSSHD curr = null;
 	private UpdaterThread updater = null;
+	private static String pending_toast = null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,6 +46,11 @@ public class SimpleSSHD extends Activity
 		super.onResume();
 		synchronized (lock) {
 			curr = this;
+			if (pending_toast != null) {
+				Toast.makeText(this, pending_toast,
+					Toast.LENGTH_LONG).show();
+				pending_toast = null;
+			}
 		}
 		update_startstop_prime();
 		updater = new UpdaterThread();
@@ -216,6 +222,21 @@ public class SimpleSSHD extends Activity
 			return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 		} catch (Exception e) {
 			return "UNKNOWN";
+		}
+	}
+
+	/* called from AuthKeysSave (in its own worker thread) if it fails */
+	public static void toast(String s) {
+		synchronized (lock) {
+			if (curr != null) {
+				curr.runOnUiThread(new Runnable() {
+				public void run() {
+					Toast.makeText(this, s,
+						Toast.LENGTH_LONG).show();
+				} });
+			} else {
+				pending_toast = s;
+			}
 		}
 	}
 }

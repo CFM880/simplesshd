@@ -16,6 +16,8 @@
         </activity>
 	<activity android:name="Settings" android:label="Settings" />
 	<activity android:name="AuthKeys" android:label="Authorized Keys" />
+	<service android:name="AuthKeysSave" android:label="AuthKeysSave" />
+	<service android:name="AuthKeysFetch" android:label="AuthKeysFetch" />
 	<service android:name="SimpleSSHDService"
 	    android:label="SimpleSSHDService" />
 	<receiver android:name="BootReceiver">
