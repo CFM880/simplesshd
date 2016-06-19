@@ -10,7 +10,7 @@ public class AuthKeysSave extends IntentService {
 		super("SimpleSSHDAuthKeysSave");
 	}
 	protected void onHandleIntent(Intent i) {
-		String s = i.getStringExtra("s", null);
+		String s = i.getStringExtra("s");
 		if (s == null) {
 			return;
 		}

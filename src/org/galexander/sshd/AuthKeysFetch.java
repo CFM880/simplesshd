@@ -4,18 +4,19 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Message;
 import android.os.Messenger;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.HttpURLConnection;
 
 
-public class AuthKeysSave extends IntentService {
-	public AuthKeysSave() {
-		super("SimpleSSHDAuthKeysSave");
+public class AuthKeysFetch extends IntentService {
+	public AuthKeysFetch() {
+		super("SimpleSSHDAuthKeysFetch");
 	}
 	protected void onHandleIntent(Intent i) {
-		Messenger m = (Messenger)i.getExtra("m");
-		Message msg = m.obtain();
-		String url = i.getStringExtra("url", null);
+		Messenger m = (Messenger)i.getParcelableExtra("m");
+		Message msg = Message.obtain();
+		String url = i.getStringExtra("url");
 
 		String result = "";
 		byte[] b = new byte[1024];
@@ -26,7 +27,7 @@ public class AuthKeysSave extends IntentService {
 			}
 			URL u = new URL(url);
 			HttpURLConnection conn = (HttpURLConnection)
-					url.openConnection();
+					u.openConnection();
 			try {
 				InputStream in = conn.getInputStream();
 				try {

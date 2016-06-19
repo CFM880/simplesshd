@@ -2,6 +2,10 @@ package org.galexander.sshd;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileInputStream;
+
 
 public class AuthKeysLoad extends AsyncTask<Void,Void,Void> {
 	private AuthKeys act = null;
@@ -13,8 +17,8 @@ public class AuthKeysLoad extends AsyncTask<Void,Void,Void> {
 	}
 
 	AuthKeysLoad(AuthKeys act_) {
-		act = act_;
 		super();
+		act = act_;
 	}
 
 	protected Void doInBackground(Void... v) {

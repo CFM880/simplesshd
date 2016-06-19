@@ -1,13 +1,18 @@
 package org.galexander.sshd;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.InputType;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.widget.EditText;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class AuthKeys extends Activity {
 	private EditText authtext;
@@ -34,16 +39,16 @@ public class AuthKeys extends Activity {
 		AlertDialog.Builder ab = new AlertDialog.Builder(this);
 		ab.setTitle("Fetch authorized_keys");
 		final EditText url = new EditText(this);
-		url.setInputType(EditText.TYPE_CLASS_TEXT |
-				 EditText.TYPE_TEXT_VARIATION_URI);
+		url.setInputType(InputType.TYPE_CLASS_TEXT |
+				 InputType.TYPE_TEXT_VARIATION_URI);
 		ab.setView(url);
 		ab.setPositiveButton("OK",
-			new DialogInterface.onClickListener() {
+			new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface d, int which) {
 				start_fetch(url.getText().toString());
 			} });
 		ab.setNegativeButton("Cancel",
-			new DialogInterface.onClickListener() {
+			new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface d, int which) {
 				d.cancel();
 			} });
@@ -62,7 +67,7 @@ public class AuthKeys extends Activity {
 
 	private void save_authtext() {
 		String s = get_authtext();
-		if ((authtext_orig_str != null) && (s != null) &&
+		if ((authtext_orig != null) && (s != null) &&
 		    !s.equals(authtext_orig)) {
 			Intent i = new Intent(this, AuthKeysSave.class);
 			i.putExtra("s", s);
@@ -102,8 +107,9 @@ public class AuthKeys extends Activity {
 
 	private void start_fetch(String url) {
 		Intent i = new Intent(this, AuthKeysFetch.class);
-		i.putExtra("url", url.getText().toString());
-		i.putExtra("m", Messenger m = new Messenger(new Handler() {
+		final Context ctx = this;
+		i.putExtra("url", url);
+		i.putExtra("m", new Messenger(new Handler() {
 			public void handleMessage(Message msg) {
 				Object o = msg.obj;
 				if (o == null) {
@@ -116,7 +122,7 @@ public class AuthKeys extends Activity {
 					append_authtext(s);
 				} else {
 					/* s must be an error message */
-					Toast.makeText(this, s,
+					Toast.makeText(ctx, s,
 						Toast.LENGTH_LONG).show();
 				}
 			} } ));

@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.Toast;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -226,12 +227,12 @@ public class SimpleSSHD extends Activity
 	}
 
 	/* called from AuthKeysSave (in its own worker thread) if it fails */
-	public static void toast(String s) {
+	public static void toast(final String s) {
 		synchronized (lock) {
 			if (curr != null) {
 				curr.runOnUiThread(new Runnable() {
 				public void run() {
-					Toast.makeText(this, s,
+					Toast.makeText(curr, s,
 						Toast.LENGTH_LONG).show();
 				} });
 			} else {
