@@ -12,8 +12,13 @@ listen on a port over 1024 (defaults to port 2222).</p>
 
 <ul>
 <li> Install SimpleSSHD.
-<li> Make a directory <tt>/sdcard/ssh</tt>, and put an
+<li> Either:
+<ul>
+<li> Go to SimpleSSHD -> Menu (upper right) -> Authorized Keys, and
+either cut and paste an SSH public key or "Fetch" one via HTTP.
+<li> OR: Make a directory <tt>/sdcard/ssh</tt>, and put an
 <tt>authorized_keys</tt> file in that directory.
+</ul>
 <li> On any computer which will connect to your Android device, set the
 port to 2222. With OpenSSH, this can be done by putting these lines in
 <tt>~/.ssh/config</tt>:
@@ -72,7 +77,7 @@ in this commandline.</p>
 <li> <b>2015/11/23 Version 1.4:</b> Don't abort if IP address lookup fails, and make proper "About" menu.
 <li> <b>2016/06/11 Version 1.5:</b> SuperSU+rsync hack now limits the buffer size to 1MB.
 <li> <b>2016/06/12 Version 1.6:</b> Fix typo that broke scp/sftp/rsync in version 1.5.
-<li> <b>2016/06/xx Version 1.7:</b> Don't clear environment variables (so you can use 'am' or 'pm' more easily).
+<li> <b>2016/06/xx Version 1.7:</b> Don't clear environment variables (so you can use 'am' or 'pm' more easily).  Add "Authorized Keys" menu option to help maintain the Authorized Keys file.
 </ul>
 
 <h2>About</h2>
