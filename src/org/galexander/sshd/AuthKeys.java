@@ -67,12 +67,14 @@ public class AuthKeys extends Activity {
 
 	private void save_authtext() {
 		String s = get_authtext();
-		if ((authtext_orig != null) && (s != null) &&
-		    !s.equals(authtext_orig)) {
+		if ((s != null) && ((authtext_orig != null) ||
+		                    !s.equals(authtext_orig))) {
 			Intent i = new Intent(this, AuthKeysSave.class);
 			i.putExtra("s", s);
 			startService(i);
 		}
+		/* so that we won't save it again */
+		authtext_orig = null;
 	}
 
 	private String get_authtext() {
