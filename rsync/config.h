@@ -65,5 +65,6 @@
 #define HAVE_SECURE_MKSTEMP 1
 #define HAVE_FCHMOD 1
 #define HAVE_SETMODE 1
+#define HAVE_STRUCT_STAT64 1
 
 #endif /* __RSYNC_CONFIG_H */
