@@ -219,5 +219,9 @@ perform any read() that is possible at any time, no matter how many
 write()s are outstanding.  That seems to do the trick.
 
 
+XXX - add support for lseek64 and stat64 to sftp
+XXX - enable support for lseek64 and stat64 in rsync
+XXX - what about scp?
+XXX - test on large files
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
