@@ -646,7 +646,7 @@ process_read(u_int32_t id)
 	}
 	fd = handle_to_fd(handle);
 	if (fd >= 0) {
-		if (lseek(fd, off, SEEK_SET) < 0) {
+		if (lseek64(fd, off, SEEK_SET) < 0) {
 			error("process_read: seek failed");
 			status = errno_to_portable(errno);
 		} else {
@@ -684,7 +684,7 @@ process_write(u_int32_t id)
 		status = SSH2_FX_FAILURE;
 	else {
 		if (!(handle_to_flags(handle) & O_APPEND) &&
-				lseek(fd, off, SEEK_SET) < 0) {
+				lseek64(fd, off, SEEK_SET) < 0) {
 			status = errno_to_portable(errno);
 			error("process_write: seek failed");
 		} else {

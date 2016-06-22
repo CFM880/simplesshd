@@ -214,12 +214,30 @@ Of course, this is only if you set the shell to /system/xbin/su as a way
 of having root access for rsync.
 
 Anyways, I made a new program, "buffersu", which is just a
-stdin/stdout-buffering wrapper for rsync() that is guaranteed to always
+stdin/stdout-buffering wrapper for rsync that is guaranteed to always
 perform any read() that is possible at any time, no matter how many
 write()s are outstanding.  That seems to do the trick.
 
 
-XXX - add support for lseek64 and stat64 to sftp
+June 21, 2016.
+
+Chris Moore reports that rsync and sftp do not like files larger than 2GB.
+
+rsync was easy - it just needed an additional #define in rsync/config.h
+to enable its builtin support for using stat64/lseek64/off64_t/etc.
+
+Now that I'm investigating sftp, I find this surprising fact about bionic
+(though the glibc man page for stat(2) tried to tell me this) - stat64
+and stat are the same thing!  But off64_t and lseek64 are significant.
+That should make converting sftp pretty convenient.  Especially since
+sftp already uses "u_int64_t" instead of off_t.
+
+p.s. Chris Moore gave me this command to test sftp, which turned out to
+be useful:
+
+   curl -v --pubkey .ssh/id_rsa.pub -r 2147482624-2147484672 -k sftp://mushroom:2222/sdcard/ssh/buh -o buh-new
+
+
 XXX - what about scp?
 XXX - test on large files
 XXX - if you remove it from the recent apps list, does it stop the service??
