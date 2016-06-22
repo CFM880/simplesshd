@@ -84,7 +84,7 @@ void bwlimit(int);
 arglist args;
 
 /* Bandwidth limit */
-off_t limit_rate = 0;
+off64_t limit_rate = 0;
 
 /* Name of current file being transferred. */
 char *curfile;
@@ -601,7 +601,8 @@ source(int argc, char **argv)
 	struct stat stb;
 	static BUF buffer;
 	BUF *bp;
-	off_t i, amt, statbytes;
+/* XXX - if PROGRESS_METER is enabled, we'll regret making statbytes 64-bit */
+	off64_t i, amt, statbytes;
 	size_t result;
 	int fd = -1, haderr, indx;
 	char *last, *name, buf[2048];
@@ -830,10 +831,10 @@ sink(int argc, char **argv)
 		YES, NO, DISPLAYED
 	} wrerr;
 	BUF *bp;
-	off_t i;
+	off64_t i;
 	size_t j, count;
 	int amt, exists, first, mask, mode, ofd, omode;
-	off_t size, statbytes;
+	off64_t size, statbytes;
 	int setimes, targisdir, wrerrno = 0;
 	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048];
 	struct timeval tv[2];

@@ -237,8 +237,12 @@ be useful:
 
    curl -v --pubkey .ssh/id_rsa.pub -r 2147482624-2147484672 -k sftp://mushroom:2222/sdcard/ssh/buh -o buh-new
 
+As for scp, it's not as clear what needs to be done.  It doesn't use
+lseek.  But it does use off_t a bit, including on an index in a for loop
+that is compared against st_size (which is 64-bit).  So I'll just change
+all of the off_t to off64_t and hope for the best.
 
-XXX - what about scp?
+
 XXX - test on large files
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
