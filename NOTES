@@ -242,7 +242,7 @@ lseek.  But it does use off_t a bit, including on an index in a for loop
 that is compared against st_size (which is 64-bit).  So I'll just change
 all of the off_t to off64_t and hope for the best.
 
+sftp and rsync work!  Not gonna bother testing scp on big files...
 
-XXX - test on large files
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
