@@ -25,7 +25,6 @@ conf_path_file(const char *fn)
 static JNIEnv *env;
 static jclass cl_string;
 static jclass cl_simplesshdservice;
-static jfieldID fid_sss_sshd_pid;
 
 extern int dropbear_main(int argc, char **argv);
 
@@ -48,8 +47,6 @@ jni_init(JNIEnv *env_)
 
 	CLASS(string, "java/lang/String")
 	CLASS(simplesshdservice, "org/galexander/sshd/SimpleSSHDService")
-
-	STFIELD(sss_sshd_pid, simplesshdservice, "sshd_pid", "I")
 
 	return 1;
 }
@@ -115,7 +112,7 @@ from_java_string(jobject s)
 	return ret;
 }
 
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
 	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra,
@@ -167,23 +164,18 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 				(sizeof argv / sizeof *argv) - argc);
 		fprintf(stderr, "starting dropbear\n");
 		retval = dropbear_main(argc, argv);
+		/* NB - probably not reachable */
 		fprintf(stderr, "dropbear finished (%d)\n", retval);
-	} else {
-		(*env)->SetStaticIntField(env, cl_simplesshdservice,
-					fid_sss_sshd_pid, pid);
+		exit(0);
 	}
+	return pid;
 }
 
 JNIEXPORT void JNICALL
-Java_org_galexander_sshd_SimpleSSHDService_stop_1sshd(JNIEnv *env_, jclass cl)
+Java_org_galexander_sshd_SimpleSSHDService_kill(JNIEnv *env_, jclass cl,
+			jint pid)
 {
-	pid_t pid;
-	if (!jni_init(env_)) {
-		return;
-	}
-	pid = (*env)->GetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid);
 	kill(pid, SIGKILL);
-	(*env)->SetStaticIntField(env, cl_simplesshdservice, fid_sss_sshd_pid, 0);
 }
 
 JNIEXPORT int JNICALL

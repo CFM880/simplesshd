@@ -9,7 +9,13 @@ import java.io.File;
 import java.io.FileReader;
 
 public class SimpleSSHDService extends Service {
-	public static int sshd_pid = 0;
+		/* if restarting twice within 10 seconds, give up */
+	private static final int MIN_DURATION = 10000;
+
+	private static final Object lock = new Object();
+	private static int sshd_pid = 0;
+	private static long sshd_when = 0;
+	private static long sshd_duration = 0;
 
 	public void onCreate() {
 		super.onCreate();
@@ -17,11 +23,8 @@ public class SimpleSSHDService extends Service {
 		Prefs.init(this);
 
 		read_pidfile();
-		if (is_started()) {
-			/* would prefer to restart the daemon process rather
-			 * than leave the stale one around.. */
-			stop_sshd();
-		}
+
+		stop_sshd();	/* it would be stale anyways */
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -48,9 +51,7 @@ public class SimpleSSHDService extends Service {
 		/* unfortunately, android doesn't reliably call this when, i.e.,
 		 * the package is upgraded... so it's really pretty useless */
 	public void onDestroy() {
-		if (is_started()) {
-			stop_sshd();
-		}
+		stop_sshd();
 		stopSelf();
 		super.onDestroy();
 	}
@@ -59,23 +60,55 @@ public class SimpleSSHDService extends Service {
 		return (sshd_pid != 0);
 	}
 
-	private void do_start() {
-		if (is_started()) {
-			stop_sshd();
+	private static void stop_sshd() {
+		int pid;
+		synchronized (lock) {
+			pid = sshd_pid;
+			sshd_pid = 0;
 		}
-		start_sshd(Prefs.get_port(),
+		if (pid != 0) {
+			kill(pid);
+		}
+	}
+
+	private static void maybe_restart(int pid) {
+		boolean do_restart = false;
+		long now = System.currentTimeMillis();
+		synchronized (lock) {
+			if (sshd_pid == pid) {
+				sshd_pid = 0;
+				do_restart =
+					((sshd_duration == 0) ||
+					 (sshd_when == 0) ||
+					 (sshd_duration >= MIN_DURATION) ||
+					 ((now-sshd_when) >= MIN_DURATION));
+			}
+		}
+		if (do_restart) {
+			do_start();
+		}
+	}
+
+	private static void do_start() {
+		stop_sshd();
+		final int pid = start_sshd(Prefs.get_port(),
 			Prefs.get_path(), Prefs.get_shell(),
 			Prefs.get_home(), Prefs.get_extra(),
 			(Prefs.get_rsyncbuffer() ? 1 : 0));
 
-		if (sshd_pid != 0) {
-			final int pid = sshd_pid;
+		long now = System.currentTimeMillis();
+		if (pid != 0) {
+			synchronized (lock) {
+				stop_sshd();
+				sshd_pid = pid;
+				sshd_duration = ((sshd_when != 0)
+						? (now - sshd_when) : 0);
+				sshd_when = now;
+			}
 			(new Thread() {
 				public void run() {
 					waitpid(pid);
-					if (sshd_pid == pid) {
-						sshd_pid = 0;
-					}
+					maybe_restart(pid);
 					SimpleSSHD.update_startstop();
 				}
 			}).start();
@@ -86,23 +119,32 @@ public class SimpleSSHDService extends Service {
 	private static void read_pidfile() {
 		try {
 			File f = new File(Prefs.get_path(), "dropbear.pid");
+			int pid = 0;
 			if (f.exists()) {
 				BufferedReader r = new BufferedReader(
 							new FileReader(f));
 				try {
-					sshd_pid =
+					pid =
 						Integer.valueOf(r.readLine());
 				} finally {
 					r.close();
 				}
 			}
+			if (pid != 0) {
+				synchronized (lock) {
+					stop_sshd();
+					sshd_pid = pid;
+					sshd_when = System.currentTimeMillis();
+					sshd_duration = 0;
+				}
+			}
 		} catch (Exception e) { /* *shrug* */ }
 	}
 
-	private static native void start_sshd(int port, String path,
+	private static native int start_sshd(int port, String path,
 			String shell, String home, String extra,
 			int rsyncbuffer);
-	private static native void stop_sshd();
+	private static native void kill(int pid);
 	private static native int waitpid(int pid);
 	static {
 		System.loadLibrary("simplesshd-jni");
