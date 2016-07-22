@@ -64,8 +64,8 @@ much traffic. */
 #undef ENABLE_CLI_LOCALTCPFWD
 #undef ENABLE_CLI_REMOTETCPFWD
 
-#undef ENABLE_SVR_LOCALTCPFWD
-#undef ENABLE_SVR_REMOTETCPFWD
+#define ENABLE_SVR_LOCALTCPFWD 1
+#define ENABLE_SVR_REMOTETCPFWD 1
 
 /* Enable Authentication Agent Forwarding */
 #undef ENABLE_SVR_AGENTFWD
