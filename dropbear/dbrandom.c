@@ -85,8 +85,8 @@ process_file(hash_state *hs, const char *filename,
 			struct timeval timeout;
 			fd_set read_fds;
 
- 			timeout.tv_sec  = 2;
- 			timeout.tv_usec = 0;
+ 			timeout.tv_sec  = 0;
+ 			timeout.tv_usec = 1000;
 
 			FD_ZERO(&read_fds);
 			FD_SET(readfd, &read_fds);
@@ -97,6 +97,8 @@ process_file(hash_state *hs, const char *filename,
 				already_blocked = 1;
 			}
 		}
+
+		if (already_blocked) break;
 
 		if (len == 0)
 		{
@@ -205,12 +207,12 @@ void seedrandom() {
 #ifdef __linux__
 	/* Seems to be a reasonable source of entropy from timers. Possibly hard
 	 * for even local attackers to reproduce */
-	process_file(&hs, "/proc/timer_list", 0, 0);
+	process_file(&hs, "/proc/timer_list", 4096, 0);
 	/* Might help on systems with wireless */
-	process_file(&hs, "/proc/interrupts", 0, 0);
+	process_file(&hs, "/proc/interrupts", 4096, 0);
 
-	process_file(&hs, "/proc/loadavg", 0, 0);
-	process_file(&hs, "/proc/sys/kernel/random/entropy_avail", 0, 0);
+	process_file(&hs, "/proc/loadavg", 4096, 0);
+	process_file(&hs, "/proc/sys/kernel/random/entropy_avail", 4096, 0);
 
 	/* Mostly network visible but useful in some situations.
 	 * Limit size to avoid slowdowns on systems with lots of routes */
@@ -219,7 +221,7 @@ void seedrandom() {
 	process_file(&hs, "/proc/net/tcp", 4096, 0);
 	/* Also includes interface lo */
 	process_file(&hs, "/proc/net/rt_cache", 4096, 0);
-	process_file(&hs, "/proc/vmstat", 0, 0);
+	process_file(&hs, "/proc/vmstat", 4096, 0);
 #endif
 
 	pid = getpid();
