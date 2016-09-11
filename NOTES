@@ -244,5 +244,9 @@ all of the off_t to off64_t and hope for the best.
 
 sftp and rsync work!  Not gonna bother testing scp on big files...
 
+
+XXX - Jared Stafford says startForeground() improves responsiveness
+substantially on Nkey Lime Pie
+
 XXX - if you remove it from the recent apps list, does it stop the service??
 XXX - support password-based logins?
