@@ -1,5 +1,6 @@
 package org.galexander.sshd;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
@@ -31,15 +32,12 @@ public class SimpleSSHDService extends Service {
 		if ((intent == null) ||
 		    (!intent.getBooleanExtra("stop", false))) {
 			do_start();
-/* XXX - maybe we should call startForeground(), but then we'd have to make a
- * bogus notification... and START_STICKY seems to actually do a good job of
- * restarting us if we're killed...  */
+			do_foreground();
 			return START_STICKY;
 		} else {
 			stop_sshd();
+			stop_service();
 			SimpleSSHD.update_startstop();
-			stopSelf();
-/* XXX - need stopForeground() too ? */
 			return START_NOT_STICKY;
 		}
 	}
@@ -52,8 +50,15 @@ public class SimpleSSHDService extends Service {
 		 * the package is upgraded... so it's really pretty useless */
 	public void onDestroy() {
 		stop_sshd();
-		stopSelf();
+		stop_service();
 		super.onDestroy();
+	}
+
+	private void do_foreground() {
+		Notification n = new Notification(R.drawable.notification_icon,
+					"SimpleSSHD", 0);
+		n.tickerText = "SimpleSSHD";
+		startForeground(1, n);
 	}
 
 	public static boolean is_started() {
@@ -69,6 +74,11 @@ public class SimpleSSHDService extends Service {
 		if (pid != 0) {
 			kill(pid);
 		}
+	}
+
+	private void stop_service() {
+		stopSelf();
+		stopForeground(true);
 	}
 
 	private static void maybe_restart(int pid) {

@@ -245,8 +245,69 @@ all of the off_t to off64_t and hope for the best.
 sftp and rsync work!  Not gonna bother testing scp on big files...
 
 
-XXX - Jared Stafford says startForeground() improves responsiveness
-substantially on Nkey Lime Pie
+October 1, 2016.
 
-XXX - if you remove it from the recent apps list, does it stop the service??
-XXX - support password-based logins?
+Jared Stafford told me startForeground() improves responsiveness on
+Nougat.  There had been a comment suggesting startForeground(), but I
+never got around to trying it because it has worked "well enough".  With
+Nougat, though, there is a definite tendency for SimpleSSHD to be
+non-responsive.  I'm not sure exactly what its cause is, but the symptom
+I notice most frequently is that the first ssh connection after a while
+will be delayed "a long time" - on the order of 10-30 seconds, or maybe
+indefinitely sometimes.  Oddly, a second connection can sometimes get
+through undelayed, even before the first connection does.  It is as if
+the fork() of process for the new connection is where the delay is, not
+in the listen() call.
+
+That's not overall too surprising, Nougat is a lot harsher about
+background processes as part of a Google push to reduce power consumption
+on idle devices.
+
+Another concern is related to a change back in July - sometimes the
+system will kill the sshd process for no good reason (maybe because they
+removed it from the recent apps list).  The remedy I settled on was to
+monitor for the sshd process dying from within the regular
+Android-managed process, and restart it.  I guess I didn't write down
+where in the documentation I found it, but Android seems expressly
+antagonistic to non-system-managed processes.  If they ever get more
+hard-assed about that, this whole idea goes out the window.
+
+Anyways, I implemented startForeground(), and I am unhappy that it
+requires a Notification. At API 7 (Android 2.1) those are really
+primitive.  For example, the PRIORITY_MIN behavior which will sometimes
+hide the notification is added in API 16 (Android 4.1).  So, I've got it
+with this stupid old-style notification, and it really doesn't look good,
+and it is always present.  That is not awesome.
+
+On the other hand, it's easy to block the notifications, and a few people
+have expressed an interest in a notification.
+
+It doesn't seem worth it to me to upgrade to a newer API just for the
+better notifications...  On the other hand, Google Play shows that I have
+862 users:
+    Android 7+  :  3.13%
+    Android 6+  : 37.47%
+    Android 5+  : 67.86%
+    Android 4.1+: 96.62%
+    Android 4.0+: 98.01%
+
+The oldest reported version is Android 2.3.
+
+So, there are a few people on very old versions, but actually SimpleSSHD
+is used on newer devices than the average app, which is the reverse of my
+typical trend.  So a few people would be negatively impacted, but not a
+very large number.  I could switch to multi-APK mode so that legacy users
+are just stuck with an unsupported back-version, which is probably what
+they truly want anyways..
+
+Anyways, I'm gonna use it with startForeground() and the notifications
+disabled for a while, and if I find it to be an improvement then I'll
+just make it so clicking on the notification goes to the app, update the
+doc, and then publish it.
+
+
+
+XXX - make clicking on the notification go to the app?
+
+
+XXX - support password-based logins for boot-strapping?
