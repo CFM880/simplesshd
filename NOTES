@@ -305,9 +305,32 @@ disabled for a while, and if I find it to be an improvement then I'll
 just make it so clicking on the notification goes to the app, update the
 doc, and then publish it.
 
+...
+
+Looking up doze mode details for improving a different app, I stumbled
+across this:
+
+   https://www.bignerdranch.com/blog/diving-into-doze-mode-for-developers/
+
+   One last case which is not mentioned in the Android documentation is
+   an app using a foreground service. Any process using a foreground
+   service is exempt from Doze Mode effects, which is key for
+   long-running applications that you may want to run even if the user
+   has put their phone down for a long period of time -- like a music app,
+   for example.
+
+   There is, however, a bug in Android Marshmallow which requires a
+   foreground service to be in a separate process from all other activity
+   code, documented here. It is planned to be fixed in Nougat.
+
+Not exactly confidence-inspiring.  And I haven't come across a
+description of how exactly doze mode screws up SimpleSSHD, either.
+
+It might be worthwhile to do the work to find out where things actually
+get wedged, it might even be a flaw in Dropbear that makes it so
+unreliable with Nougat.
 
 
 XXX - make clicking on the notification go to the app?
-
 
 XXX - support password-based logins for boot-strapping?
