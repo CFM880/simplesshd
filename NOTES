@@ -381,5 +381,17 @@ exists, no further action is necessary.
 It's a pity there is no convenient way to interact between the Android
 GUI thread and the sshd thread.
 
+Ah-hah!  I've got the least effort idea in my head!  Under situations
+that I'm not sure what they should be, it should generate a random
+password and display it on the phone's screen.  Probably it should
+generate it iff there is no authorized_keys file at all.  Since that
+detection happens for each client connection, then probably all of this
+logic should go in dropbear itself, and the display should come through
+dropbear.err.
 
-XXX - support password-based logins for boot-strapping?
+Then we might even want a UI way to delete authorized_keys, perhaps even
+as a replacement for the current awkward UI.
+
+
+XXX - if authorized_keys doesn't exist, generate a one-off password
+XXX - make a way to delete authorized_keys
