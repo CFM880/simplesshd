@@ -6,7 +6,7 @@
 	android:defaultValue="false" />
     <CheckBoxPreference
 	android:key="foreground"
-	android:title="Foreground service"
+	android:title="Foreground Service"
 	android:summary="Enable a notification while running, and run with more priority (especially in Doze mode)."
 	android:defaultValue="true" />
     <EditTextPreference
