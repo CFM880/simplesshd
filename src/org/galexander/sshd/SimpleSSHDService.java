@@ -1,6 +1,7 @@
 package org.galexander.sshd;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
@@ -62,6 +63,9 @@ public class SimpleSSHDService extends Service {
 						R.drawable.notification_icon,
 						"SimpleSSHD", 0);
 			n.tickerText = "SimpleSSHD";
+			n.contentIntent = PendingIntent.getActivity(this, 0,
+				new Intent(this, SimpleSSHD.class),
+				PendingIntent.FLAG_UPDATE_CURRENT);
 			startForeground(1, n);
 		}
 	}
