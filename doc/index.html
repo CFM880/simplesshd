@@ -41,43 +41,67 @@ too.
 
 <p>Voila!  You can use ssh/scp/sftp/rsync to talk to your Android device!</p>
 
-<h2>Configuration</h2>
+<h2>Settings</h2>
 
-<p>There are three directory settings that are important for SimpleSSHD.</p>
+<p>Generally speaking, you must re-start the SimpleSSHD service for any
+of these settings to take effect.</p>
 
-<p>The first is the path for general dropbear files, which defaults to
+<dl>
+<dt>Start on Boot</dt>
+<dd>Automatically start the SimpleSSHD service when the phone powers on.</dd>
+
+<dt>Foreground Service</dt>
+<dd>Run the SimpleSSHD service as an Android "foreground service." This
+means a notification will be displayed for the service (you might be able
+to block the notification by holding down on the notification).
+On newer versions of Android (Marshmallow and Nougat), this will also
+make SimpleSSHD much more responsive if the phone has been in and out of
+Doze mode.  It does not seem to increase battery consumption much.</dd>
+
+<dt>Port Number</dt>
+<dd>This is the port number that SimpleSSHD will listen on.  It must be
+greater than 1024 (because SimpleSSHD does not have root).</dd>
+
+<dt>SSH Path</dt>
+<dd>Path for general dropbear files, which defaults to
 <tt>/sdcard/ssh</tt>.  Most importantly, this is where
 <tt>authorized_keys</tt> is found.  It is also where host keys wind up
-(they are created on demand), and where temporary files go.</p>
+(they are created on demand), and where temporary files go.  This path
+should probably be under <tt>/sdcard</tt>.</dd>
 
-<p>Next is the path to the login shell.  The default Android shell is
+<dt>Login Shell</dt>
+<dd>Path to the command shell.  The default Android shell is
 <tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
 busybox or whatever.  If you set it to the su binary (i.e.,
-<tt>/system/xbin/su</tt>), then scp, sftp, and
-rsync will run as root and should be able to access files
-outside of the sdcard.</p>
+<tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
+should be able to access files outside of the sdcard.</dd>
 
-<p>A bug in SuperSU interacts with an infelicity in rsync to cause an
+<dt>Buffer hack for rsync+SuperSU</dt>
+<dd>A bug in SuperSU interacts with an infelicity in rsync to cause an
 occasional deadlock.  This is a real pain because I use SuperSU+rsync 
 for system-wide backups, which will always eventually trigger the
 deadlock.  To work around this, there is a "Buffer hack" option that
 should be enabled if you use rsync with SuperSU.  It adds a miniscule
 overhead to rsync, but isn't harmful even if you aren't using
-SuperSU.</p>
+SuperSU.</dd>
 
-<p>Finally, there is the path for the home directory, which also defaults
+<dt>Home Directory</dt>
+<dd>The login shell's home directory, which also defaults
 to <tt>/sdcard/ssh</tt>.  This is where your ssh session starts out, and is
-where <tt>.profile</tt> will be found if it is present.</p>
+where <tt>.profile</tt> will be found if it is present.</dd>
 
-<p>There is also a place where you can put additional commandline options
-for dropbear server.  The options which are hardcoded are:
-<tt>-R -F -p :portno</tt>.
+<dt>Extra Commandline</dt>
+<dd>You can specify additional commandline options for dropbear server.
+The options which are hardcoded are:
+<blockquote><pre>-R -F -p :portno</pre></blockquote>
 You can use <tt>\</tt> or <tt>"</tt> to escape characters in this
-commandline.</p>
+commandline.</dd>
 
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2016/10/xx Version 13:</b> Support foreground service (fewer
+stalls with newer Android).
 <li> <b>2016/08/08 Version 1.11:</b> Fix stall initializing random number generator.
 <li> <b>2016/07/22 Version 1.10:</b> Enable TCP port forwarding.
 <li> <b>2016/07/04 Version 1.9:</b> Restart sshd if the system kills it.
