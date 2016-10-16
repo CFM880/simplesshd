@@ -12,34 +12,38 @@ pre {
 
 <p>SimpleSSHD is an SSH2 server based on dropbear that supports scp,
 sftp, and rsync.  It only supports public-key based authentication (no
-password/interactive auth).  It does not use root, which means it must
-listen on a port over 1024 (defaults to port 2222).</p>
+password/interactive auth except for bootstrapping).  It does not use
+root, which means it must listen on a port over 1024 (defaults to port
+2222).</p>
 
 <h2>Quick start</h2>
 
 <ul>
 <li> Install SimpleSSHD.
-<li> Either:
-<ul>
-<li> Go to SimpleSSHD -> Menu (upper right) -> Authorized Keys, and
-either cut and paste an SSH public key or "Fetch" one via HTTP.
-<li> OR: Make a directory <tt>/sdcard/ssh</tt>, and put an
-<tt>authorized_keys</tt> file in that directory.
-</ul>
 <li> On any computer which will connect to your Android device, set the
-port to 2222. With OpenSSH, this can be done by putting these lines in
+port to 2222.  With OpenSSH, this can be done by putting these lines in
 <tt>~/.ssh/config</tt>:
 <pre>
 Host myphone
 Port 2222
 </pre>
-<li> Launch SimpleSSHD, and in Settings enable "Start on Boot", and
+<li> Launch SimpleSSHD, and in Settings enable "Start on Boot", then
 manually start it for the first time.
-<li> You might want to put a <tt>.profile</tt> in <tt>/sdcard/ssh</tt>,
-too.
+<li> Create <tt>/sdcard/ssh/authorized_keys</tt>
+<li> Optionally make <tt>/sdcard/ssh/.profile</tt>
 </ul>
 
-<p>Voila!  You can use ssh/scp/sftp/rsync to talk to your Android device!</p>
+<p>If SimpleSSHD does not find a <tt>authorized_keys</tt> file when a
+client connects, then it generates a single-use password at that time and
+displays it in the console log.  So the procedure to login the first time
+is to initiate the ssh connection, then look at the phone and type in the
+password that is on the screen in the SimpleSSHD app.  It is recommended
+to use that shell session to install the <tt>authorized_keys</tt>
+file.</p>
+
+<p>Once <tt>authorized_keys</tt> exists, only public key authentication
+is supported.  If you screw up your <tt>authorized_keys</tt> file, use
+the options menu (upper right) -> Reset Keys.</p>
 
 <h2>Settings</h2>
 
@@ -107,6 +111,8 @@ commandline.</dd>
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2016/10/xx Version 14:</b> Support single-use passwords for
+bootstrapping.
 <li> <b>2016/10/16 Version 13:</b> Support foreground service (fewer
 stalls with newer Android).  Add "Start on Open" mode.
 <li> <b>2016/08/08 Version 1.11:</b> Fix stall initializing random number generator.
