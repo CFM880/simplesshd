@@ -57,6 +57,10 @@ public class SimpleSSHD extends Activity
 		updater = new UpdaterThread();
 		updater.start();
 		ip_view.setText(get_ip());
+
+		if (Prefs.get_onopen() && !SimpleSSHDService.is_started()) {
+			startService(new Intent(this, SimpleSSHDService.class));
+		}
 	}
 
 	public void onPause() {
@@ -108,7 +112,8 @@ public class SimpleSSHD extends Activity
 
 	private void update_startstop_prime() {
 		if (SimpleSSHDService.is_started()) {
-			startstop_view.setText("STOP");
+			startstop_view.setText(
+				Prefs.get_onopen() ? "QUIT" : "STOP");
 			startstop_view.setTextColor(0xFF881111);
 		} else {
 			startstop_view.setText("START");
@@ -134,11 +139,15 @@ public class SimpleSSHD extends Activity
 	}
 
 	public void startstop_clicked(View v) {
+		boolean already_started = SimpleSSHDService.is_started();
 		Intent i = new Intent(this, SimpleSSHDService.class);
-		if (SimpleSSHDService.is_started()) {
+		if (already_started) {
 			i.putExtra("stop", true);
 		}
 		startService(i);
+		if (already_started && Prefs.get_onopen()) {
+			finish();
+		}
 	}
 
 	private void update_log_prime() {

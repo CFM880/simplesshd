@@ -58,6 +58,13 @@ On newer versions of Android (since Marshmallow), this may also make
 SimpleSSHD more responsive if the phone has been in Doze mode.  It does
 not seem to increase battery consumption much.</dd>
 
+<dt>Start on Open</dt>
+<dd>Run the SimpleSSHD service whenever the app is launched.  The "STOP"
+button will be replaced with a "QUIT" button that stops the service and
+exits the app.  This is useful if you want to only run the service when
+you really need it -- start the app to start listening for connections,
+and then click "QUIT" when you are done.</dd>
+
 <dt>Port Number</dt>
 <dd>This is the port number that SimpleSSHD will listen on.  It must be
 greater than 1024 (because SimpleSSHD does not have root).</dd>

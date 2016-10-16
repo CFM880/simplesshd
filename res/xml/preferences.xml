@@ -9,6 +9,11 @@
 	android:title="Foreground Service"
 	android:summary="Enable a notification while running, and run with more priority (especially in Doze mode)."
 	android:defaultValue="true" />
+    <CheckBoxPreference
+	android:key="onopen"
+	android:title="Start on Open"
+	android:summary="Start the service when the app is launched (and quit app when stopping service)"
+	android:defaultValue="false" />
     <EditTextPreference
 	android:key="port"
 	android:title="Port Number"

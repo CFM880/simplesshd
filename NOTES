@@ -341,6 +341,22 @@ overnight drain.
 So, in case someone does have problems with it, I am making it an option
 that defaults to enabled.
 
+Looking through email, I haven't seen any, but I have the idea several
+users have asked for a notification icon in the past.  And now that that
+is finally implemented, I am curious about other things people have
+requested that I have not been keen on.  And Jan Ondrej's requests come
+to mind:
+  o) setting to start the service automatically when the application is
+     launched
+  o) QUIT button that stops the service and the activity at once
+  o) not allow wifi to power down when the activity is open
+
+I'm really not crazy about integrating any kind of wakelock.  And QUIT
+still seems silly to me.  But with the notification there, the idea that
+someone will micromanage whether the service is running or not does not
+seem so far fetched.
+
+So I'll go ahead and add "Start on Open" setting.
 
 XXX - make clicking on the notification go to the app?
 
