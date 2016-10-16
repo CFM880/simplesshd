@@ -11,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
-import android.widget.Toast;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +31,6 @@ public class SimpleSSHD extends Activity
 	private TextView ip_view;
 	public static SimpleSSHD curr = null;
 	private UpdaterThread updater = null;
-	private static String pending_toast = null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,11 +45,6 @@ public class SimpleSSHD extends Activity
 		super.onResume();
 		synchronized (lock) {
 			curr = this;
-			if (pending_toast != null) {
-				Toast.makeText(this, pending_toast,
-					Toast.LENGTH_LONG).show();
-				pending_toast = null;
-			}
 		}
 		update_startstop_prime();
 		updater = new UpdaterThread();
@@ -81,8 +74,8 @@ public class SimpleSSHD extends Activity
 			case R.id.settings:
 				startActivity(new Intent(this, Settings.class));
 				return true;
-			case R.id.authkeys:
-				startActivity(new Intent(this, AuthKeys.class));
+			case R.id.resetkeys:
+				reset_keys();
 				return true;
 			case R.id.doc: {
 				Intent i = new Intent(Intent.ACTION_VIEW);
@@ -227,26 +220,34 @@ public class SimpleSSHD extends Activity
 		return ret;
 	}
 
+	private void do_reset_keys() {
+		new File(Prefs.get_path(), "authorized_keys").delete();
+	}
+
+	private void reset_keys() {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setCancelable(true);
+		b.setPositiveButton("Yes",
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface di,
+					int which) { do_reset_keys(); }
+			});
+		b.setNegativeButton("No",
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface di,
+					int which) { }
+			});
+		b.setIcon(android.R.drawable.ic_dialog_alert);
+		b.setTitle("Reset Keys");
+		b.setMessage("Delete the authorized_keys file? (then you will only be able to login with single-use passwords)");
+		b.show();
+	}
+
 	public String my_version() {
 		try {
 			return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 		} catch (Exception e) {
 			return "UNKNOWN";
-		}
-	}
-
-	/* called from AuthKeysSave (in its own worker thread) if it fails */
-	public static void toast(final String s) {
-		synchronized (lock) {
-			if (curr != null) {
-				curr.runOnUiThread(new Runnable() {
-				public void run() {
-					Toast.makeText(curr, s,
-						Toast.LENGTH_LONG).show();
-				} });
-			} else {
-				pending_toast = s;
-			}
 		}
 	}
 }
