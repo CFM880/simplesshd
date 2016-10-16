@@ -93,9 +93,9 @@ static void authclear() {
 		}
 		pw[8] = 0;
 		dropbear_log(LOG_WARNING, "no authorized keys, generating single-use password:");
-		dropbear_log(LOG_ALERT, "--------", pw);
+		dropbear_log(LOG_ALERT, "--------");
 		dropbear_log(LOG_ALERT, "%s", pw);
-		dropbear_log(LOG_ALERT, "--------", pw);
+		dropbear_log(LOG_ALERT, "--------");
 		ses.authstate.pw_passwd = m_strdup(pw);
 	}
 #endif /* 0 */
