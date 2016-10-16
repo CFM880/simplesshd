@@ -39,6 +39,7 @@ void send_msg_userauth_success();
 void send_msg_userauth_banner(buffer *msg);
 void svr_auth_password();
 void svr_auth_pubkey();
+int authkeys_exists(void);
 void svr_auth_pam();
 
 #ifdef ENABLE_SVR_PUBKEY_OPTIONS

@@ -506,10 +506,10 @@ void fill_passwd(const char* username) {
 		m_free(ses.authstate.pw_dir);
 	if (ses.authstate.pw_shell)
 		m_free(ses.authstate.pw_shell);
+#if 0
 	if (ses.authstate.pw_passwd)
 		m_free(ses.authstate.pw_passwd);
 
-#if 0
 	pw = getpwnam(username);
 	if (!pw) {
 		return;
@@ -540,7 +540,9 @@ void fill_passwd(const char* username) {
 	ses.authstate.pw_name = m_strdup("user");
 	ses.authstate.pw_dir = m_strdup(conf_home);
 	ses.authstate.pw_shell = m_strdup(conf_shell);
-	ses.authstate.pw_passwd = m_strdup("!!");
+	if (!ses.authstate.pw_passwd) {	/* password hack */
+		ses.authstate.pw_passwd = m_strdup("!!");
+	}
 #endif	/* 0 */
 }
 

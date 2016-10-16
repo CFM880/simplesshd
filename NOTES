@@ -393,5 +393,4 @@ Then we might even want a UI way to delete authorized_keys, perhaps even
 as a replacement for the current awkward UI.
 
 
-XXX - if authorized_keys doesn't exist, generate a one-off password
 XXX - make a way to delete authorized_keys

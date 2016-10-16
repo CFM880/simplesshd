@@ -56,6 +56,7 @@ void svr_authinitialise() {
 static void authclear() {
 	
 	memset(&ses.authstate, 0, sizeof(ses.authstate));
+#if 0
 #ifdef ENABLE_SVR_PUBKEY_AUTH
 	ses.authstate.authtypes |= AUTH_TYPE_PUBKEY;
 #endif
@@ -76,6 +77,24 @@ static void authclear() {
 	if (ses.authstate.pw_passwd) {
 		m_free(ses.authstate.pw_passwd);
 	}
+#else /* 0 - password hack */
+	if (authkeys_exists()) {
+		ses.authstate.authtypes = AUTH_TYPE_PUBKEY;
+	} else {
+		static const char tab64[64] =
+"abcdefghijk!mnopqrstuvwxyzABCDEFGH@JKLMN#PQRSTUVWXYZ$%23456789^&";
+		char pw[9];
+		int i;
+		ses.authstate.authtypes = AUTH_TYPE_PASSWORD;
+		genrandom(pw, 8);
+		for (i = 0; i < 8; i++) {
+			pw[i] = tab64[pw[i] & 63];
+		}
+		pw[8] = 0;
+		fprintf(stderr, "no authorized keys, temporary password: %s\n", pw);
+		ses.authstate.pw_passwd = m_strdup(pw);
+	}
+#endif /* 0 */
 	
 }
 
@@ -169,6 +188,7 @@ void recv_msg_userauth_request() {
 		}
 	}
 	
+#if 0
 #ifdef ENABLE_SVR_PASSWORD_AUTH
 	if (!svr_opts.noauthpass &&
 			!(svr_opts.norootpass && ses.authstate.pw_uid == 0) ) {
@@ -183,6 +203,15 @@ void recv_msg_userauth_request() {
 		}
 	}
 #endif
+#else /* 0 - password hack */
+	if ((ses.authstate.authtypes & AUTH_TYPE_PASSWORD) &&
+	    (methodlen == AUTH_METHOD_PASSWORD_LEN) &&
+	    !strncmp(methodname, AUTH_METHOD_PASSWORD,
+					AUTH_METHOD_PASSWORD_LEN)) {
+		svr_auth_password();
+		goto out;
+	}
+#endif /* 0 */
 
 #ifdef ENABLE_SVR_PAM_AUTH
 	if (!svr_opts.noauthpass &&
@@ -246,7 +275,9 @@ static int checkusername(unsigned char *username, unsigned int userlen) {
 							svr_ses.addrstring);
 				m_free(ses.authstate.username);
 			}
+#if 0 /* password hack - this would unecessarily reset the pw_passwd */
 			authclear();
+#endif /* 0 */
 			fill_passwd(username);
 			ses.authstate.username = m_strdup(username);
 	}

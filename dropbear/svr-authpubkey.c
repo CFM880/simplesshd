@@ -447,3 +447,29 @@ static int checkfileperm(char * filename) {
 }
 
 #endif
+
+/* returns 1 iff authorized_keys exists and is longer than MIN_AUTHKEYS_LINE
+ * (10 bytes) - used for password hack */
+int
+authkeys_exists(void)
+{
+	char *fn;
+	FILE *f;
+	int len = strlen(conf_path) + 40;
+	int i;
+	fn = m_malloc(len);
+	snprintf(fn, len, "%s/authorized_keys", conf_path);
+	f = fopen(fn, "r");
+	m_free(fn);
+	if (!f) {
+		return 0;
+	}
+	for (i = 0; i < MIN_AUTHKEYS_LINE; i++) {
+		if (fgetc(f) == EOF) {
+			fclose(f);
+			return 0;
+		}
+	}
+	fclose(f);
+	return 1;
+}

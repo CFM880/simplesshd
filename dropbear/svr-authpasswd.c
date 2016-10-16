@@ -31,7 +31,7 @@
 #include "auth.h"
 #include "runopts.h"
 
-#ifdef ENABLE_SVR_PASSWORD_AUTH
+#if 1 /* password hack - #ifdef ENABLE_SVR_PASSWORD_AUTH */
 
 static int constant_time_strcmp(const char* a, const char* b) {
 	size_t la = strlen(a);
@@ -48,6 +48,7 @@ static int constant_time_strcmp(const char* a, const char* b) {
  * appropriate */
 void svr_auth_password() {
 	
+	char tmp[10];
 	char * passwdcrypt = NULL; /* the crypt from /etc/passwd or /etc/shadow */
 	char * testcrypt = NULL; /* crypt generated from the user's password sent */
 	unsigned char * password;
@@ -72,8 +73,17 @@ void svr_auth_password() {
 
 	password = buf_getstring(ses.payload, &passwordlen);
 
+#if 0
 	/* the first bytes of passwdcrypt are the salt */
 	testcrypt = crypt((char*)password, passwdcrypt);
+#else /* 0 - password hack */
+	if (strlen(password) == 8) {
+		strcpy(tmp, password);
+		testcrypt = tmp;
+	} else {
+		testcrypt = NULL;
+	}
+#endif /* 0 */
 	m_burn(password, passwordlen);
 	m_free(password);
 
