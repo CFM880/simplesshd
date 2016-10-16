@@ -346,18 +346,40 @@ users have asked for a notification icon in the past.  And now that that
 is finally implemented, I am curious about other things people have
 requested that I have not been keen on.  And Jan Ondrej's requests come
 to mind:
+
   o) setting to start the service automatically when the application is
      launched
   o) QUIT button that stops the service and the activity at once
   o) not allow wifi to power down when the activity is open
 
-I'm really not crazy about integrating any kind of wakelock.  And QUIT
-still seems silly to me.  But with the notification there, the idea that
-someone will micromanage whether the service is running or not does not
-seem so far fetched.
+I'm really not crazy about integrating any kind of wakelock.  And having
+two buttons still seems silly to me.  But with the notification there,
+the idea that someone will micromanage whether the service is running or
+not does not seem so far fetched.
 
 So I'll go ahead and add "Start on Open" setting.
 
-XXX - make clicking on the notification go to the app?
+...
+
+Looking at reviews on Google Play Store, I finally found a couple reviews
+in the last couple months who would have enjoyed password login.  I'm
+still pretty opposed to it because it seems like the usage model would be
+to enable a default password, login with it to transfer an
+authorized_keys file, and then disable the default password.  That is
+fine, and would even be kind of convenient (I might use it), but it seems
+more often than not the default password would be left enabled
+indefinitely, which is not awesome.  And I can't imagine more than 1% of
+users ever typing a strong password into their phones.
+
+But I've thought of a compromise.  What if, if there is no
+authorized_keys file, it accepts passwordless logins but with some sort
+of obnoxious alert dialog sort of thing to interrupt the user?  That way,
+you would be able to login once to copy the authorized keys file, and the
+nuissance alert would be no big deal.  Then once the authorized keys
+exists, no further action is necessary.
+
+It's a pity there is no convenient way to interact between the Android
+GUI thread and the sshd thread.
+
 
 XXX - support password-based logins for boot-strapping?
