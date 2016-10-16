@@ -393,4 +393,3 @@ Then we might even want a UI way to delete authorized_keys, perhaps even
 as a replacement for the current awkward UI.
 
 
-XXX - make a way to delete authorized_keys
