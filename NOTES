@@ -331,6 +331,17 @@ get wedged, it might even be a flaw in Dropbear that makes it so
 unreliable with Nougat.
 
 
+October 16, 2016.
+
+I've been using a foreground service for a while, and it has not caused
+me any troubles.  The thing I have been most anxious about is that it
+might disable doze mode entirely...but there has not been any noteworthy
+overnight drain.
+
+So, in case someone does have problems with it, I am making it an option
+that defaults to enabled.
+
+
 XXX - make clicking on the notification go to the app?
 
 XXX - support password-based logins for boot-strapping?

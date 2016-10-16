@@ -17,6 +17,7 @@ public class SimpleSSHDService extends Service {
 	private static int sshd_pid = 0;
 	private static long sshd_when = 0;
 	private static long sshd_duration = 0;
+	private static boolean foregrounded = false;
 
 	public void onCreate() {
 		super.onCreate();
@@ -55,10 +56,14 @@ public class SimpleSSHDService extends Service {
 	}
 
 	private void do_foreground() {
-		Notification n = new Notification(R.drawable.notification_icon,
-					"SimpleSSHD", 0);
-		n.tickerText = "SimpleSSHD";
-		startForeground(1, n);
+		foregrounded = Prefs.get_foreground();
+		if (foregrounded) {
+			Notification n = new Notification(
+						R.drawable.notification_icon,
+						"SimpleSSHD", 0);
+			n.tickerText = "SimpleSSHD";
+			startForeground(1, n);
+		}
 	}
 
 	public static boolean is_started() {
@@ -78,7 +83,10 @@ public class SimpleSSHDService extends Service {
 
 	private void stop_service() {
 		stopSelf();
-		stopForeground(true);
+		if (foregrounded) {
+			stopForeground(true);
+			foregrounded = false;
+		}
 	}
 
 	private static void maybe_restart(int pid) {

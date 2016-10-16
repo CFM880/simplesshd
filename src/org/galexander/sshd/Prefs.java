@@ -16,6 +16,9 @@ public class Prefs {
 	public static boolean get_onboot() {
 		return pref.getBoolean("onboot", false);
 	}
+	public static boolean get_foreground() {
+		return pref.getBoolean("foreground", true);
+	}
 	public static boolean get_rsyncbuffer() {
 		return pref.getBoolean("rsyncbuffer", false);
 	}
