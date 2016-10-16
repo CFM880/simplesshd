@@ -81,6 +81,7 @@ static void authclear() {
 	if (authkeys_exists()) {
 		ses.authstate.authtypes = AUTH_TYPE_PUBKEY;
 	} else {
+		/* NB - don't use Il1O0 because they're visually ambiguous */
 		static const char tab64[64] =
 "abcdefghijk!mnopqrstuvwxyzABCDEFGH@JKLMN#PQRSTUVWXYZ$%23456789^&";
 		char pw[9];
@@ -91,7 +92,10 @@ static void authclear() {
 			pw[i] = tab64[pw[i] & 63];
 		}
 		pw[8] = 0;
-		fprintf(stderr, "no authorized keys, temporary password: %s\n", pw);
+		dropbear_log(LOG_WARNING, "no authorized keys, generating single-use password:");
+		dropbear_log(LOG_ALERT, "--------", pw);
+		dropbear_log(LOG_ALERT, "%s", pw);
+		dropbear_log(LOG_ALERT, "--------", pw);
 		ses.authstate.pw_passwd = m_strdup(pw);
 	}
 #endif /* 0 */
