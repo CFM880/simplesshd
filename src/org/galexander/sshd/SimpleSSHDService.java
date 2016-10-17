@@ -70,6 +70,12 @@ public class SimpleSSHDService extends Service {
 
 			n.contentView = new RemoteViews(getPackageName(),
 					R.layout.notification);
+			/* for some reason icon cannot be defined in xml: */
+			n.contentView.setImageViewResource(R.id.n_icon,
+					R.drawable.icon);
+			n.contentView.setTextViewText(R.id.n_text,
+				"SimpleSSHD listening on "+SimpleSSHD.get_ip()+
+				":"+Prefs.get_port());
 
 			startForeground(1, n);
 		}
