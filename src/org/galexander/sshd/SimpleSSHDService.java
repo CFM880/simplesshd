@@ -118,6 +118,7 @@ public class SimpleSSHDService extends Service {
 
 	private static void do_start() {
 		stop_sshd();
+		new File(Prefs.get_path()).mkdirs();
 		final int pid = start_sshd(Prefs.get_port(),
 			Prefs.get_path(), Prefs.get_shell(),
 			Prefs.get_home(), Prefs.get_extra(),
