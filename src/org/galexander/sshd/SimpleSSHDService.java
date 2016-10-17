@@ -74,8 +74,9 @@ public class SimpleSSHDService extends Service {
 			n.contentView.setImageViewResource(R.id.n_icon,
 					R.drawable.icon);
 			n.contentView.setTextViewText(R.id.n_text,
-				"SimpleSSHD listening on "+SimpleSSHD.get_ip()+
-				":"+Prefs.get_port());
+				"SimpleSSHD listening on " +
+				SimpleSSHD.get_ip(false) +
+				":" + Prefs.get_port());
 
 			startForeground(1, n);
 		}
