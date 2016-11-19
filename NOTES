@@ -393,3 +393,41 @@ Then we might even want a UI way to delete authorized_keys, perhaps even
 as a replacement for the current awkward UI.
 
 
+November 19, 2016.
+
+I got a user request to update for security.  I looked at dropbear and
+didn't see any relevant security issues, so I'm gonna hold off for a
+while, but it should be on my radar.
+
+I also got a user request for writing to external SD card.  He gave
+this link:
+
+   http://stackoverflow.com/questions/33162152/storage-permission-error-in-marshmallow
+
+It gives me a really strong deja vu, I think I tried that a few months
+ago when a nearly identical request came in, and it didn't work.  I wish
+I had kept notes for that experiment!
+
+I think there are two separate issues.  I think Android 6+ push you to
+use requestPermission() to explicitly enable the WRITE_EXTERNAL_STORAGE
+permission, but if targetSdkVersion is low enough then you are
+grandfathered in, so we don't care.  The second issue is that Android 5+
+require use of a special API to access a removable SD card (which is
+different from /sdcard, which is typically internal storage protected by
+WRITE_EXTERNAL_STORAGE on new phones?).  That second issue is what is
+biting people.
+
+I don't know any way around that.  If Google doesn't back down, then I
+guess the only plausible way around it would be something like an
+LD_PRELOAD that intercepts open/lseek/read/write/close to external SD,
+and replaces them with connection to a local daemon process that is
+running in a typical Android context and is able to use the awful API.
+
+Seems like a lot of work and complication.  I might go through with it if
+I happened to use external SD myself, but I'm of the personal opinion
+that removable storage is obsolete now that even relatively cheap phones
+like the base Moto G4 come with 16GB...  640kB ought to be enough for
+anybody.
+
+I told the most recent guy to try SuperSU.  I don't have any idea if that
+will really work, to be honest.
