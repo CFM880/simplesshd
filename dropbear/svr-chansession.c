@@ -1000,7 +1000,7 @@ static void execchild(void *user_data) {
 	run_shell_command(chansess->cmd, ses.maxfd, usershell);
 
 	/* only reached on error */
-	dropbear_exit("Child failed");
+	dropbear_exit("Failed to execv() shell '%.100s'", usershell);
 }
 
 /* Set up the general chansession environment, in particular child-exit
