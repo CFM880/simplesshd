@@ -311,9 +311,9 @@ static void closechansess(struct Channel *channel) {
 		li = chansess_login_alloc(chansess);
 		login_logout(li);
 		login_free_entry(li);
-#endif /* 0 */
 
 		pty_release(chansess->tty);
+#endif /* 0 */
 		m_free(chansess->tty);
 	}
 
