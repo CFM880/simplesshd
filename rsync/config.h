@@ -47,7 +47,15 @@
 #define HAVE_GETADDRINFO 1
 #define HAVE_CHMOD 1
 #define HAVE_SIGACTION 1
+/* Bionic supplies sigprocmask() but in Android Oreo and beyond, it seems to be:
+ *    fprintf(stderr, "Bad system call\n");
+ *    exit(0);
+ * When it should probably be:
+ *    errno=ENOSYS;
+ *    return -1;
+ * WTF, Bionic.
 #define HAVE_SIGPROCMASK 1
+*/
 #define SUPPORT_LINKS 1
 #define SUPPORT_HARD_LINKS 1
 #define HAVE_LINK 1
