@@ -465,3 +465,7 @@ linking against a bad version of Bionic.
 
 Well, I think I've got it - fchmod() works, but chmod() does not.
 *shrug*
+
+
+XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
+XXX - find the /data/data/org.galexander.sshd/lib/ directory programatically, so it will work with whatever bizarre secure android with virtualized apps
