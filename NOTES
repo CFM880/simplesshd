@@ -431,3 +431,37 @@ anybody.
 
 I told the most recent guy to try SuperSU.  I don't have any idea if that
 will really work, to be honest.
+
+
+October 28, 2017.
+
+At the beginning of October, a user notified me that rsync doesn't work
+on Android 8.0 (Oreo, API 26).  In the past week, Google has upgraded my
+Nexus 5x to Oreo and I can confirm it.
+
+It seems that SE Linux or something causes certain system calls to
+perform the equivalent of:
+
+    fprintf(stderr, "Bad system call\n");
+    exit(-1);
+
+It should return ENOSYS instead, but someone at Google is not cool enough
+to be working with Unix.
+
+The first one I discovered like this is sigprocmask(), which we can
+probably do without.  The next one is chmod(), which is somewhat more
+useful.
+
+The troubling thing is that I can find a file where the commandline chmod
+works, but the same chmod() doesn't work in rsync.
+
+I figured maybe my NDK was just too old ("r10d"), but I think I can't
+conveniently upgrade it because Google only distributes the NDK for Linux
+x86-64 now.  I was using SDK 7, so I tried SDK 11, 17, 19, and got the
+same result.  The NDK I have also has a directory for SDK 21, but it has
+typos in the header files, or they aren't compatible with its version of
+gcc.  But anyways, if SDK 19 doesn't work then maybe it's more than just
+linking against a bad version of Bionic.
+
+Well, I think I've got it - fchmod() works, but chmod() does not.
+*shrug*

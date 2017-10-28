@@ -214,8 +214,21 @@ int do_chmod(const char *path, mode_t mode)
 # else
 		code = 1;
 # endif
-	} else
+	} else {
+#if 0
+	/* NB - Android 8.0 Oreo gives "Bad system call" and terminates the
+	 * process for any call to chmod(), but fchmod() is alright */
 		code = chmod(path, mode & CHMOD_BITS); /* DISCOURAGED FUNCTION */
+#else
+		int fd = open(path, O_RDONLY);
+		if (fd < 0) {
+			code = fd;
+		} else {
+			code = fchmod(fd, mode & CHMOD_BITS);
+			close(fd);
+		}
+#endif
+	}
 #endif /* !HAVE_LCHMOD */
 	if (code != 0 && (preserve_perms || preserve_executability))
 		return code;
