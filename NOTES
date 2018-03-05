@@ -467,5 +467,31 @@ Well, I think I've got it - fchmod() works, but chmod() does not.
 *shrug*
 
 
+March 4, 2018.
+
+Looked in the google play console for crashes, and I find a few.  10
+people have run into UnsatisfiedLinkError, and they seem to all be using
+x86.  According to
+
+https://stackoverflow.com/questions/32598756/android-ndkhow-to-exclude-x86-device-in-google-player
+
+It's not plausible to fix this problem by blacklisting x86 devices!
+Google sucks!  And the justification is that there is an ARM emulation
+layer, but obviously it doesn't work and why should I have to debug it??
+
+Anyways, someday may want to try making a jni/Application.mk and setting
+APP_ABI in there to support x86 too?  Do I really think that will work
+for scp/rsync/etc?  Guh.
+
+And this bug has only one report...  The startActivity() call to open the
+documentation is getting a android.content.ActivityNotFoundException.  I
+guess it must mean there is no browser installed or something?  I seem to
+be using the normal way to visit an http programatically..  Only one
+report, so I guess I just don't care.
+
+
+XXX - support x86?
+
+XXX - make the default path for authorized_keys be in the app-private, too, for security ?
 XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
 XXX - find the /data/data/org.galexander.sshd/lib/ directory programatically, so it will work with whatever bizarre secure android with virtualized apps
