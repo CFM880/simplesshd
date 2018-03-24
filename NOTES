@@ -490,7 +490,17 @@ be using the normal way to visit an http programatically..  Only one
 report, so I guess I just don't care.
 
 
-XXX - support x86?
+March 24, 2018.
+
+Win Bent emailed me to let me know his x86_64 Asus ZenPad is able to run
+SimpleSSHD but is unable to run rsync.  So, the ARM-on-x86 emulation
+layer is catching up and now works sometimes, but isn't compatible with
+the hack for scp/sftp/rsync.  Win was kind enough to test a build that
+supports just armeabi and x86, and reported it works.  So I don't need to
+build support for both x86 and x86_64, apparently.  Nice to have a
+concrete answer to the question!
+
+
 
 XXX - make the default path for authorized_keys be in the app-private, too, for security ?
 XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
