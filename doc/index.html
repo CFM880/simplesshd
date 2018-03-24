@@ -117,23 +117,23 @@ commandline.</dd>
 <p>Here are some common complaints:</p>
 
 <ul>
-<li> Writing to an SD card is not generally possible.  Modern Android
-(since about Kit Kat) only allows write access to an SD card through the
-Android Java API, but shell commands usually use Unix APIs (POSIX, C).  I
-don't know a work-around.  Most phones let you write to <tt>/sdcard</tt>,
-but it's actually in the phone's internal memory.
+<li> Writing to an SD card is not generally possible -- your mileage may
+vary.  Modern Android (since about Kit Kat) only allows write access to
+an SD card through the Android Java API, but shell commands usually use
+Unix APIs (POSIX, C).  I don't know a work-around.  Most phones let you
+write to <tt>/sdcard</tt>, but it's often in the phone's internal memory.
 
-<li> There is no way to update the ctime, mtime, or atime on files in
-<tt>/sdcard</tt>.  Android system generally forces all files created in
-<tt>/sdcard</tt> to be owned by <tt>root</tt>, and regular users can't
-change the mtime/atime of files they don't own.  If you want to
-<tt>rsync</tt> to a phone, consider the <tt>--size-only</tt> option,
-which will prevent checking the contents of files if their size matches
-(not guaranteed to be correct, but faster than verifying each file's
-contents).
+<li> <tt>rsync</tt> will do too much work for an update, because there is
+usually no way to update the ctime, mtime, or atime on files in
+<tt>/sdcard</tt>.  Use <tt>rynsc --size-only</tt>, and it will compare
+the file sizes instead of the modification time.
+
+<li> For the same reason, <tt>rsync -a</tt> will generally fail.  Use
+<tt>rsync -r</tt> instead.
 
 <li> "<tt>Not backgrounding</tt>" is just the string that dropbear
-outputs when it isn't asked to <tt>fork()</tt> when it starts up.
+outputs when it isn't asked to <tt>fork()</tt> when it starts up -- it's
+harmless.
 
 <li> If you really must specify which IP to listen on, consider setting
 <b>Port Number</b> to 22 (which will fail and be ignored), and then add
