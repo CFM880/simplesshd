@@ -574,12 +574,12 @@ int spawn_command(void(*exec_fn)(void *user_data), void *exec_data,
 static void
 install_environment(void)
 {
-	char *s = conf_env;
+	const char *s = conf_env;
 	if (!s) {
 		return;
 	}
 	while (*s) {
-		char *name, *val;
+		const char *name, *val;
 		int name_len, val_len;
 
 		name = s;
