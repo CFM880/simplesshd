@@ -570,6 +570,50 @@ int spawn_command(void(*exec_fn)(void *user_data), void *exec_data,
 	}
 }
 
+
+static void
+install_environment(void)
+{
+	char *s = conf_env;
+	if (!s) {
+		return;
+	}
+	while (*s) {
+		char *name, *val;
+		int name_len, val_len;
+
+		name = s;
+		while (*s && (*s != '=') && (*s != '\r') && (*s != '\n')) {
+			s++;
+		}
+		name_len = s-name;
+		if (*s == '=') {
+			s++;
+			val = s;
+			while (*s && (*s != '\r') && (*s != '\n')) {
+				s++;
+			}
+			val_len = s-val;
+		} else {
+			val = "";
+			val_len = 0;
+		}
+		while ((*s == '\r') || (*s == '\n')) {
+			s++;
+		}
+		if (name_len) {
+			char *n = m_malloc(name_len+1);
+			char *v = m_malloc(val_len+1);
+			memcpy(n, name, name_len);
+			memcpy(v, val, val_len);
+			n[name_len] = 0;
+			v[val_len] = 0;
+			setenv(n, v, /*overwrite=*/1);	/* might fail *shrug* */
+		}
+	}
+}
+
+
 /* Runs a command with "sh -c". Will close FDs (except stdin/stdout/stderr) and
  * re-enabled SIGPIPE. If cmd is NULL, will run a login shell.
  */
@@ -625,6 +669,8 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 	for (i = 3; i <= maxfd; i++) {
 		m_close(i);
 	}
+
+	install_environment();
 
 	execv(usershell, argv);
 }

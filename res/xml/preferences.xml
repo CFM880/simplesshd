@@ -44,4 +44,9 @@
 	android:title="Extra Commandline"
 	android:summary="Commandline options for dropbear server"
 	android:defaultValue="" />
+    <EditTextPreference
+	android:key="env"
+	android:title="Environment Variables"
+	android:summary="Environment variables (one &quot;name=value&quot; per line)."
+	android:defaultValue="" />
 </PreferenceScreen>

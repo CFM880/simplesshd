@@ -530,7 +530,6 @@ environment...just one name=value per line.
 
 
 XXX - document su change
-XXX - add environment variable option (one name=value per line, just passed into setenv())
 XXX - document environment variables
 
 

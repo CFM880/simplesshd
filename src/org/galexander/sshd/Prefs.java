@@ -46,6 +46,9 @@ public class Prefs {
 	public static String get_extra() {
 		return pref.getString("extra", "");
 	}
+	public static String get_env() {
+		return pref.getString("env", "");
+	}
 
 	public static SharedPreferences.Editor edit() {
 		return pref.edit();
