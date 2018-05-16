@@ -12,7 +12,7 @@
     <CheckBoxPreference
 	android:key="onopen"
 	android:title="Start on Open"
-	android:summary="Start the service when the app is launched (and quit app when stopping service)"
+	android:summary="Start the service when the app is launched (and quit app when stopping service)."
 	android:defaultValue="false" />
     <EditTextPreference
 	android:key="port"
@@ -28,7 +28,7 @@
     <EditTextPreference
 	android:key="shell"
 	android:title="Login Shell"
-	android:summary="Location of sh binary"
+	android:summary="Location of sh binary."
 	android:defaultValue="/system/bin/sh" />
     <CheckBoxPreference
 	android:key="rsyncbuffer"
@@ -37,12 +37,12 @@
     <EditTextPreference
 	android:key="home"
 	android:title="Home Directory"
-	android:summary="Default directory after login (put .profile here)"
+	android:summary="Default directory after login (put .profile here)."
 	android:defaultValue="/sdcard/ssh" />
     <EditTextPreference
 	android:key="extra"
 	android:title="Extra Commandline"
-	android:summary="Commandline options for dropbear server"
+	android:summary="Commandline options for dropbear server."
 	android:defaultValue="" />
     <EditTextPreference
 	android:key="env"
