@@ -88,11 +88,12 @@ should probably be under <tt>/sdcard</tt>.</dd>
 <tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
 busybox or whatever.  If you set it to the su binary (i.e.,
 <tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
-should be able to access files outside of the sdcard.  If the name of the
-shell contains "su" in it, instead of putting "-" before argv[0] to
-indicate the login shell, it puts "-" as argv[1].  That is, a regular
-login shell would be invoked as "-sh", but su will be invoked as
-"su -".</dd>
+should be able to access files outside of <tt>/sdcard</tt>.  If the name
+of the shell contains "<tt>su</tt>" in it, instead of putting
+"<tt>-</tt>" before <tt>argv[0]</tt> to indicate the login shell,
+SimpleSSHD puts "<tt>-</tt>" as <tt>argv[1]</tt>.  That is, a regular
+login shell would be invoked as "<tt>-sh</tt>", but su will be invoked as
+"<tt>su -</tt>".</dd>
 
 <dt>Buffer hack for rsync+SuperSU</dt>
 <dd>A bug in SuperSU interacts with an infelicity in rsync to cause an
