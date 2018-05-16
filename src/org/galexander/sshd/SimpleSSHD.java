@@ -78,9 +78,22 @@ public class SimpleSSHD extends Activity
 				reset_keys();
 				return true;
 			case R.id.doc: {
-				Intent i = new Intent(Intent.ACTION_VIEW);
-				i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
-				startActivity(i);
+				try {
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("http://www.galexander.org/software/simplesshd"));
+					startActivity(i);
+				} catch (Exception e) {
+					new AlertDialog.Builder(this)
+						.setCancelable(true)
+						.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface di, int which) { }
+                        })
+						.setIcon(android.R.drawable.ic_dialog_info)
+						.setTitle("no browser")
+						.setMessage("YOU: a note 7 owner with no browser installed on your android?\nME: an app developer who keeps getting crash reports and wants to hear your story. email nobrowserdroid@galexander.org")
+						.show();
+				}
 			}	return true;
 			case R.id.about: {
 				AlertDialog.Builder b = new AlertDialog.Builder(this);
