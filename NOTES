@@ -529,8 +529,8 @@ Anyways, it seems the obvious way forward is to make a setting for the
 environment...just one name=value per line.
 
 
-XXX - document su change
-XXX - document environment variables
+XXX - survey crashes in play store
+XXX - figure out what to do to update to newest API??? lame
 
 
 XXX - make the default path for authorized_keys be in the app-private, too, for security ?
