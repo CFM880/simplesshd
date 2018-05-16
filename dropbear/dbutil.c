@@ -609,6 +609,8 @@ install_environment(void)
 			n[name_len] = 0;
 			v[val_len] = 0;
 			setenv(n, v, /*overwrite=*/1);	/* might fail *shrug* */
+			m_free(n);
+			m_free(v);
 		}
 	}
 }
