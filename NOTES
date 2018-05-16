@@ -502,6 +502,38 @@ concrete answer to the question!
 
 
 
+May 16, 2018.
+
+Roland Jaeger let me know busybox's "su" doesn't appreciate being called
+with "-" prefix to argv[0] for a login shell, it can't find the "-su"
+applet.  su wants "-" to come in argv[>=1] instead to indicate a login
+shell.
+
+I guess it's kind of a hack but I just don't see it causing much
+trouble...  If the string "su" is found in the shell's name, it runs
+"su -" instead of "-su".  *shrug*.  Roland tested it and reports it works
+for him.
+
+He also notes that the default /system/bin/sh distributed with his device
+doesn't run .profile, instead it runs whatever is in $ENV.  Apparently
+mksh is "the Android shell", and indeed that is what's on my Nexus 5x.
+mksh is supposed to run /etc/mkshrc (well, /system/etc/mkshrc on Android,
+I guess), and then $ENV.  But on my device, it loads .profile too.  So I
+guess there is some diversity of configurations.  *shrug*
+
+NB - bash supports the same idea but it calls the variable $BASH_ENV, or
+$ENV if --posix is set.  *shrug*  And whatever shell comes with
+SimpleBusyBox (ash?) loads .profile by default.
+
+Anyways, it seems the obvious way forward is to make a setting for the
+environment...just one name=value per line.
+
+
+XXX - document su change
+XXX - add environment variable option (one name=value per line, just passed into setenv())
+XXX - document environment variables
+
+
 XXX - make the default path for authorized_keys be in the app-private, too, for security ?
 XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
 XXX - find the /data/data/org.galexander.sshd/lib/ directory programatically, so it will work with whatever bizarre secure android with virtualized apps
