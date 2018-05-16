@@ -88,7 +88,11 @@ should probably be under <tt>/sdcard</tt>.</dd>
 <tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
 busybox or whatever.  If you set it to the su binary (i.e.,
 <tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
-should be able to access files outside of the sdcard.</dd>
+should be able to access files outside of the sdcard.  If the name of the
+shell contains "su" in it, instead of putting "-" before argv[0] to
+indicate the login shell, it puts "-" as argv[1].  That is, a regular
+login shell would be invoked as "-sh", but su will be invoked as
+"su -".</dd>
 
 <dt>Buffer hack for rsync+SuperSU</dt>
 <dd>A bug in SuperSU interacts with an infelicity in rsync to cause an
@@ -110,6 +114,13 @@ The options which are hardcoded are:
 <blockquote><pre>-R -F -p :portno</pre></blockquote>
 You can use <tt>\</tt> or <tt>"</tt> to escape characters in this
 commandline.</dd>
+
+<dt>Environment Variables</dt>
+<dd>You can specify environment variables to define before executing the
+shell.  There is one variable per line, with a "name=value" format.
+A common use would be "ENV=/sdcard/ssh/.profile", if your device has a
+build of <tt>mksh</tt> that does not execute a .profile
+automatically.</dd>
 
 
 <h2>Frequently Asked Questions</h2>
@@ -145,6 +156,9 @@ harmless.
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2018/05/16 Version 18:</b> Use correct idiom for <tt>su</tt> as a
+login shell (so busybox <tt>su</tt> can work).  Add environment variables
+to setting.
 <li> <b>2018/03/24 Version 17:</b> Add native x86 support.
 <li> <b>2017/10/28 Version 16:</b> Fix rsync on Android 8.0 (Oreo).
 <li> <b>2016/10/17 Version 15:</b> Fix crash on pre-Nougat versions of Android.
