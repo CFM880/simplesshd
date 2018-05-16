@@ -598,19 +598,20 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 
 	if (cmd != NULL) {
 		argv[0] = baseshell;
+		argv[1] = "-c";
+		argv[2] = (char*)cmd;
+		argv[3] = NULL;
+	} else if (strstr(usershell, "su")) {
+		/* busybox requires "su" in argv[0], so don't treat it like a
+		 * command shell */
+		argv[0] = baseshell;
+		argv[1] = "-";
+		argv[2] = NULL;
 	} else {
 		/* a login shell should be "-bash" for "/bin/bash" etc */
 		int len = strlen(baseshell) + 2; /* 2 for "-" */
 		argv[0] = (char*)m_malloc(len);
 		snprintf(argv[0], len, "-%s", baseshell);
-	}
-
-	if (cmd != NULL) {
-		argv[1] = "-c";
-		argv[2] = (char*)cmd;
-		argv[3] = NULL;
-	} else {
-		/* construct a shell of the form "-bash" etc */
 		argv[1] = NULL;
 	}
 
