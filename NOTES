@@ -528,8 +528,52 @@ SimpleBusyBox (ash?) loads .profile by default.
 Anyways, it seems the obvious way forward is to make a setting for the
 environment...just one name=value per line.
 
+...
 
-XXX - survey crashes in play store
+Noticed a couple crashes in the Play store console.  One is a repeat of
+this Note 7 that gives ActivityNotFoundException when viewing
+documentation.  I decided to catch the exception and display a dialog
+asking the user to contact me, because I'm curious.
+
+The other crash is a NullPointerException due to a bug in older Android
+(a 2013 Nexus 7).  It isn't my fault and I don't care.
+   https://issuetracker.google.com/issues/36972466
+
+There is also an ANR, I think it's my very first!  Here's the message:
+   Input dispatching timed out (Waiting to send non-key event because the
+   touched window has not finished processing certain input events that
+   were delivered to it over 500.0ms ago. Wait queue length: 25. Wait
+   queue head age: 34478.4ms.)
+I can't tell if it's saying it blocked for 500ms or for 34s, but either
+one seems problematic.
+
+It's 4 identical-looking failures on one day, so it might be a fluke.
+It's on x86_64, though I don't think that's the problem...
+
+There are a ton of threads so it will be a bit of a trick to try to describe:
+   main - waiting in epoll_wait() under a bunch of framework
+          MessageQueue/Looper stuff.
+   Thread-23 - sleeping in UpdaterThread.run() line 26
+   Thread-15 - SimpleSSHDService.run()'s call to native waitpid()
+   and just a ton of misc threads that don't seem interesting to me
+
+So, it seems like the main thread is specifically waiting for something
+to do, I have no idea why it's not responding to user input.  I don't
+think the blocked UpdaterThread or SimpleSSHDService thread, because
+those are specifically in other threads because they are designed to
+block.  I'm thinking it's a fluke of some sort, maybe a DoS sort of
+scenario on this one device.
+
+Anyways, the other thing I found out at the Play store is I got warned
+because I'm supposed to "target a recent SDK", which means API level 26
+(Android 8.0 Oreo).  I think this is dumb but apparently it only means
+I have to update android:targetSdkVersion to 26.  I can leave
+minSdkVersion at 7, and target=android-7.  I hope.
+
+I imagine a bit of UI will move around but it should just be a matter of
+shaking it out and then testing it on an older device.
+
+
 XXX - figure out what to do to update to newest API??? lame
 
 
