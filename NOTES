@@ -573,8 +573,32 @@ minSdkVersion at 7, and target=android-7.  I hope.
 I imagine a bit of UI will move around but it should just be a matter of
 shaking it out and then testing it on an older device.
 
+Oh, I just remembered the important new Androidism - permissions.  In
+particular, I think it is now more complicated than just
+WRITE_EXTERNAL_STORAGE.  Ugh?
 
+Using my Nexus 5x (Android 8.1), updating to a new one with
+targetSdkVersion 26, everything seems to just work.  But the
+blue-on-white for the IP display becomes blue-on-black and it is almost
+unreadable.  And also, it is kind of ugly.  I think if I can switch it to
+a dark theme or something that will work itself out.
+
+But then I uninstalled the app and installed it from scratch with
+targetSdkVersion 26, and that does not work at all.  On startup it shows
+the next "null" on every line where it's supposed to show the log.  And
+once the service is started, the log is still null, and anything
+attempting to connect says:
+   Connection closed by 192.168.1.23
+
+So my guess is that it's now more complicated than just
+WRITE_EXTERNAL_STORAGE.  Ugh!
+
+XXX - fix permissions problem with newest API
+XXX - fix color problem with newest API (switch to "dark" theme)
 XXX - figure out what to do to update to newest API??? lame
+XXX - test it installed from play store and upgrading to the API 26 one
+XXX - test it installed scratch as the API 26 one
+XXX - test it upgraded and installed on old device
 
 
 XXX - make the default path for authorized_keys be in the app-private, too, for security ?
