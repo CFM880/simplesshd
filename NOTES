@@ -613,10 +613,17 @@ https://developer.android.com/guide/topics/manifest/uses-sdk-element
 That's quite a few to check out to go from SDK 11 (Honeycomb) to SDK 26
 (Oreo).  But I'll probably learn something...
 
+Have to use checkSelfPermission() and requestPermission() to get
+"dangerous" permissions (WRITE_EXTERNAL_STORAGE).  Luckily, INTERNET and
+RECEIVE_BOOT_COMPLETED are "normal" permissions and just need to be in
+the AndroidManifest.xml, I guess.  And I don't need to worry about
+READ_EXTERNAL_STORAGE, so long as I explicitly request
+WRITE_EXTERNAL_STORAGE.
 
-XXX - fix permissions problem with newest API
+
+XXX - upgrade project.properties to android-26
+XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
 XXX - fix color problem with newest API (switch to "dark" theme)
-XXX - figure out what to do to update to newest API??? lame
 XXX - test it installed from play store and upgrading to the API 26 one
 XXX - test it installed scratch as the API 26 one
 XXX - test it upgraded and installed on old device
