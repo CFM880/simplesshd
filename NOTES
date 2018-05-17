@@ -593,6 +593,27 @@ attempting to connect says:
 So my guess is that it's now more complicated than just
 WRITE_EXTERNAL_STORAGE.  Ugh!
 
+...
+
+A little info from
+
+https://medium.com/google-developers/picking-your-compilesdkversion-minsdkversion-targetsdkversion-a098a0341ebd
+
+which told me I can put the compile target much ahead of the min target
+and supposedly I'll get warned if I use new features.  Anyways, maybe I
+can gate the new permissions model behind a simple if?  I'm not sure if
+it will be enough to explicitly ask for the permission, or if the
+permission is accessed differently.
+
+It also suggests I look at the "Platform Highlights" in the API Level
+table at:
+
+https://developer.android.com/guide/topics/manifest/uses-sdk-element
+
+That's quite a few to check out to go from SDK 11 (Honeycomb) to SDK 26
+(Oreo).  But I'll probably learn something...
+
+
 XXX - fix permissions problem with newest API
 XXX - fix color problem with newest API (switch to "dark" theme)
 XXX - figure out what to do to update to newest API??? lame
