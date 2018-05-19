@@ -24,7 +24,7 @@
 	android:key="path"
 	android:title="SSH Path"
 	android:summary="Location of misc dropbear files (put authorized_keys here)."
-	android:defaultValue="/sdcard/ssh" />
+	android:defaultValue="/xxx" />
     <EditTextPreference
 	android:key="shell"
 	android:title="Login Shell"
@@ -38,7 +38,7 @@
 	android:key="home"
 	android:title="Home Directory"
 	android:summary="Default directory after login (put .profile here)."
-	android:defaultValue="/sdcard/ssh" />
+	android:defaultValue="/xxx" />
     <EditTextPreference
 	android:key="extra"
 	android:title="Extra Commandline"

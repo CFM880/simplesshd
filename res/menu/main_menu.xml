@@ -3,6 +3,8 @@
     <item android:id="@+id/settings"
           android:icon="@android:drawable/ic_menu_manage"
           android:title="Settings" />
+    <item android:id="@+id/copypriv"
+          android:title="Copy App-private Path" />
     <item android:id="@+id/resetkeys"
           android:icon="@android:drawable/ic_secure"
           android:title="Reset Keys" />

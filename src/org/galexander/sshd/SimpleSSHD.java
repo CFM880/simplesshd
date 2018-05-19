@@ -7,13 +7,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.DialogInterface;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Button;
+import android.text.ClipboardManager;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.net.Uri;
 import java.io.File;
 import java.io.FileReader;
@@ -30,10 +32,12 @@ public class SimpleSSHD extends Activity
 	private Button startstop_view;
 	private TextView ip_view;
 	public static SimpleSSHD curr = null;
+	public static String app_private = null;
 	private UpdaterThread updater = null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		app_private = getFilesDir().toString();
 		Prefs.init(this);
 		setContentView(R.layout.main);
 		log_view = (EditText)findViewById(R.id.log);
@@ -73,6 +77,9 @@ public class SimpleSSHD extends Activity
 		switch (item.getItemId()) {
 			case R.id.settings:
 				startActivity(new Intent(this, Settings.class));
+				return true;
+			case R.id.copypriv:
+				copy_app_private();
 				return true;
 			case R.id.resetkeys:
 				reset_keys();
@@ -235,6 +242,32 @@ public class SimpleSSHD extends Activity
 			}
 		} catch (Exception ex) { } // for now eat exceptions
 		return ret;
+	}
+
+	private void copy_app_private() {
+		new AlertDialog.Builder(this)
+		  .setCancelable(true)
+		  .setPositiveButton("OK",
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface di,
+					int which) { }
+			})
+		  .setNegativeButton("Copy",
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface di,
+					int which) {
+					ClipboardManager cl = (ClipboardManager)
+						getSystemService(
+						Context.CLIPBOARD_SERVICE);
+					if (cl != null) {
+						cl.setText(app_private);
+					}
+				}
+			})
+		  .setIcon(android.R.drawable.ic_dialog_info)
+		  .setTitle("App-private path")
+		  .setMessage(app_private)
+		  .show();
 	}
 
 	private void do_reset_keys() {

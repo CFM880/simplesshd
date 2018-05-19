@@ -621,9 +621,30 @@ READ_EXTERNAL_STORAGE, so long as I explicitly request
 WRITE_EXTERNAL_STORAGE.
 
 
-XXX - make sure to create the app-private files/ on first startup
-XXX - add options menu "copy app-private path", or something
-XXX - change default from /sdcard/ssh to app-private/files for new installs, or something
+May 19, 2018.
+
+Michael Mess wrote to let me know that he can't use authorized_keys file
+because the /sdcard/ssh/authorized_keys file is group-readwritable.  I
+know regular OpenSSH on a PC does complain if the authorized_keys file is
+world-writable, so this made sense to me.  He says it is a security flaw,
+but really, it is not, because any app that can run code and write to
+/sdcard/ssh already has all of the permissions that SimpleSSHD has
+(except network, but whatever) -- it isn't escalation, just a horizontal
+spreading.
+
+He suggested moving the SSH config into app-private, which is something
+I've been toying with anyways.
+
+So after some internal debate, I decided to do two changes:
+
+  * add "Copy app-private path" to the options menu, which brings up a
+    dialog showing the app-private path, with an option "Copy" to put it
+    in the clipboard.
+  * make the default for new installs for "home" and "path" be the
+    app-private dir
+
+I look forward to seeing if anyone complains about it.
+
 
 XXX - upgrade project.properties to android-26
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE

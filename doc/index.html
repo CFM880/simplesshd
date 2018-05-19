@@ -29,8 +29,8 @@ Port 2222
 </pre>
 <li> Launch SimpleSSHD, and in Settings enable "Start on Boot", then
 manually start it for the first time.
-<li> Create <tt>/sdcard/ssh/authorized_keys</tt>
-<li> Optionally make <tt>/sdcard/ssh/.profile</tt>
+<li> Create <tt>authorized_keys</tt> in the home directory
+<li> Optionally make <tt>.profile</tt>
 </ul>
 
 <p>If SimpleSSHD does not find an <tt>authorized_keys</tt> file when a
@@ -44,6 +44,15 @@ file.</p>
 <p>Once <tt>authorized_keys</tt> exists, only public key authentication
 is supported.  If you screw up your <tt>authorized_keys</tt> file, use
 the options menu (upper right) -> Reset Keys.</p>
+
+<p>The default home directory is now the app-private directory, which
+will generally be something like
+<tt>/data/data/org.galexander.sshd/files</tt>, but may vary depending on
+your device.  Use options menu -> Copy App-private Path to view the path
+or copy it onto the clipboard.  A nice feature of the app-private
+directory is it generally supports the full range of Unix of file
+permissions, including execute!  A disadvantage is that these files all
+disappear if you uninstall SimpleSSHD.</p>
 
 <p>Once you get setup, you may want BusyBox.  Check out
 <a href="https://play.google.com/store/apps/details?id=org.galexander.busybox">SimpleBusyBox</a>.</p>
@@ -77,8 +86,10 @@ and then click "QUIT" when you are done.</dd>
 greater than 1024 (because SimpleSSHD does not have root).</dd>
 
 <dt>SSH Path</dt>
-<dd>Path for general dropbear files, which defaults to
-<tt>/sdcard/ssh</tt>.  Most importantly, this is where
+<dd>Path for general dropbear files, which now defaults to
+the app-private directory (usually something like
+<tt>/data/data/org.galexander.sshd/files</tt>).
+Most importantly, this is where
 <tt>authorized_keys</tt> is found.  It is also where host keys wind up
 (they are created on demand), and where temporary files go.  This path
 should probably be under <tt>/sdcard</tt>.</dd>
@@ -106,8 +117,9 @@ SuperSU.</dd>
 
 <dt>Home Directory</dt>
 <dd>The login shell's home directory, which also defaults
-to <tt>/sdcard/ssh</tt>.  This is where your ssh session starts out, and is
-where <tt>.profile</tt> will be found if it is present.</dd>
+to the app-private directory.
+This is where your ssh session starts out, and is where <tt>.profile</tt>
+will be found if it is present.</dd>
 
 <dt>Extra Commandline</dt>
 <dd>You can specify additional commandline options for dropbear server.
@@ -158,6 +170,8 @@ harmless.
 <h2>Change Log</h2>
 
 <ul>
+<li> <b>2018/05/19 Version 19:</b> Use the app-private directory by
+default on new installs for the SSH/home dir.
 <li> <b>2018/05/16 Version 18:</b> Use correct idiom for <tt>su</tt> as a
 login shell (so busybox <tt>su</tt> can work).  Add environment variables
 to settings.
