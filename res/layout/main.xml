@@ -9,6 +9,7 @@
 	android:textAppearance="?android:attr/textAppearanceMedium"
 	android:typeface="monospace"
 	android:background="#ff112266"
+	android:textColor="#ffffffff"
 	android:text="IP: XXX" />
     <EditText android:id="@+id/log"
 	android:layout_width="fill_parent"
@@ -20,7 +21,8 @@
 	android:typeface="monospace"
 	android:gravity="top"
 	android:singleLine="false"
-	android:background="#00000000" />
+	android:background="#00000000"
+	android:textColor="#ffffffff" />
     <Button android:id="@+id/startstop"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
