@@ -646,9 +646,14 @@ So after some internal debate, I decided to do two changes:
 I look forward to seeing if anyone complains about it.
 
 
+XXX - make preference categories
+XXX - test on optimus v
+XXX - publish
+
 XXX - upgrade project.properties to android-26
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
 XXX - fix color problem with newest API (switch to "dark" theme)
+XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
 XXX - test it installed from play store and upgrading to the API 26 one
 XXX - test it installed scratch as the API 26 one
 XXX - test it upgraded and installed on old device
