@@ -1,44 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="Startup">
     <CheckBoxPreference
 	android:key="onboot"
 	android:title="Start on Boot"
+	android:defaultValue="false" />
+    <CheckBoxPreference
+	android:key="onopen"
+	android:title="Start on Open"
+	android:summary="Start the service when the app is launched (and quit app when stopping service)."
 	android:defaultValue="false" />
     <CheckBoxPreference
 	android:key="foreground"
 	android:title="Foreground Service"
 	android:summary="Enable a notification while running, and run with more priority (especially in Doze mode)."
 	android:defaultValue="true" />
-    <CheckBoxPreference
-	android:key="onopen"
-	android:title="Start on Open"
-	android:summary="Start the service when the app is launched (and quit app when stopping service)."
-	android:defaultValue="false" />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="Dropbear">
     <EditTextPreference
 	android:key="port"
 	android:title="Port Number"
 	android:summary="Must be greater than 1024."
 	android:numeric="integer"
 	android:defaultValue="2222" />
-    <EditTextPreference
-	android:key="path"
-	android:title="SSH Path"
-	android:summary="Location of misc dropbear files (put authorized_keys here)."
-	android:defaultValue="/xxx" />
-    <EditTextPreference
-	android:key="shell"
-	android:title="Login Shell"
-	android:summary="Location of sh binary."
-	android:defaultValue="/system/bin/sh" />
     <CheckBoxPreference
 	android:key="rsyncbuffer"
 	android:title="Buffer hack for rsync+SuperSU"
 	android:defaultValue="false" />
-    <EditTextPreference
-	android:key="home"
-	android:title="Home Directory"
-	android:summary="Default directory after login (put .profile here)."
-	android:defaultValue="/xxx" />
     <EditTextPreference
 	android:key="extra"
 	android:title="Extra Commandline"
@@ -49,4 +37,22 @@
 	android:title="Environment Variables"
 	android:summary="Environment variables (one &quot;name=value&quot; per line)."
 	android:defaultValue="" />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="Paths">
+    <EditTextPreference
+	android:key="path"
+	android:title="SSH Path"
+	android:summary="Location of misc dropbear files (put authorized_keys here)."
+	android:defaultValue="/xxx" />
+    <EditTextPreference
+	android:key="home"
+	android:title="Home Directory"
+	android:summary="Default directory after login (put .profile here)."
+	android:defaultValue="/xxx" />
+    <EditTextPreference
+	android:key="shell"
+	android:title="Login Shell"
+	android:summary="Location of sh binary."
+	android:defaultValue="/system/bin/sh" />
+  </PreferenceCategory>
 </PreferenceScreen>

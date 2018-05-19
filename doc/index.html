@@ -66,6 +66,13 @@ of these settings to take effect.</p>
 <dt>Start on Boot</dt>
 <dd>Automatically start the SimpleSSHD service when the phone powers on.</dd>
 
+<dt>Start on Open</dt>
+<dd>Run the SimpleSSHD service whenever the app is launched.  The "STOP"
+button will be replaced with a "QUIT" button that stops the service and
+exits the app.  This is useful if you want to only run the service when
+you really need it -- start the app to start listening for connections,
+and then click "QUIT" when you are done.</dd>
+
 <dt>Foreground Service</dt>
 <dd>Run the SimpleSSHD service as an Android "foreground service." This
 means a notification will be displayed for the service (you might be able
@@ -74,37 +81,9 @@ On newer versions of Android (since Marshmallow), this may also make
 SimpleSSHD more responsive if the phone has been in Doze mode.  It does
 not seem to increase battery consumption much.</dd>
 
-<dt>Start on Open</dt>
-<dd>Run the SimpleSSHD service whenever the app is launched.  The "STOP"
-button will be replaced with a "QUIT" button that stops the service and
-exits the app.  This is useful if you want to only run the service when
-you really need it -- start the app to start listening for connections,
-and then click "QUIT" when you are done.</dd>
-
 <dt>Port Number</dt>
 <dd>This is the port number that SimpleSSHD will listen on.  It must be
 greater than 1024 (because SimpleSSHD does not have root).</dd>
-
-<dt>SSH Path</dt>
-<dd>Path for general dropbear files, which now defaults to
-the app-private directory (usually something like
-<tt>/data/data/org.galexander.sshd/files</tt>).
-Most importantly, this is where
-<tt>authorized_keys</tt> is found.  It is also where host keys wind up
-(they are created on demand), and where temporary files go.  This path
-should probably be under <tt>/sdcard</tt>.</dd>
-
-<dt>Login Shell</dt>
-<dd>Path to the command shell.  The default Android shell is
-<tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
-busybox or whatever.  If you set it to the su binary (i.e.,
-<tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
-should be able to access files outside of <tt>/sdcard</tt>.  If the name
-of the shell contains "<tt>su</tt>" in it, instead of putting
-"<tt>-</tt>" before <tt>argv[0]</tt> to indicate the login shell,
-SimpleSSHD puts "<tt>-</tt>" as <tt>argv[1]</tt>.  That is, a regular
-login shell would be invoked as "<tt>-sh</tt>", but su will be invoked as
-"<tt>su -</tt>".</dd>
 
 <dt>Buffer hack for rsync+SuperSU</dt>
 <dd>A bug in SuperSU interacts with an infelicity in rsync to cause an
@@ -114,12 +93,6 @@ deadlock.  To work around this, there is a "Buffer hack" option that
 should be enabled if you use rsync with SuperSU.  It adds a miniscule
 overhead to rsync, but isn't harmful even if you aren't using
 SuperSU.</dd>
-
-<dt>Home Directory</dt>
-<dd>The login shell's home directory, which also defaults
-to the app-private directory.
-This is where your ssh session starts out, and is where <tt>.profile</tt>
-will be found if it is present.</dd>
 
 <dt>Extra Commandline</dt>
 <dd>You can specify additional commandline options for dropbear server.
@@ -135,6 +108,33 @@ shell.  There is one variable per line, with a
 A common use would be "<tt>ENV=/sdcard/ssh/.profile</tt>", if your device has a
 build of <tt>mksh</tt> that does not execute a <tt>.profile</tt>
 automatically.</dd>
+
+<dt>SSH Path</dt>
+<dd>Path for general dropbear files, which now defaults to
+the app-private directory (usually something like
+<tt>/data/data/org.galexander.sshd/files</tt>).
+Most importantly, this is where
+<tt>authorized_keys</tt> is found.  It is also where host keys wind up
+(they are created on demand), and where temporary files go.  This path
+should probably be under <tt>/sdcard</tt>.</dd>
+
+<dt>Home Directory</dt>
+<dd>The login shell's home directory, which also defaults
+to the app-private directory.
+This is where your ssh session starts out, and is where <tt>.profile</tt>
+will be found if it is present.</dd>
+
+<dt>Login Shell</dt>
+<dd>Path to the command shell.  The default Android shell is
+<tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
+busybox or whatever.  If you set it to the su binary (i.e.,
+<tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
+should be able to access files outside of <tt>/sdcard</tt>.  If the name
+of the shell contains "<tt>su</tt>" in it, instead of putting
+"<tt>-</tt>" before <tt>argv[0]</tt> to indicate the login shell,
+SimpleSSHD puts "<tt>-</tt>" as <tt>argv[1]</tt>.  That is, a regular
+login shell would be invoked as "<tt>-sh</tt>", but su will be invoked as
+"<tt>su -</tt>".</dd>
 
 
 <h2>Frequently Asked Questions</h2>
@@ -171,7 +171,7 @@ harmless.
 
 <ul>
 <li> <b>2018/05/19 Version 19:</b> Use the app-private directory by
-default on new installs for the SSH/home dir.
+default on new installs for the SSH/home dir.  Organize settings.
 <li> <b>2018/05/16 Version 18:</b> Use correct idiom for <tt>su</tt> as a
 login shell (so busybox <tt>su</tt> can work).  Add environment variables
 to settings.
