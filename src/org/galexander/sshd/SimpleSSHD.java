@@ -134,21 +134,22 @@ public class SimpleSSHD extends Activity
 		}
 	}
 
-	public static void update_startstop() {
-		Thread t = new Thread() {
-			public void run() {
-				synchronized (lock) {
-					if (curr != null) {
-						curr.update_startstop_prime();
-					}
-				}
-			}
-		};
+	private static void run_on_ui(Runnable r) {
 		synchronized (lock) {
 			if (curr != null) {
-				curr.runOnUiThread(t);
+				curr.runOnUiThread(r);
 			}
 		}
+	}
+
+	public static void update_startstop() {
+		run_on_ui(new Runnable() { public void run() {
+			synchronized (lock) {
+				if (curr != null) {
+					curr.update_startstop_prime();
+				}
+			}
+		} });
 	}
 
 	public void startstop_clicked(View v) {
@@ -199,20 +200,13 @@ public class SimpleSSHD extends Activity
 	}
 
 	public static void update_log() {
-		Thread t = new Thread() {
-			public void run() {
-				synchronized (lock) {
-					if (curr != null) {
-						curr.update_log_prime();
-					}
+		run_on_ui(new Runnable() { public void run() {
+			synchronized (lock) {
+				if (curr != null) {
+					curr.update_log_prime();
 				}
 			}
-		};
-		synchronized (lock) {
-			if (curr != null) {
-				curr.runOnUiThread(t);
-			}
-		}
+		} });
 	}
 
 	public static String get_ip(boolean pretty) {
