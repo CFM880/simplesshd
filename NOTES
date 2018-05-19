@@ -1,10 +1,11 @@
 BUILD INSTRUCTIONS:
 
 
-To build this, you'll need to remove my key.* settings in ant.properties.
-You'll have to build a "debug" apk instead of a "release" one.  Android
-will not let you install a debug apk on top of a release one, so you have
-to remove stock SimpleSSHD first before installing the debug build.
+To build this without my private keys, you'll need to replace my
+ant.properties symlink with an empty file.  You'll have to build a
+"debug" apk instead of a "release" one.  Android will not let you install
+a debug apk on top of a release one, so you have to remove stock
+SimpleSSHD first before installing the debug build.
 
 Then follow these steps (roughly the "doit" script):
 
@@ -13,6 +14,10 @@ Then follow these steps (roughly the "doit" script):
    mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
    mv libs/armeabi/rsync libs/armeabi/librsync.so &&
    mv libs/armeabi/buffersu libs/armeabi/libbuffersu.so &&
+   mv libs/x86/scp libs/x86/libscp.so &&
+   mv libs/x86/sftp-server libs/x86/libsftp-server.so &&
+   mv libs/x86/rsync libs/x86/librsync.so &&
+   mv libs/x86/buffersu libs/x86/libbuffersu.so &&
    ant debug
 
 The mv steps are very important, because ant will only package the
