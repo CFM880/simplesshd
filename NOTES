@@ -646,9 +646,6 @@ So after some internal debate, I decided to do two changes:
 I look forward to seeing if anyone complains about it.
 
 
-XXX - test on optimus v
-XXX - publish
-
 XXX - upgrade project.properties to android-26
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
 XXX - fix color problem with newest API (switch to "dark" theme)
