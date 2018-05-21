@@ -660,6 +660,8 @@ I knew that, so, what I'm saying is, I feel stupid for reading that
 medium.com link.
 
 
+XXX - upgrade to newest dropbear
+
 XXX - upgrade project.properties to android-26
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
 XXX - fix color problem with newest API (switch to "dark" theme)
