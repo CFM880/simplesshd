@@ -651,6 +651,15 @@ So after some internal debate, I decided to do two changes:
 I look forward to seeing if anyone complains about it.
 
 
+May 20, 2018.
+
+I tried updating the build target to a newer version than minSdkVersion,
+and I got a warning, and I looked at the official google documentation,
+and you can't build with anything newer than the minSdkVersion.  I mean,
+I knew that, so, what I'm saying is, I feel stupid for reading that
+medium.com link.
+
+
 XXX - upgrade project.properties to android-26
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
 XXX - fix color problem with newest API (switch to "dark" theme)
