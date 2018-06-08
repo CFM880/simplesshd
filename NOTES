@@ -660,6 +660,21 @@ I knew that, so, what I'm saying is, I feel stupid for reading that
 medium.com link.
 
 
+June 8, 2018.
+
+Request from Joan Marce i Igual for --iconv.  That requires iconv.h,
+which isn't part of Bionic.  GNU libiconv will do it, but it doesn't look
+particularly easy to build, and it isn't small.  Someone on github has
+uploaded their tree for building iconv on Android, which might save me a
+bunch of effort:
+
+   https://github.com/ironsteel/iconv-android.git
+
+Unfortunately it doesn't have much history to it, so I don't know if
+it'll be worth anything or not but it should give me a sense of the build
+task without forcing me to decipher autoconf.
+
+
 XXX - upgrade to newest dropbear
 
 XXX - upgrade project.properties to android-26
@@ -670,6 +685,7 @@ XXX - test it installed from play store and upgrading to the API 26 one
 XXX - test it installed scratch as the API 26 one
 XXX - test it upgraded and installed on old device
 
+XXX - libiconv? HAVE_ICONV_H etc
 
 XXX - make the default path for authorized_keys be in the app-private, too, for security ?
 XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
