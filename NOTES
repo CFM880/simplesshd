@@ -675,11 +675,16 @@ it'll be worth anything or not but it should give me a sense of the build
 task without forcing me to decipher autoconf.
 
 
-XXX - upgrade to newest dropbear
+XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
+XXX - reference lib dir by files dir /../lib, test it by logging in as "Guest"
+XXX - figure out what pie does to the boot event receiver
 
-XXX - upgrade project.properties to android-26
+XXX - upgrade to newest dropbear
+XXX - ed25519
+
+XXX - upgrade project.properties to android-26 (unfortunately, this requires switching to gradle or abandoning notifications!)
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
-XXX - fix color problem with newest API (switch to "dark" theme)
+XXX - fix color problem with newest API (override all colors)
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
 XXX - test it installed from play store and upgrading to the API 26 one
 XXX - test it installed scratch as the API 26 one
