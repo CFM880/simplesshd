@@ -128,7 +128,8 @@ will be found if it is present.</dd>
 <dd>Path to the command shell.  The default Android shell is
 <tt>/system/bin/sh</tt>, but you may prefer to use the one that comes with
 busybox or whatever.  If you set it to the su binary (i.e.,
-<tt>/system/xbin/su</tt>), then scp, sftp, and rsync will run as root and
+<tt>/system/xbin/su</tt>, or maybe <tt>/su/bin/su</tt>),
+then scp, sftp, and rsync will run as root and
 should be able to access files outside of <tt>/sdcard</tt>.  If the name
 of the shell contains "<tt>su</tt>" in it, instead of putting
 "<tt>-</tt>" before <tt>argv[0]</tt> to indicate the login shell,
