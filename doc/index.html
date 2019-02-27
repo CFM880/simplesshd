@@ -105,7 +105,9 @@ commandline.</dd>
 <dd>You can specify environment variables to define before executing the
 shell.  There is one variable per line, with a
 "<em>name</em><tt>=</tt><em>value</em>" format.
-A common use would be "<tt>ENV=/sdcard/ssh/.profile</tt>", if your device has a
+A common use would be
+"<tt>ENV=>/data/data/org.galexander.sshd/files/.profile</tt>",
+if your device has a
 build of <tt>mksh</tt> that does not execute a <tt>.profile</tt>
 automatically.</dd>
 
@@ -115,8 +117,8 @@ the app-private directory (usually something like
 <tt>/data/data/org.galexander.sshd/files</tt>).
 Most importantly, this is where
 <tt>authorized_keys</tt> is found.  It is also where host keys wind up
-(they are created on demand), and where temporary files go.  This path
-should probably be under <tt>/sdcard</tt>.</dd>
+(they are created on demand), and where temporary files go.  Other than
+the app-private directory, it may go under <tt>/sdcard</tt>.</dd>
 
 <dt>Home Directory</dt>
 <dd>The login shell's home directory, which also defaults
