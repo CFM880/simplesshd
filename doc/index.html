@@ -167,6 +167,12 @@ harmless.
 <b>Port Number</b> to 22 (which will fail and be ignored), and then add
 <tt>-p 192.168.1.123:2222</tt> to <b>Extra Commandline</b>.
 
+<li> <tt>ed25519</tt> keys are not supported by Dropbear (yet).  Use a
+regular <tt>rsa</tt> key for greatest compatibility.
+
+<li> Do not use <tt>ssh-copy-id</tt>, it will try to put the
+<tt>authorized_keys</tt> file in the wrong place.
+
 </ul>
 
 
