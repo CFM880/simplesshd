@@ -1,1 +1,1 @@
-rsync icon.png index.html shed:ga.org/software/simplesshd/
+rsync *.apk icon.png index.html shed:ga.org/software/simplesshd/
