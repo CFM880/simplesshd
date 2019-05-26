@@ -675,6 +675,20 @@ it'll be worth anything or not but it should give me a sense of the build
 task without forcing me to decipher autoconf.
 
 
+May 25, 2019.
+
+To update to the new SDK (26 required now, 28 required starting in
+August), I have to switch to gradle and all that garbage.  Every time I
+update anything with the new SDKs, everything breaks, even after I've
+already updated everything to gradle.  So basically it is the worst
+possible development environment.
+
+Anyways, the NDK now doesn't support anything older than android-16 (JB
+4.1), which is stupid but whatever.  Looking on the play store, it looks
+like I have 5 users on these older devices.  I hope it simply refuses to
+update for them, and they can continue to use the older version!
+
+
 XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
 XXX - reference lib dir by files dir /../lib, test it by logging in as "Guest"
 XXX - figure out what pie does to the boot event receiver

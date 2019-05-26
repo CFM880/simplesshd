@@ -1,8 +1,8 @@
 ~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
-mv libs/armeabi/scp libs/armeabi/libscp.so &&
-mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
-mv libs/armeabi/rsync libs/armeabi/librsync.so &&
-mv libs/armeabi/buffersu libs/armeabi/libbuffersu.so &&
+mv libs/armeabi-v7a/scp libs/armeabi-v7a/libscp.so &&
+mv libs/armeabi-v7a/sftp-server libs/armeabi-v7a/libsftp-server.so &&
+mv libs/armeabi-v7a/rsync libs/armeabi-v7a/librsync.so &&
+mv libs/armeabi-v7a/buffersu libs/armeabi-v7a/libbuffersu.so &&
 mv libs/x86/scp libs/x86/libscp.so &&
 mv libs/x86/sftp-server libs/x86/libsftp-server.so &&
 mv libs/x86/rsync libs/x86/librsync.so &&

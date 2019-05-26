@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId "org.galexander.sshd"
-        minSdkVersion 7
+        minSdkVersion 16
         targetSdkVersion 28
     }
 
