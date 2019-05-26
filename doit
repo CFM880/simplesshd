@@ -1,4 +1,4 @@
-ndk-build -j8 &&
+~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
 mv libs/armeabi/scp libs/armeabi/libscp.so &&
 mv libs/armeabi/sftp-server libs/armeabi/libsftp-server.so &&
 mv libs/armeabi/rsync libs/armeabi/librsync.so &&
@@ -7,7 +7,5 @@ mv libs/x86/scp libs/x86/libscp.so &&
 mv libs/x86/sftp-server libs/x86/libsftp-server.so &&
 mv libs/x86/rsync libs/x86/librsync.so &&
 mv libs/x86/buffersu libs/x86/libbuffersu.so &&
-ant release &&
-mrinst bin/SimpleSSHD-release.apk
-#scp bin/SimpleSSHD-release.apk shed:ga.org/buh.apk
-# cat bin/SimpleSSHD-release.apk | ssh roach 'cat > /sdcard/buh.apk; source .profile; am start --user 0 -d file:///sdcard/buh.apk'
+./gradlew assembleRelease &&
+andinst bin/SimpleSSHD-release.apk
