@@ -74,5 +74,8 @@
 #define HAVE_FCHMOD 1
 #define HAVE_SETMODE 1
 #define HAVE_STRUCT_STAT64 1
+#define HAVE_INET_NTOP 1
+#define MAJOR_IN_SYSMACROS 1
+#define HAVE_ASPRINTF 1
 
 #endif /* __RSYNC_CONFIG_H */

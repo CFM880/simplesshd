@@ -22,6 +22,7 @@
 #define HAVE_SIG_ATOMIC_T 1
 #define HAVE_MBLEN 1
 #define HAVE_SYS_UN_H 1
+#define HAVE_ATTRIBUTE__SENTINEL__ 1
 
 #define error(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
 #define fatal(fmt, ...) { fprintf(stderr, fmt, ##__VA_ARGS__); cleanup_exit(255); }

@@ -122,7 +122,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	const char *extra;
 
 	if (!jni_init(env_)) {
-		return;
+		return 0;
 	}
 	conf_path = from_java_string(jpath);
 	conf_shell = from_java_string(jshell);
