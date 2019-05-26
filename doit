@@ -1,11 +1,15 @@
+#!/bin/sh
+
 ~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
-mv libs/armeabi-v7a/scp libs/armeabi-v7a/libscp.so &&
-mv libs/armeabi-v7a/sftp-server libs/armeabi-v7a/libsftp-server.so &&
-mv libs/armeabi-v7a/rsync libs/armeabi-v7a/librsync.so &&
-mv libs/armeabi-v7a/buffersu libs/armeabi-v7a/libbuffersu.so &&
-mv libs/x86/scp libs/x86/libscp.so &&
-mv libs/x86/sftp-server libs/x86/libsftp-server.so &&
-mv libs/x86/rsync libs/x86/librsync.so &&
-mv libs/x86/buffersu libs/x86/libbuffersu.so &&
+mkdir -p app/src/main/lib/armeabi-v7a &&
+mv libs/armeabi-v7a/scp app/src/main/lib/armeabi-v7a/libscp.so &&
+mv libs/armeabi-v7a/sftp-server app/src/main/lib/armeabi-v7a/libsftp-server.so &&
+mv libs/armeabi-v7a/rsync app/src/main/lib/armeabi-v7a/librsync.so &&
+mv libs/armeabi-v7a/buffersu app/src/main/lib/armeabi-v7a/libbuffersu.so &&
+mkdir -p app/src/main/lib/x86 &&
+mv libs/x86/scp app/src/main/lib/x86/libscp.so &&
+mv libs/x86/sftp-server app/src/main/lib/x86/libsftp-server.so &&
+mv libs/x86/rsync app/src/main/lib/x86/librsync.so &&
+mv libs/x86/buffersu app/src/main/lib/x86/libbuffersu.so &&
 ./gradlew assembleRelease &&
-andinst bin/SimpleSSHD-release.apk
+andinst app/build/outputs/apk/release/app-release.apk
