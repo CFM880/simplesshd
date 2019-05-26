@@ -688,24 +688,34 @@ Anyways, the NDK now doesn't support anything older than android-16 (JB
 like I have 5 users on these older devices.  I hope it simply refuses to
 update for them, and they can continue to use the older version!
 
+... I got it to build and install and run, and it "works".  The only
+issue that is currently biting me is (on using am to install an apk):
 
-XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
+   InstallStart: Requesting uid 10180 needs to declare permission
+   android.permission.REQUEST_INSTALL_PACKAGES
+
+Anyways, there's a bunch of stuff remaining to do, and then I will
+release it.
+
+
+XXX - figure out android.permission.REQUEST_INSTALL_PACKAGES
+XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE (it only works now because it's grandfathered in)
+
+XXX - fix color problem with newest API (override all colors, i think only the STOP/START button remains?)
+
+XXX - upgrade to newest dropbear
+
 XXX - reference lib dir by files dir /../lib, test it by logging in as "Guest"
 XXX - figure out what pie does to the boot event receiver
 
-XXX - upgrade to newest dropbear
+XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
+
 XXX - ed25519
 
-XXX - upgrade project.properties to android-26 (unfortunately, this requires switching to gradle or abandoning notifications!)
-XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE
-XXX - fix color problem with newest API (override all colors)
-XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
+XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
 XXX - test it installed from play store and upgrading to the API 26 one
 XXX - test it installed scratch as the API 26 one
-XXX - test it upgraded and installed on old device
+XXX - test it upgraded and installed on oldish device (set up android emulator)
+XXX - test it installed on x86 with android emulator
 
 XXX - libiconv? HAVE_ICONV_H etc
-
-XXX - make the default path for authorized_keys be in the app-private, too, for security ?
-XXX - show /data/data/org.galexander.sshd/files somewhere as a suggested place to put files
-XXX - find the /data/data/org.galexander.sshd/lib/ directory programatically, so it will work with whatever bizarre secure android with virtualized apps
