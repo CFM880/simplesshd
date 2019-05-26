@@ -50,6 +50,14 @@ public class Prefs {
 	public static String get_env() {
 		return pref.getString("env", "");
 	}
+	public static boolean get_requested() {	/* already requested perms */
+		return pref.getBoolean("requested", false);
+	}
+	public static void set_requested() {
+		SharedPreferences.Editor edit = pref.edit();
+		edit.putBoolean("requested", true);
+		edit.commit();
+	}
 
 	/* NB - other defaults can be filled in by either Prefs or Settings as
 	 * needed */

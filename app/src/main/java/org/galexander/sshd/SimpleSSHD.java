@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.text.ClipboardManager;
 import android.view.View;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import java.net.NetworkInterface;
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.List;
+import android.Manifest;
 
 public class SimpleSSHD extends Activity
 {
@@ -50,6 +52,7 @@ public class SimpleSSHD extends Activity
 		synchronized (lock) {
 			curr = this;
 		}
+		permission();
 		update_startstop_prime();
 		updater = new UpdaterThread();
 		updater.start();
@@ -293,5 +296,22 @@ public class SimpleSSHD extends Activity
 		} catch (Exception e) {
 			return "UNKNOWN";
 		}
+	}
+
+	public void permission() {
+		if (android.os.Build.VERSION.SDK_INT < 23) {
+			return;
+		}
+		if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+			return;
+		}
+		if (Prefs.get_requested()) {	/* already asked once */
+			return;
+		}
+		requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+	}
+
+	public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
+		Prefs.set_requested();	/* whatever result, don't ask again */
 	}
 }

@@ -698,7 +698,58 @@ Anyways, there's a bunch of stuff remaining to do, and then I will
 release it.
 
 
-XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE (it only works now because it's grandfathered in)
+May 26, 2019.
+
+I got an AVD (emulated android) running SDK 26 (Oreo 8.0) x86.  It uses
+kvm virtualization so it's much faster than the old emulated ARM I used
+to be shackled with.
+
+Anyways, right off, it says (in a toast):
+   Developer warning for package "org.galexander.sshd"
+   Failed to post notification on channel "null"
+   See log for more details
+adb logcat says:
+   05-26 17:13:49.877  1741  1764 E NotificationService: No Channel found
+   for pkg=org.galexander.sshd, channelId=null, id=1, tag=null,
+   opPkg=org.galexander.sshd, callingUid=10085, userId=0, incomingUserId=0,
+   notificationUid=10085, notification=Notification(channel=null pri=0
+   contentView=org.galexander.sshd/0x7f030001 vibrate=null sound=null
+   tick defaults=0x0 flags=0x40 color=0x00000000 vis=PRIVATE)
+
+This gives a kind of deja vu -- I think from BluntMP3?  I'm just adding
+it to the todo list.
+
+To access SimpleSSHD, run
+   adb forward tcp:2222 tcp:2222
+   ssh -p 2222 localhost
+
+And it demonstrates that the sdcard access is forbidden.  In fact, I can
+toggle it inside the System Settings -> Applications -> SimpleSSHD ->
+permissions -> Storage, and it takes effect more or less immediately.
+
+Android development is such a constant stream of astonishing garbage.
+When it requests the permission, which happens just as I would want it
+to, it then pops up a "System UI has stopped" dialog.  But look, it isn't
+my fault:
+
+   https://stackoverflow.com/questions/49261555/system-ui-has-stopped-emulator-when-requesting-permissions
+
+For real.  There's a bug in the emulator you fix by "increasing the DPI."
+I had tried some older 854x480 sort of emulated device because I didn't
+want all those pixels, but I'll just use Pixel 2 (the default, and one
+Google surely tests).  It has a different skin where the soft buttons are
+part of the skin, which is I bet what the bug is around.
+
+So, the permissions request works now.  It just asks once, and no matter
+what the answer is, it never asks again.  And if it is grandfathered in
+because the previous version of the app used an older SDK, then it will
+never ask and it'll just have the permission.  And, at least on an
+emulated Pixel 2, it can access /sdcard, which is "internal storage."
+It does emulate an "SD card", but it can't access that.
+
+
+
+XXX - assign a channel for the service notification
 
 XXX - upgrade to newest dropbear
 
