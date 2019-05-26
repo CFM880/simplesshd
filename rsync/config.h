@@ -76,6 +76,7 @@
 #define HAVE_STRUCT_STAT64 1
 #define HAVE_INET_NTOP 1
 #define MAJOR_IN_SYSMACROS 1
+#define HAVE_SIZE_T 1
 #define HAVE_ASPRINTF 1
 
 #endif /* __RSYNC_CONFIG_H */
