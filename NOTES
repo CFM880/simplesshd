@@ -698,15 +698,12 @@ Anyways, there's a bunch of stuff remaining to do, and then I will
 release it.
 
 
-XXX - find location of native libs (it no longer updates the lib-> symlink!)
-
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE (it only works now because it's grandfathered in)
 
 XXX - fix color problem with newest API (override all colors, i think only the STOP/START button remains?)
 
 XXX - upgrade to newest dropbear
 
-XXX - reference lib dir by files dir /../lib, test it by logging in as "Guest"
 XXX - figure out what pie does to the boot event receiver
 
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown

@@ -613,6 +613,8 @@ install_environment(void)
 			m_free(v);
 		}
 	}
+
+	setenv("SSHD_LIBDIR", conf_lib, /*overwrite=*/1);
 }
 
 
@@ -627,18 +629,16 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
 	baseshell = basename(usershell);
 
 	if (cmd && !strncmp(cmd, "scp ", 4)) {
-		char *t = m_malloc(strlen(cmd)+strlen(NDK_EXECUTABLES_PATH)+80);
-		sprintf(t, "%s/lib%s.so %s", NDK_EXECUTABLES_PATH, "scp",
-				cmd+4);
+		char *t = m_malloc(strlen(cmd)+strlen(conf_lib)+80);
+		sprintf(t, "%s/lib%s.so %s", conf_lib, "scp", cmd+4);
 		cmd = t;
 	} else if (cmd && !strncmp(cmd, "rsync ", 6)) {
-		char *t = m_malloc(strlen(cmd)+strlen(NDK_EXECUTABLES_PATH)+80);
+		char *t = m_malloc(strlen(cmd)+strlen(conf_lib)+80);
 		char *x = "rsync";
 		if (conf_rsyncbuffer) {
 			x = "buffersu";
 		}
-		sprintf(t, "%s/lib%s.so %s", NDK_EXECUTABLES_PATH, x,
-				cmd+6);
+		sprintf(t, "%s/lib%s.so %s", conf_lib, x, cmd+6);
 		cmd = t;
 	}
 

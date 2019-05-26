@@ -32,8 +32,6 @@
 #define DBMULTI_dropbear 1
 #define DROPBEAR_MULTI 1
 
-#define NDK_EXECUTABLES_PATH "/data/data/org.galexander.sshd/lib"
-
 
 /* in jni/interface.c: */
 extern const char *conf_path;
@@ -42,6 +40,7 @@ extern const char *conf_home;
 const char *conf_path_file(const char *fn);
 extern int conf_rsyncbuffer;
 extern const char *conf_env;
+extern const char *conf_lib;
 
 
 #endif /* __CONFIG_H__ */

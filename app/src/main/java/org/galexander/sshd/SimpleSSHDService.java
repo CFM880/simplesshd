@@ -20,6 +20,7 @@ public class SimpleSSHDService extends Service {
 	private static long sshd_when = 0;
 	private static long sshd_duration = 0;
 	private static boolean foregrounded = false;
+	private static String libdir = null;
 
 	public void onCreate() {
 		super.onCreate();
@@ -32,6 +33,7 @@ public class SimpleSSHDService extends Service {
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		libdir = getApplicationInfo().nativeLibraryDir;
 		if ((intent == null) ||
 		    (!intent.getBooleanExtra("stop", false))) {
 			do_start();
@@ -130,7 +132,7 @@ public class SimpleSSHDService extends Service {
 			Prefs.get_path(), Prefs.get_shell(),
 			Prefs.get_home(), Prefs.get_extra(),
 			(Prefs.get_rsyncbuffer() ? 1 : 0),
-			Prefs.get_env());
+			Prefs.get_env(), libdir);
 
 		long now = System.currentTimeMillis();
 		if (pid != 0) {
@@ -179,7 +181,7 @@ public class SimpleSSHDService extends Service {
 
 	private static native int start_sshd(int port, String path,
 			String shell, String home, String extra,
-			int rsyncbuffer, String env);
+			int rsyncbuffer, String env, String lib);
 	private static native void kill(int pid);
 	private static native int waitpid(int pid);
 	static {

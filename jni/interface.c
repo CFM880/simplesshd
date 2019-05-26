@@ -9,7 +9,8 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-const char *conf_path = "", *conf_shell = "", *conf_home = "", *conf_env = "";
+const char *conf_path = "", *conf_shell = "", *conf_home = "", *conf_env = "",
+	*conf_lib = "";
 int conf_rsyncbuffer = 0;
 
 /* NB - this will leak memory like crazy if called often.... */
@@ -103,6 +104,9 @@ static const char *
 from_java_string(jobject s)
 {
 	const char *ret, *t;
+	if (!s) {
+		return "";
+	}
 	t = (*env)->GetStringUTFChars(env, s, NULL);
 	if (!t) {
 		return "";
@@ -116,7 +120,7 @@ JNIEXPORT jint JNICALL
 Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	jclass cl,
 	jint port, jobject jpath, jobject jshell, jobject jhome, jobject jextra,
-	jint rsyncbuffer, jobject jenv)
+	jint rsyncbuffer, jobject jenv, jobject jlib)
 {
 	pid_t pid;
 	const char *extra;
@@ -130,6 +134,7 @@ Java_org_galexander_sshd_SimpleSSHDService_start_1sshd(JNIEnv *env_,
 	extra = from_java_string(jextra);
 	conf_rsyncbuffer = rsyncbuffer;
 	conf_env = from_java_string(jenv);
+	conf_lib = from_java_string(jlib);
 
 	pid = fork();
 	if (pid == 0) {

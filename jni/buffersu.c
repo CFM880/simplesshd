@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#define WRAPPED_CMD "/data/data/org.galexander.sshd/lib/librsync.so"
+#define WRAPPED_CMD "%s/librsync.so"
 #define WRAPPED_ARG0 "rsync"
 #define MAX_BUFSZ (1024*1024)
 
@@ -133,10 +133,18 @@ buf_write(struct buf *b, int fd)
 int
 main(int argc, char **argv)
 {
+	char *libdir;
+	char *wrapped_cmd;
 	int p0[2], p1[2];
 	pid_t pid;
 	pipe(p0);
 	pipe(p1);
+
+	libdir = getenv("SSHD_LIBDIR");
+	if (!libdir) { libdir = "SSHD_LIBDIR_not_set"; }
+	wrapped_cmd = malloc(strlen(libdir) + strlen(WRAPPED_CMD) + 2);
+	sprintf(wrapped_cmd, WRAPPED_CMD, libdir);
+
 	if ((pid=fork())) {
 		/* parent */
 		fd_set ifds, ofds;
@@ -225,7 +233,7 @@ T(ofd)
 		memcpy(child_argv, argv, argc*sizeof *child_argv);
 		child_argv[0] = WRAPPED_ARG0;
 		child_argv[argc] = NULL;
-		execv(WRAPPED_CMD, child_argv);
+		execv(wrapped_cmd, child_argv);
 		perror("execv");
 		return -1;
 	}
