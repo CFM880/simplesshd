@@ -21,7 +21,7 @@
 	android:typeface="monospace"
 	android:gravity="top"
 	android:singleLine="false"
-	android:background="#00000000"
+	android:background="#ff000000"
 	android:textColor="#ffffffff" />
     <Button android:id="@+id/startstop"
 	android:layout_width="fill_parent"
