@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+
+def keyprops=new Properties()
+keyprops.load(new FileInputStream(rootProject.file("keystore.properties")))
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.0"
+
+    sourceSets {
+	main {
+	    jniLibs.srcDirs 'src/main/lib'
+	}
+    }
+
+    signingConfigs {
+	release {
+	    keyAlias keyprops['keyAlias']
+	    keyPassword keyprops['keyPassword']
+	    storeFile file(keyprops['storeFile'])
+	    storePassword keyprops['storePassword']
+	}
+    }
+
+    defaultConfig {
+        applicationId "org.galexander.sshd"
+        minSdkVersion 7
+        targetSdkVersion 28
+    }
+
+    buildTypes {
+        release {
+	    signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
