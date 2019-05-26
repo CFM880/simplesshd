@@ -700,13 +700,13 @@ release it.
 
 XXX - call checkSelfPermission/requestPermission to get WRITE_EXTERNAL_STORAGE (it only works now because it's grandfathered in)
 
-XXX - fix color problem with newest API (override all colors, i think only the STOP/START button remains?)
-
 XXX - upgrade to newest dropbear
 
 XXX - figure out what pie does to the boot event receiver
 
 XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
+
+--- new release
 
 XXX - ed25519
 
@@ -720,3 +720,5 @@ XXX - libiconv? HAVE_ICONV_H etc
 XXX - changelog:
   - API 28
   - x86_64, arm64
+  - should now find native libraries even under a user account
+  - fix more possible color issues
