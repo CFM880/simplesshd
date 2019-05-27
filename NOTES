@@ -770,8 +770,39 @@ you have to click on the icon which is a portrait phone with a green
 android head on the lower-right corner of it.  Upper-right corner.
 And you have to open a project before it will show you that.  Jesus.
 
+...
 
-XXX - figure out what pie does to the boot event receiver
+Testing with pie, I am able to reproduce the problem with start-on-boot.
+Here's some excerpts from logcat:
+
+   05-26 21:24:26.251  1837  3408 W ActivityManager: Background start not allowed: service Intent { cmp=org.galexander.sshd/.SimpleSSHDService } to org.galexander.sshd/.SimpleSSHDService from pid=3756 uid=10085 pkg=org.galexander.sshd startFg?=false
+   --------- beginning of crash
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime: FATAL EXCEPTION: main
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime: Process: org.galexander.sshd, PID: 3756
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime: java.lang.RuntimeException: Unable to start receiver org.galexander.sshd.BootReceiver: java.lang.IllegalStateException: Not allowed to start service Intent { cmp=org.galexander.sshd/.SimpleSSHDService }: app is in background uid UidRecord{5aff37a u0a85 RCVR idle change:uncached procs:1 seq(0,0,0)}
+    ...
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Not allowed to start service Intent { cmp=org.galexander.sshd/.SimpleSSHDService }: app is in background uid UidRecord{5aff37a u0a85 RCVR idle change:uncached procs:1 seq(0,0,0)}
+    ...
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime:        at android.content.ContextWrapper.startService(ContextWrapper.java:664)
+   05-26 21:24:26.251  3756  3756 E AndroidRuntime:        at org.galexander.sshd.BootReceiver.onReceive(BootReceiver.java:11)
+
+So it looks like a pretty intentional rule that you can't start a service
+from a boot receiver??
+
+And I have the same problem on my Z2 Force (Oreo 8.0) now that I've
+updated the SDK.
+
+This guy says it will allow you to startForegroundService(), so that's
+what I'll try...
+
+   https://stackoverflow.com/questions/49572570/android-start-a-service-on-boot-not-working
+
+Which seems to work!  So there is a need for some sort of dance in the
+Settings screen to force it to enable foreground services if
+start-on-boot is selected, and then we'll be golden.
+
+
+XXX - some sort of failsafe so start-on-boot && >= OREO implies foreground
 XXX - upgrade to newest dropbear
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
