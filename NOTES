@@ -820,8 +820,3 @@ XXX - test it upgraded and installed on oldish device (set up android emulator)
 XXX - test it installed on x86 with android emulator
 
 XXX - libiconv? HAVE_ICONV_H etc
-XXX - changelog:
-  - API 28
-  - x86_64, arm64
-  - should now find native libraries even under a user account
-  - fix more possible color issues
