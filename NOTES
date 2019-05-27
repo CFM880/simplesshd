@@ -747,19 +747,40 @@ never ask and it'll just have the permission.  And, at least on an
 emulated Pixel 2, it can access /sdcard, which is "internal storage."
 It does emulate an "SD card", but it can't access that.
 
+...
 
+Getting a channel onto the notification was a pain in the ass.  All this
+gradle stuff is getting increasingly undocumented.  Every time they
+change something so they won't ever have to change anything again, they
+then immediately change everything.  This leads to a mass proliferation
+of immediately-obsoleted documents.  It even damages resources like
+stackexchange because people take their extraordinarily unique context
+for granted when asking and answering questions.  So something that
+worked against gradle 3.3.4 will now be broken against gradle 3.3.5 but
+no one will think to mention what version of gradle, or what version of
+the build scripts gradle runs, or what-have-you.
 
-XXX - assign a channel for the service notification
+Anyways, the upshot is, the way I got it to work is I opened the project
+in Android Studio, and eventually I used Refactor->Migrate to AndroidX,
+which turned out to have all manner of complications but here we go.
 
-XXX - upgrade to newest dropbear
+Speaking of Android Studio, the AVD Manager (Android Virtual Device, I
+guess) is not accessible under Tools, even though it should be.  Instead,
+you have to click on the icon which is a portrait phone with a green
+android head on the lower-right corner of it.  Upper-right corner.
+And you have to open a project before it will show you that.  Jesus.
+
 
 XXX - figure out what pie does to the boot event receiver
+XXX - upgrade to newest dropbear
+XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
-XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
 
 --- new release
 
-XXX - ed25519
+XXX - see if settings looks better with SDK26, if not, hack it so that the ones with strings have their states shown
+
+XXX - ed25519?
 
 XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
 XXX - test it installed from play store and upgrading to the API 26 one
