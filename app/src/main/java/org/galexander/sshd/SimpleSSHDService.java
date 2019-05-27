@@ -1,12 +1,16 @@
 package org.galexander.sshd;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
+import android.os.Build;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import androidx.core.app.NotificationCompat;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -62,25 +66,44 @@ public class SimpleSSHDService extends Service {
 	private void do_foreground() {
 		foregrounded = Prefs.get_foreground();
 		if (foregrounded) {
-			Notification n = new Notification(
-						R.drawable.notification_icon,
-						"SimpleSSHD", 0);
-			n.tickerText = "SimpleSSHD";
-			n.contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, SimpleSSHD.class),
-				PendingIntent.FLAG_UPDATE_CURRENT);
+			create_notification_channel();
 
-			n.contentView = new RemoteViews(getPackageName(),
+			RemoteViews rv = new RemoteViews(getPackageName(),
 					R.layout.notification);
-			/* for some reason icon cannot be defined in xml: */
-			n.contentView.setImageViewResource(R.id.n_icon,
-					R.drawable.icon);
-			n.contentView.setTextViewText(R.id.n_text,
+			rv.setImageViewResource(R.id.n_icon, R.drawable.icon);
+			rv.setTextViewText(R.id.n_text,
 				"SimpleSSHD listening on " +
 				SimpleSSHD.get_ip(false) +
 				":" + Prefs.get_port());
-
+			PendingIntent pi = PendingIntent.getActivity(this, 0,
+				new Intent(this, SimpleSSHD.class),
+				PendingIntent.FLAG_UPDATE_CURRENT);
+			Notification n = new NotificationCompat.Builder(
+						this, "main")
+				.setSmallIcon(R.drawable.notification_icon)
+				.setTicker("SimpleSSHD")
+				.setContent(rv)
+				.setContentIntent(pi)
+				.setOngoing(true)
+				.setPriority(NotificationCompat.PRIORITY_LOW)
+				.setLocalOnly(true)
+				.setVisibility(
+					NotificationCompat.VISIBILITY_PUBLIC)
+				.build();
 			startForeground(1, n);
+		}
+	}
+
+	private void create_notification_channel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationChannel nc = new NotificationChannel(
+				"main", "SimpleSSHD",
+				NotificationManager.IMPORTANCE_LOW);
+			nc.enableLights(false);
+			nc.enableVibration(false);
+			nc.setSound(null, null);
+			getSystemService(NotificationManager.class)
+				.createNotificationChannel(nc);
 		}
 	}
 
