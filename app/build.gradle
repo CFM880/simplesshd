@@ -5,7 +5,7 @@ keyprops.load(new FileInputStream(rootProject.file("keystore.properties")))
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.0"
+    buildToolsVersion "28.0.3"
 
     sourceSets {
 	main {
