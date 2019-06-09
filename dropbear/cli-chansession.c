@@ -35,15 +35,15 @@
 #include "chansession.h"
 #include "agentfwd.h"
 
-static void cli_closechansess(struct Channel *channel);
+static void cli_closechansess(const struct Channel *channel);
 static int cli_initchansess(struct Channel *channel);
 static void cli_chansessreq(struct Channel *channel);
-static void send_chansess_pty_req(struct Channel *channel);
-static void send_chansess_shell_req(struct Channel *channel);
-static void cli_escape_handler(struct Channel *channel, unsigned char* buf, int *len);
+static void send_chansess_pty_req(const struct Channel *channel);
+static void send_chansess_shell_req(const struct Channel *channel);
+static void cli_escape_handler(const struct Channel *channel, const unsigned char* buf, int *len);
 static int cli_init_netcat(struct Channel *channel);
 
-static void cli_tty_setup();
+static void cli_tty_setup(void);
 
 const struct ChanType clichansess = {
 	0, /* sepfds */
@@ -52,11 +52,12 @@ const struct ChanType clichansess = {
 	NULL, /* checkclosehandler */
 	cli_chansessreq, /* reqhandler */
 	cli_closechansess, /* closehandler */
+	NULL, /* cleanup */
 };
 
 static void cli_chansessreq(struct Channel *channel) {
 
-	unsigned char* type = NULL;
+	char* type = NULL;
 	int wantreply;
 
 	TRACE(("enter cli_chansessreq"))
@@ -83,7 +84,7 @@ out:
 	
 
 /* If the main session goes, we close it up */
-static void cli_closechansess(struct Channel *UNUSED(channel)) {
+static void cli_closechansess(const struct Channel *UNUSED(channel)) {
 	cli_tty_cleanup(); /* Restore tty modes etc */
 
 	/* This channel hasn't gone yet, so we have > 1 */
@@ -270,9 +271,9 @@ void cli_chansess_winchange() {
 	cli_ses.winchange = 0;
 }
 
-static void send_chansess_pty_req(struct Channel *channel) {
+static void send_chansess_pty_req(const struct Channel *channel) {
 
-	unsigned char* term = NULL;
+	char* term = NULL;
 
 	TRACE(("enter send_chansess_pty_req"))
 
@@ -303,9 +304,9 @@ static void send_chansess_pty_req(struct Channel *channel) {
 	TRACE(("leave send_chansess_pty_req"))
 }
 
-static void send_chansess_shell_req(struct Channel *channel) {
+static void send_chansess_shell_req(const struct Channel *channel) {
 
-	unsigned char* reqtype = NULL;
+	char* reqtype = NULL;
 
 	TRACE(("enter send_chansess_shell_req"))
 
@@ -355,7 +356,7 @@ static int cli_initchansess(struct Channel *channel) {
 
 	cli_init_stdpipe_sess(channel);
 
-#ifdef ENABLE_CLI_AGENTFWD
+#if DROPBEAR_CLI_AGENTFWD
 	if (cli_opts.agent_fwd) {
 		cli_setup_agent(channel);
 	}
@@ -379,7 +380,7 @@ static int cli_initchansess(struct Channel *channel) {
 	return 0; /* Success */
 }
 
-#ifdef ENABLE_CLI_NETCAT
+#if DROPBEAR_CLI_NETCAT
 
 static const struct ChanType cli_chan_netcat = {
 	0, /* sepfds */
@@ -387,12 +388,13 @@ static const struct ChanType cli_chan_netcat = {
 	cli_init_netcat, /* inithandler */
 	NULL,
 	NULL,
-	cli_closechansess
+	cli_closechansess,
+	NULL,
 };
 
 void cli_send_netcat_request() {
 
-	const unsigned char* source_host = "127.0.0.1";
+	const char* source_host = "127.0.0.1";
 	const int source_port = 22;
 
 	TRACE(("enter cli_send_netcat_request"))
@@ -403,7 +405,7 @@ void cli_send_netcat_request() {
 		dropbear_exit("Couldn't open initial channel");
 	}
 
-	buf_putstring(ses.writepayload, cli_opts.netcat_host, 
+	buf_putstring(ses.writepayload, cli_opts.netcat_host,
 			strlen(cli_opts.netcat_host));
 	buf_putint(ses.writepayload, cli_opts.netcat_port);
 
@@ -438,7 +440,6 @@ do_escape(unsigned char c) {
 		case '.':
 			dropbear_exit("Terminated");
 			return 1;
-			break;
 		case 0x1a:
 			/* ctrl-z */
 			cli_tty_cleanup();
@@ -447,13 +448,13 @@ do_escape(unsigned char c) {
 			cli_tty_setup();
 			cli_ses.winchange = 1;
 			return 1;
-			break;
+		default:
+			return 0;
 	}
-	return 0;
 }
 
 static
-void cli_escape_handler(struct Channel* UNUSED(channel), unsigned char* buf, int *len) {
+void cli_escape_handler(const struct Channel* UNUSED(channel), const unsigned char* buf, int *len) {
 	char c;
 	int skip_char = 0;
 

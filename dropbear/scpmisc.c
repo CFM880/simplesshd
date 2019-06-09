@@ -1,3 +1,6 @@
+/* Dropbear Note: This file is based on OpenSSH 4.3p2. Avoid unnecessary 
+   changes to simplify future updates */
+
 /*
  * Copyright (c) 2000 Markus Friedl.  All rights reserved.
  *
@@ -99,7 +102,7 @@ xstrdup(const char *str)
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	strncpy(cp, str, len);
+	strlcpy(cp, str, len);
 	return cp;
 }
 
@@ -223,6 +226,7 @@ void fatal(char* fmt,...)
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
 	va_end(args);
+	fputc('\n', stderr);
 	exit(255);
 }
 
@@ -231,7 +235,7 @@ sanitise_stdfd(void)
 {
 	int nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	if ((nullfd = dupfd = open(DROPBEAR_PATH_DEVNULL, O_RDWR)) == -1) {
 		fprintf(stderr, "Couldn't open /dev/null: %s", strerror(errno));
 		exit(1);
 	}

@@ -305,21 +305,6 @@ login_set_current_time(struct logininfo *li)
 	li->tv_usec = tv.tv_usec;
 }
 
-/* copy a sockaddr_* into our logininfo */
-void
-login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-	       const unsigned int sa_size)
-{
-	unsigned int bufsize = sa_size;
-
-	/* make sure we don't overrun our union */
-	if (sizeof(li->hostaddr) < sa_size)
-		bufsize = sizeof(li->hostaddr);
-
-	memcpy((void *)&(li->hostaddr.sa), (const void *)sa, bufsize);
-}
-
-
 /**
  ** login_write: Call low-level recording functions based on autoconf
  ** results
@@ -721,7 +706,7 @@ utmp_write_direct(struct logininfo *li, struct utmp *ut)
 		}
 
 		(void)lseek(fd, (off_t)(tty * sizeof(struct utmp)), SEEK_SET);
-		if (atomicio(write, fd, ut, sizeof(*ut)) != sizeof(*ut))
+		if (atomicio(vwrite, fd, ut, sizeof(*ut)) != sizeof(*ut))
 			dropbear_log(LOG_WARNING, "utmp_write_direct: error writing %s: %s",
 			    UTMP_FILE, strerror(errno));
 
@@ -910,7 +895,7 @@ wtmp_write(struct logininfo *li, struct utmp *ut)
 		return 0;
 	}
 	if (fstat(fd, &buf) == 0)
-		if (atomicio(write, fd, ut, sizeof(*ut)) != sizeof(*ut)) {
+		if (atomicio(vwrite, fd, ut, sizeof(*ut)) != sizeof(*ut)) {
 			ftruncate(fd, buf.st_size);
 			dropbear_log(LOG_WARNING, "wtmp_write: problem writing %s: %s",
 			    WTMP_FILE, strerror(errno));
@@ -1077,7 +1062,7 @@ wtmpx_write(struct logininfo *li, struct utmpx *utx)
 	}
 
 	if (fstat(fd, &buf) == 0)
-		if (atomicio(write, fd, utx, sizeof(*utx)) != sizeof(*utx)) {
+		if (atomicio(vwrite, fd, utx, sizeof(*utx)) != sizeof(*utx)) {
 			ftruncate(fd, buf.st_size);
 			dropbear_log(LOG_WARNING, "wtmpx_write: problem writing %s: %s",
 			    WTMPX_FILE, strerror(errno));
@@ -1345,7 +1330,8 @@ lastlog_openseek(struct logininfo *li, int *fd, int filemode)
 
 		if ( lseek(*fd, offset, SEEK_SET) != offset ) {
 			dropbear_log(LOG_WARNING, "lastlog_openseek: %s->lseek(): %s",
-			 lastlog_file, strerror(errno));
+				lastlog_file, strerror(errno));
+			m_close(*fd);
 			return 0;
 		}
 	}
@@ -1366,7 +1352,7 @@ lastlog_perform_login(struct logininfo *li)
 		return(0);
 
 	/* write the entry */
-	if (atomicio(write, fd, &last, sizeof(last)) != sizeof(last)) {
+	if (atomicio(vwrite, fd, &last, sizeof(last)) != sizeof(last)) {
 		close(fd);
 		dropbear_log(LOG_WARNING, "lastlog_write_filemode: Error writing to %s: %s",
 		    LASTLOG_FILE, strerror(errno));

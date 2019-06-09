@@ -22,9 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE. */
 
-#ifndef _ALGO_H_
+#ifndef DROPBEAR_ALGO_H_
 
-#define _ALGO_H_
+#define DROPBEAR_ALGO_H_
 
 #include "includes.h"
 #include "buffer.h"
@@ -35,7 +35,7 @@
 
 struct Algo_Type {
 
-	const unsigned char *name; /* identifying name */
+	const char *name; /* identifying name */
 	char val; /* a value for this cipher, or -1 for invalid */
 	const void *data; /* algorithm specific data */
 	char usable; /* whether we can use this algorithm */
@@ -51,6 +51,7 @@ extern algo_type sshhostkey[];
 extern algo_type sshciphers[];
 extern algo_type sshhashes[];
 extern algo_type ssh_compress[];
+extern algo_type ssh_delaycompress[];
 extern algo_type ssh_nocompress[];
 
 extern const struct dropbear_cipher dropbear_nocipher;
@@ -82,9 +83,15 @@ struct dropbear_hash {
 };
 
 enum dropbear_kex_mode {
+#if DROPBEAR_NORMAL_DH
 	DROPBEAR_KEX_NORMAL_DH,
+#endif
+#if DROPBEAR_ECDH
 	DROPBEAR_KEX_ECDH,
+#endif
+#if DROPBEAR_CURVE25519
 	DROPBEAR_KEX_CURVE25519,
+#endif
 };
 
 struct dropbear_kex {
@@ -95,7 +102,7 @@ struct dropbear_kex {
 	const int dh_p_len;
 
 	/* elliptic curve DH KEX */
-#ifdef DROPBEAR_ECDH
+#if DROPBEAR_ECDH
 	const struct dropbear_ecc_curve *ecc_curve;
 #else
 	const void* dummy;
@@ -105,8 +112,8 @@ struct dropbear_kex {
 	const struct ltc_hash_descriptor *hash_desc;
 };
 
-int have_algo(char* algo, size_t algolen, algo_type algos[]);
-void buf_put_algolist(buffer * buf, algo_type localalgos[]);
+int have_algo(const char* algo, size_t algolen, const algo_type algos[]);
+void buf_put_algolist(buffer * buf, const algo_type localalgos[]);
 
 enum kexguess2_used {
 	KEXGUESS2_LOOK,
@@ -121,10 +128,10 @@ enum kexguess2_used {
 algo_type * buf_match_algo(buffer* buf, algo_type localalgos[],
 		enum kexguess2_used *kexguess2, int *goodguess);
 
-#ifdef ENABLE_USER_ALGO_LIST
+#if DROPBEAR_USER_ALGO_LIST
 int check_user_algos(const char* user_algo_list, algo_type * algos, 
 		const char *algo_desc);
-char * algolist_string(algo_type algos[]);
+char * algolist_string(const algo_type algos[]);
 #endif
 
 enum {
@@ -133,4 +140,4 @@ enum {
 	DROPBEAR_COMP_ZLIB_DELAY,
 };
 
-#endif /* _ALGO_H_ */
+#endif /* DROPBEAR_ALGO_H_ */

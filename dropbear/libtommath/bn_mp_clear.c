@@ -1,4 +1,5 @@
-#include <tommath.h>
+#include <tommath_private.h>
+#include "dbhelpers.h"
 #ifdef BN_MP_CLEAR_C
 /* LibTomMath, multiple-precision integer library -- Tom St Denis
  *
@@ -12,24 +13,17 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
+ * Tom St Denis, tstdenis82@gmail.com, http://libtom.org
  */
 
 /* clear one (frees)  */
 void
 mp_clear (mp_int * a)
 {
-  volatile mp_digit *p;
-  int len;
-
   /* only do anything if a hasn't been freed previously */
   if (a->dp != NULL) {
     /* first zero the digits */
-	len = a->alloc;
-	p = a->dp;
-	while (len--) {
-		*p++ = 0;
-	}
+	m_burn(a->dp, a->alloc * sizeof(*a->dp));
 
     /* free ram */
     XFREE(a->dp);
@@ -42,6 +36,6 @@ mp_clear (mp_int * a)
 }
 #endif
 
-/* $Source: /cvs/libtom/libtommath/bn_mp_clear.c,v $ */
-/* $Revision: 1.3 $ */
-/* $Date: 2006/03/31 14:18:44 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

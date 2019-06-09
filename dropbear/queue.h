@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE. */
 
-#ifndef _QUEUE_H_
-#define _QUEUE_H_
+#ifndef DROPBEAR_QUEUE_H_
+#define DROPBEAR_QUEUE_H_
 
 struct Link {
 
@@ -41,9 +41,9 @@ struct Queue {
 };
 
 void initqueue(struct Queue* queue);
-int isempty(struct Queue* queue);
+int isempty(const struct Queue* queue);
 void* dequeue(struct Queue* queue);
-void *examine(struct Queue* queue);
+void *examine(const struct Queue* queue);
 void enqueue(struct Queue* queue, void* item);
 
 #endif

@@ -22,11 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE. */
 
-#ifndef _INCLUDES_H_
-#define _INCLUDES_H_
+#ifndef DROPBEAR_INCLUDES_H_
+#define DROPBEAR_INCLUDES_H_
 
 
-#include "config.h"
 #include "options.h"
 #include "debug.h"
 
@@ -57,6 +56,7 @@
 #include <stdarg.h>
 #include <dirent.h>
 #include <time.h>
+#include <setjmp.h>
 
 #ifdef HAVE_UTMP_H
 #include <utmp.h>
@@ -132,7 +132,6 @@
 #include <tommath.h>
 #endif
 
-
 #include "compat.h"
 
 #ifndef HAVE_U_INT8_T
@@ -156,12 +155,18 @@ typedef unsigned int u_int32_t;
 typedef u_int32_t uint32_t;
 #endif /* HAVE_UINT32_T */
 
-#ifdef SO_PRIORITY
+#ifndef SIZE_T_MAX
+#define SIZE_T_MAX ULONG_MAX
+#endif /* SIZE_T_MAX */
+
+#ifdef HAVE_LINUX_PKT_SCHED_H
 #include <linux/types.h>
 #include <linux/pkt_sched.h>
 #endif
 
 #include "fake-rfc2553.h"
+
+#include "fuzz.h"
 
 #ifndef LOG_AUTHPRIV
 #define LOG_AUTHPRIV LOG_AUTH
@@ -177,4 +182,4 @@ typedef u_int32_t uint32_t;
 # define UNUSED(x) x 
 #endif
 
-#endif /* _INCLUDES_H_ */
+#endif /* DROPBEAR_INCLUDES_H_ */
