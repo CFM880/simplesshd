@@ -61,7 +61,7 @@ void svr_authinitialise() {
 		char pw[9];
 		int i;
 		ses.authstate.authtypes = AUTH_TYPE_PASSWORD;
-		genrandom(pw, 8);
+		genrandom((unsigned char *)pw, 8);
 		for (i = 0; i < 8; i++) {
 			pw[i] = tab64[pw[i] & 63];
 		}
