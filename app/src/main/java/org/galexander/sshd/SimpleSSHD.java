@@ -214,6 +214,7 @@ public class SimpleSSHD extends Activity
 
 	public static String get_ip(boolean pretty) {
 		String ret = "";
+		int num_ips = 0;
 		try {
 			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 			for (NetworkInterface intf : interfaces) {
@@ -226,14 +227,16 @@ public class SimpleSSHD extends Activity
 						if (i != -1) {
 							ip = ip.substring(0,i);
 						}
-						if (pretty) {
-							if (!ret.equals("")) {
-								ret += "\n";
-							}
-							ret += "IP: "+ ip;
-						} else {
+						if (!pretty) {
 							return ip;
 						}
+						if (num_ips++ >= 5) {
+							return ret+"...";
+						}
+						if (num_ips > 1) {
+							ret += "\n";
+						}
+						ret += "IP: " + ip;
 					}
 				}
 			}
