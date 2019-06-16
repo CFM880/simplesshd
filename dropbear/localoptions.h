@@ -297,3 +297,5 @@ be overridden at runtime with -I. 0 disables idle timeouts */
 
 /* The default path. This will often get replaced by the shell */
 #define DEFAULT_PATH "/sbin:/system/sbin:/system/bin:/system/xbin"
+
+#define DROPBEAR_SVR_MULTIUSER 0

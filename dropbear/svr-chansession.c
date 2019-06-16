@@ -961,7 +961,7 @@ static void execchild(const void *user_data) {
 #endif /* DEBUG_VALGRIND */
 #endif
 
-#if 0 /* DROPBEAR_SVR_MULTIUSER */
+#if DROPBEAR_SVR_MULTIUSER
 	/* We can only change uid/gid as root ... */
 	if (getuid() == 0) {
 

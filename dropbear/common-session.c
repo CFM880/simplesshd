@@ -68,7 +68,7 @@ void common_session_init(int sock_in, int sock_out) {
 	/* Sets it to lowdelay */
 	update_channel_prio();
 
-#if !DROPBEAR_SVR_MULTIUSER
+#if 0 && !DROPBEAR_SVR_MULTIUSER
 	/* A sanity check to prevent an accidental configuration option
 	   leaving multiuser systems exposed */
 	errno = 0;
