@@ -19,8 +19,11 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/compat.c \
 	$(DROPBEAR_PATH)/crypto_desc.c \
 	$(DROPBEAR_PATH)/curve25519-donna.c \
+	$(DROPBEAR_PATH)/dbhelpers.c \
+	$(DROPBEAR_PATH)/dbmalloc.c \
 	$(DROPBEAR_PATH)/dbrandom.c \
 	$(DROPBEAR_PATH)/dbutil.c \
+	$(DROPBEAR_PATH)/dh_groups.c \
 	$(DROPBEAR_PATH)/dss.c \
 	$(DROPBEAR_PATH)/ecc.c \
 	$(DROPBEAR_PATH)/ecdsa.c \
@@ -92,6 +95,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/rmd320.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha1.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha256.c \
+	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha384.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/sha2/sha512.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/tiger.c \
 	$(DROPBEAR_PATH)/libtomcrypt/src/hashes/whirl/whirl.c \
@@ -352,6 +356,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_dr_setup.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_exch.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_expt_d.c \
+	$(DROPBEAR_PATH)/libtommath/bn_mp_expt_d_ex.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_exptmod.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_exptmod_fast.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_exteuclid.c \
@@ -386,6 +391,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_mul_d.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_mulmod.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_n_root.c \
+	$(DROPBEAR_PATH)/libtommath/bn_mp_n_root_ex.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_neg.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_or.c \
 	$(DROPBEAR_PATH)/libtommath/bn_mp_prime_fermat.c \
@@ -444,6 +450,7 @@ DROPBEAR_SRCS := $(DROPBEAR_PATH)/atomicio.c \
 	$(DROPBEAR_PATH)/listener.c \
 	$(DROPBEAR_PATH)/loginrec.c \
 	$(DROPBEAR_PATH)/ltc_prng.c \
+	$(DROPBEAR_PATH)/netio.c \
 	$(DROPBEAR_PATH)/packet.c \
 	$(DROPBEAR_PATH)/process-packet.c \
 	$(DROPBEAR_PATH)/progressmeter.c \
