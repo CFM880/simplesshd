@@ -802,8 +802,11 @@ Settings screen to force it to enable foreground services if
 start-on-boot is selected, and then we'll be golden.
 
 
-XXX - some sort of failsafe so start-on-boot && >= OREO implies foreground
 XXX - upgrade to newest dropbear
+ - test ssh passwd auth
+ - test ssh pubkey auth
+ - test server key generation
+ - test sftp, scp, rsync
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
 
