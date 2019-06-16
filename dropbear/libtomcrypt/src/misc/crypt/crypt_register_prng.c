@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -15,7 +13,7 @@
   @file crypt_register_prng.c
   Register a PRNG, Tom St Denis
 */
-  
+
 /**
    Register a PRNG with the descriptor table
    @param prng   The PRNG you wish to register
@@ -50,6 +48,6 @@ int register_prng(const struct ltc_prng_descriptor *prng)
    return -1;
 }
 
-/* $Source: /cvs/libtom/libtomcrypt/src/misc/crypt/crypt_register_prng.c,v $ */
-/* $Revision: 1.7 $ */
-/* $Date: 2006/11/01 09:28:17 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

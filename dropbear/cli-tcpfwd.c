@@ -23,15 +23,15 @@
  * SOFTWARE. */
 
 #include "includes.h"
-#include "options.h"
 #include "dbutil.h"
 #include "tcpfwd.h"
 #include "channel.h"
 #include "runopts.h"
 #include "session.h"
 #include "ssh.h"
+#include "netio.h"
 
-#ifdef ENABLE_CLI_REMOTETCPFWD
+#if DROPBEAR_CLI_REMOTETCPFWD
 static int newtcpforwarded(struct Channel * channel);
 
 const struct ChanType cli_chan_tcpremote = {
@@ -40,11 +40,12 @@ const struct ChanType cli_chan_tcpremote = {
 	newtcpforwarded,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 #endif
 
-#ifdef ENABLE_CLI_LOCALTCPFWD
+#if DROPBEAR_CLI_LOCALTCPFWD
 static int cli_localtcp(const char* listenaddr, 
 		unsigned int listenport, 
 		const char* remoteaddr,
@@ -55,11 +56,29 @@ static const struct ChanType cli_chan_tcplocal = {
 	tcp_prio_inithandler,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 #endif
 
-#ifdef ENABLE_CLI_LOCALTCPFWD
+#if DROPBEAR_CLI_ANYTCPFWD
+static void fwd_failed(const char* format, ...) ATTRIB_PRINTF(1,2);
+static void fwd_failed(const char* format, ...)
+{
+	va_list param;
+	va_start(param, format);
+
+	if (cli_opts.exit_on_fwd_failure) {
+		_dropbear_exit(EXIT_FAILURE, format, param);
+	} else {
+		_dropbear_log(LOG_WARNING, format, param);
+	}
+
+	va_end(param);
+}
+#endif
+
+#if DROPBEAR_CLI_LOCALTCPFWD
 void setup_localtcp() {
 	m_list_elem *iter;
 	int ret;
@@ -74,7 +93,7 @@ void setup_localtcp() {
 				fwd->connectaddr,
 				fwd->connectport);
 		if (ret == DROPBEAR_FAILURE) {
-			dropbear_log(LOG_WARNING, "Failed local port forward %s:%d:%s:%d",
+			fwd_failed("Failed local port forward %s:%d:%s:%d",
 					fwd->listenaddr,
 					fwd->listenport,
 					fwd->connectaddr,
@@ -118,7 +137,7 @@ static int cli_localtcp(const char* listenaddr,
 	tcpinfo->chantype = &cli_chan_tcplocal;
 	tcpinfo->tcp_type = direct;
 
-	ret = listen_tcpfwd(tcpinfo);
+	ret = listen_tcpfwd(tcpinfo, NULL);
 
 	if (ret == DROPBEAR_FAILURE) {
 		m_free(tcpinfo);
@@ -126,9 +145,9 @@ static int cli_localtcp(const char* listenaddr,
 	TRACE(("leave cli_localtcp: %d", ret))
 	return ret;
 }
-#endif /* ENABLE_CLI_LOCALTCPFWD */
+#endif /* DROPBEAR_CLI_LOCALTCPFWD */
 
-#ifdef  ENABLE_CLI_REMOTETCPFWD
+#if DROPBEAR_CLI_REMOTETCPFWD
 static void send_msg_global_request_remotetcp(const char *addr, int port) {
 
 	TRACE(("enter send_msg_global_request_remotetcp"))
@@ -180,7 +199,10 @@ void cli_recv_msg_request_failure() {
 		struct TCPFwdEntry *fwd = (struct TCPFwdEntry*)iter->item;
 		if (!fwd->have_reply) {
 			fwd->have_reply = 1;
-			dropbear_log(LOG_WARNING, "Remote TCP forward request failed (port %d -> %s:%d)", fwd->listenport, fwd->connectaddr, fwd->connectport);
+			fwd_failed("Remote TCP forward request failed (port %d -> %s:%d)",
+					fwd->listenport,
+					fwd->connectaddr,
+					fwd->connectport);
 			return;
 		}
 	}
@@ -210,12 +232,11 @@ void setup_remotetcp() {
 
 static int newtcpforwarded(struct Channel * channel) {
 
-    char *origaddr = NULL;
+	char *origaddr = NULL;
 	unsigned int origport;
 	m_list_elem * iter = NULL;
-	struct TCPFwdEntry *fwd;
+	struct TCPFwdEntry *fwd = NULL;
 	char portstring[NI_MAXSERV];
-	int sock;
 	int err = SSH_OPEN_ADMINISTRATIVELY_PROHIBITED;
 
 	origaddr = buf_getstring(ses.payload, NULL);
@@ -245,28 +266,16 @@ static int newtcpforwarded(struct Channel * channel) {
 	}
 
 
-	if (iter == NULL) {
+	if (iter == NULL || fwd == NULL) {
 		/* We didn't request forwarding on that port */
-        	cleantext(origaddr);
+		cleantext(origaddr);
 		dropbear_log(LOG_INFO, "Server sent unrequested forward from \"%s:%d\"", 
                 origaddr, origport);
 		goto out;
 	}
 	
-	snprintf(portstring, sizeof(portstring), "%d", fwd->connectport);
-	sock = connect_remote(fwd->connectaddr, portstring, 1, NULL);
-	if (sock < 0) {
-		TRACE(("leave newtcpdirect: sock failed"))
-		err = SSH_OPEN_CONNECT_FAILED;
-		goto out;
-	}
-
-	ses.maxfd = MAX(ses.maxfd, sock);
-
-	/* We don't set readfd, that will get set after the connection's
-	 * progress succeeds */
-	channel->writefd = sock;
-	channel->initconn = 1;
+	snprintf(portstring, sizeof(portstring), "%u", fwd->connectport);
+	channel->conn_pending = connect_remote(fwd->connectaddr, portstring, channel_connect_done, channel, NULL, NULL);
 
 	channel->prio = DROPBEAR_CHANNEL_PRIO_UNKNOWABLE;
 	
@@ -277,4 +286,4 @@ out:
 	TRACE(("leave newtcpdirect: err %d", err))
 	return err;
 }
-#endif /* ENABLE_CLI_REMOTETCPFWD */
+#endif /* DROPBEAR_CLI_REMOTETCPFWD */

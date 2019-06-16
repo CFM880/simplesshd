@@ -34,12 +34,14 @@
 #include "service.h"
 #include "auth.h"
 #include "channel.h"
+#include "netio.h"
+#include "runopts.h"
 
-static int read_packet_init();
+static int read_packet_init(void);
 static void make_mac(unsigned int seqno, const struct key_context_directional * key_state,
 		buffer * clear_buf, unsigned int clear_len, 
 		unsigned char *output_mac);
-static int checkmac();
+static int checkmac(void);
 
 /* For exact details see http://www.zlib.net/zlib_tech.html
  * 5 bytes per 16kB block, plus 6 bytes for the stream.
@@ -48,21 +50,21 @@ static int checkmac();
 #define ZLIB_COMPRESS_EXPANSION (((RECV_MAX_PAYLOAD_LEN/16384)+1)*5 + 6)
 #define ZLIB_DECOMPRESS_INCR 1024
 #ifndef DISABLE_ZLIB
-static buffer* buf_decompress(buffer* buf, unsigned int len);
+static buffer* buf_decompress(const buffer* buf, unsigned int len);
 static void buf_compress(buffer * dest, buffer * src, unsigned int len);
 #endif
 
 /* non-blocking function writing out a current encrypted packet */
 void write_packet() {
 
-	int len, written;
-	buffer * writebuf = NULL;
-	unsigned packet_type;
-#ifdef HAVE_WRITEV
-	struct iovec *iov = NULL;
-	int i;
-	struct Link *l;
-	int iov_max_count;
+	ssize_t written;
+#if defined(HAVE_WRITEV) && (defined(IOV_MAX) || defined(UIO_MAXIOV))
+	/* 50 is somewhat arbitrary */
+	unsigned int iov_count = 50;
+	struct iovec iov[50];
+#else
+	int len;
+	buffer* writebuf;
 #endif
 	
 	TRACE2(("enter write_packet"))
@@ -70,70 +72,45 @@ void write_packet() {
 
 #if defined(HAVE_WRITEV) && (defined(IOV_MAX) || defined(UIO_MAXIOV))
 
-#ifndef IOV_MAX
-#define IOV_MAX UIO_MAXIOV
-#endif
-
-	/* Make sure the size of the iov is below the maximum allowed by the OS. */
-	iov_max_count = ses.writequeue.count;
-	if (iov_max_count > IOV_MAX)
-	{
-		iov_max_count = IOV_MAX;
-	}
-
-	iov = m_malloc(sizeof(*iov) * iov_max_count);
-	for (l = ses.writequeue.head, i = 0; l; l = l->link, i++)
-	{
-		writebuf = (buffer*)l->item;
-		packet_type = writebuf->data[writebuf->len-1];
-		len = writebuf->len - 1 - writebuf->pos;
-		dropbear_assert(len > 0);
-		TRACE2(("write_packet writev #%d  type %d len %d/%d", i, packet_type,
-				len, writebuf->len-1))
-		iov[i].iov_base = buf_getptr(writebuf, len);
-		iov[i].iov_len = len;
-	}
+	packet_queue_to_iovec(&ses.writequeue, iov, &iov_count);
 	/* This may return EAGAIN. The main loop sometimes
 	calls write_packet() without bothering to test with select() since
 	it's likely to be necessary */
-	written = writev(ses.sock_out, iov, iov_max_count);
+#if DROPBEAR_FUZZ
+	if (fuzz.fuzzing) {
+		/* pretend to write one packet at a time */
+		/* TODO(fuzz): randomise amount written based on the fuzz input */
+		written = iov[0].iov_len;
+	}
+	else
+#endif
+	{
+	written = writev(ses.sock_out, iov, iov_count);
 	if (written < 0) {
 		if (errno == EINTR || errno == EAGAIN) {
-			m_free(iov);
 			TRACE2(("leave write_packet: EINTR"))
 			return;
 		} else {
 			dropbear_exit("Error writing: %s", strerror(errno));
 		}
 	}
+	}
+
+	packet_queue_consume(&ses.writequeue, written);
+	ses.writequeue_len -= written;
 
 	if (written == 0) {
 		ses.remoteclosed();
 	}
 
-	while (written > 0) {
-		writebuf = (buffer*)examine(&ses.writequeue);
-		len = writebuf->len - 1 - writebuf->pos;
-		if (len > written) {
-			/* partial buffer write */
-			buf_incrpos(writebuf, written);
-			written = 0;
-		} else {
-			written -= len;
-			dequeue(&ses.writequeue);
-			buf_free(writebuf);
-		}
-	}
-
-	m_free(iov);
 #else /* No writev () */
+#if DROPBEAR_FUZZ
+	_Static_assert(0, "No fuzzing code for no-writev writes");
+#endif
 	/* Get the next buffer in the queue of encrypted packets to write*/
 	writebuf = (buffer*)examine(&ses.writequeue);
 
-	/* The last byte of the buffer is not to be transmitted, but is 
-	 * a cleartext packet_type indicator */
-	packet_type = writebuf->data[writebuf->len-1];
-	len = writebuf->len - 1 - writebuf->pos;
+	len = writebuf->len - writebuf->pos;
 	dropbear_assert(len > 0);
 	/* Try to write as much as possible */
 	written = write(ses.sock_out, buf_getptr(writebuf, len), len);
@@ -150,6 +127,8 @@ void write_packet() {
 	if (written == 0) {
 		ses.remoteclosed();
 	}
+
+	ses.writequeue_len -= written;
 
 	if (written == len) {
 		/* We've finished with the packet, free it */
@@ -283,18 +262,18 @@ static int read_packet_init() {
 	}
 	len = buf_getint(ses.readbuf) + 4 + macsize;
 
-	TRACE2(("packet size is %d, block %d mac %d", len, blocksize, macsize))
+	TRACE2(("packet size is %u, block %u mac %u", len, blocksize, macsize))
 
 
 	/* check packet length */
 	if ((len > RECV_MAX_PACKET_LEN) ||
 		(len < MIN_PACKET_LEN + macsize) ||
 		((len - macsize) % blocksize != 0)) {
-		dropbear_exit("Integrity error (bad packet size %d)", len);
+		dropbear_exit("Integrity error (bad packet size %u)", len);
 	}
 
 	if (len > ses.readbuf->size) {
-		buf_resize(ses.readbuf, len);		
+		ses.readbuf = buf_resize(ses.readbuf, len);		
 	}
 	buf_setlen(ses.readbuf, len);
 	buf_setpos(ses.readbuf, blocksize);
@@ -342,7 +321,7 @@ void decrypt_packet() {
 	/* - 4 - 1 is for LEN and PADLEN values */
 	len = ses.readbuf->len - padlen - 4 - 1 - macsize;
 	if ((len > RECV_MAX_PAYLOAD_LEN+ZLIB_COMPRESS_EXPANSION) || (len < 1)) {
-		dropbear_exit("Bad packet size %d", len);
+		dropbear_exit("Bad packet size %u", len);
 	}
 
 	buf_setpos(ses.readbuf, PACKET_PAYLOAD_OFF);
@@ -351,18 +330,17 @@ void decrypt_packet() {
 	if (is_compress_recv()) {
 		/* decompress */
 		ses.payload = buf_decompress(ses.readbuf, len);
+		buf_setpos(ses.payload, 0);
+		ses.payload_beginning = 0;
+		buf_free(ses.readbuf);
 	} else 
 #endif
 	{
-		/* copy payload */
-		ses.payload = buf_new(len);
-		memcpy(ses.payload->data, buf_getptr(ses.readbuf, len), len);
-		buf_incrlen(ses.payload, len);
+		ses.payload = ses.readbuf;
+		ses.payload_beginning = ses.payload->pos;
+		buf_setlen(ses.payload, ses.payload->pos + len);
 	}
-
-	buf_free(ses.readbuf);
 	ses.readbuf = NULL;
-	buf_setpos(ses.payload, 0);
 
 	ses.recvseq++;
 
@@ -382,6 +360,20 @@ static int checkmac() {
 	buf_setpos(ses.readbuf, 0);
 	make_mac(ses.recvseq, &ses.keys->recv, ses.readbuf, contents_len, mac_bytes);
 
+#if DROPBEAR_FUZZ
+	if (fuzz.fuzzing) {
+	 	/* fail 1 in 2000 times to test error path. */
+		unsigned int value = 0;
+		if (mac_size > sizeof(value)) {
+			memcpy(&value, mac_bytes, sizeof(value));
+		}
+		if (value % 2000 == 99) {
+			return DROPBEAR_FAILURE;
+		}
+		return DROPBEAR_SUCCESS;
+	}
+#endif
+
 	/* compare the hash */
 	buf_setpos(ses.readbuf, contents_len);
 	if (constant_time_memcmp(mac_bytes, buf_getptr(ses.readbuf, mac_size), mac_size) != 0) {
@@ -393,7 +385,7 @@ static int checkmac() {
 
 #ifndef DISABLE_ZLIB
 /* returns a pointer to a newly created buffer */
-static buffer* buf_decompress(buffer* buf, unsigned int len) {
+static buffer* buf_decompress(const buffer* buf, unsigned int len) {
 
 	int result;
 	buffer * ret;
@@ -435,7 +427,7 @@ static buffer* buf_decompress(buffer* buf, unsigned int len) {
 				dropbear_exit("bad packet, oversized decompressed");
 			}
 			new_size = MIN(RECV_MAX_PAYLOAD_LEN, ret->size + ZLIB_DECOMPRESS_INCR);
-			buf_resize(ret, new_size);
+			ret = buf_resize(ret, new_size);
 		}
 	}
 }
@@ -602,18 +594,15 @@ void encrypt_packet() {
 	}
 	buf_incrpos(writebuf, len);
 
-    /* stick the MAC on it */
-    buf_putbytes(writebuf, mac_bytes, mac_size);
-
-	/* The last byte of the buffer stores the cleartext packet_type. It is not
-	 * transmitted but is used for transmit timeout purposes */
-	buf_putbyte(writebuf, packet_type);
-	/* enqueue the packet for sending. It will get freed after transmission. */
-	buf_setpos(writebuf, 0);
-	enqueue(&ses.writequeue, (void*)writebuf);
+	/* stick the MAC on it */
+	buf_putbytes(writebuf, mac_bytes, mac_size);
 
 	/* Update counts */
 	ses.kexstate.datatrans += writebuf->len;
+
+	writebuf_enqueue(writebuf);
+
+	/* Update counts */
 	ses.transseq++;
 
 	now = monotonic_now();
@@ -629,6 +618,13 @@ void encrypt_packet() {
 	}
 
 	TRACE2(("leave encrypt_packet()"))
+}
+
+void writebuf_enqueue(buffer * writebuf) {
+	/* enqueue the packet for sending. It will get freed after transmission. */
+	buf_setpos(writebuf, 0);
+	enqueue(&ses.writequeue, (void*)writebuf);
+	ses.writequeue_len += writebuf->len;
 }
 
 
@@ -664,7 +660,7 @@ static void make_mac(unsigned int seqno, const struct key_context_directional * 
 			dropbear_exit("HMAC error");
 		}
 	
-        bufsize = MAX_MAC_LEN;
+		bufsize = MAX_MAC_LEN;
 		if (hmac_done(&hmac, output_mac, &bufsize) != CRYPT_OK) {
 			dropbear_exit("HMAC error");
 		}
@@ -674,7 +670,8 @@ static void make_mac(unsigned int seqno, const struct key_context_directional * 
 
 #ifndef DISABLE_ZLIB
 /* compresses len bytes from src, outputting to dest (starting from the
- * respective current positions. */
+ * respective current positions. dest must have sufficient space,
+ * len+ZLIB_COMPRESS_EXPANSION */
 static void buf_compress(buffer * dest, buffer * src, unsigned int len) {
 
 	unsigned int endpos = src->pos + len;
@@ -682,38 +679,28 @@ static void buf_compress(buffer * dest, buffer * src, unsigned int len) {
 
 	TRACE2(("enter buf_compress"))
 
-	while (1) {
+	dropbear_assert(dest->size - dest->pos >= len+ZLIB_COMPRESS_EXPANSION);
 
-		ses.keys->trans.zstream->avail_in = endpos - src->pos;
-		ses.keys->trans.zstream->next_in = 
-			buf_getptr(src, ses.keys->trans.zstream->avail_in);
+	ses.keys->trans.zstream->avail_in = endpos - src->pos;
+	ses.keys->trans.zstream->next_in = 
+		buf_getptr(src, ses.keys->trans.zstream->avail_in);
 
-		ses.keys->trans.zstream->avail_out = dest->size - dest->pos;
-		ses.keys->trans.zstream->next_out =
-			buf_getwriteptr(dest, ses.keys->trans.zstream->avail_out);
+	ses.keys->trans.zstream->avail_out = dest->size - dest->pos;
+	ses.keys->trans.zstream->next_out =
+		buf_getwriteptr(dest, ses.keys->trans.zstream->avail_out);
 
-		result = deflate(ses.keys->trans.zstream, Z_SYNC_FLUSH);
+	result = deflate(ses.keys->trans.zstream, Z_SYNC_FLUSH);
 
-		buf_setpos(src, endpos - ses.keys->trans.zstream->avail_in);
-		buf_setlen(dest, dest->size - ses.keys->trans.zstream->avail_out);
-		buf_setpos(dest, dest->len);
+	buf_setpos(src, endpos - ses.keys->trans.zstream->avail_in);
+	buf_setlen(dest, dest->size - ses.keys->trans.zstream->avail_out);
+	buf_setpos(dest, dest->len);
 
-		if (result != Z_OK) {
-			dropbear_exit("zlib error");
-		}
-
-		if (ses.keys->trans.zstream->avail_in == 0) {
-			break;
-		}
-
-		dropbear_assert(ses.keys->trans.zstream->avail_out == 0);
-
-		/* the buffer has been filled, we must extend. This only happens in
-		 * unusual circumstances where the data grows in size after deflate(),
-		 * but it is possible */
-		buf_resize(dest, dest->size + ZLIB_COMPRESS_EXPANSION);
-
+	if (result != Z_OK) {
+		dropbear_exit("zlib error");
 	}
+
+	/* fails if destination buffer wasn't large enough */
+	dropbear_assert(ses.keys->trans.zstream->avail_in == 0);
 	TRACE2(("leave buf_compress"))
 }
 #endif

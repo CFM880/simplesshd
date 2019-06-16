@@ -24,7 +24,7 @@
 
 #include "includes.h"
 
-#ifdef ENABLE_CLI_AGENTFWD
+#if DROPBEAR_CLI_AGENTFWD
 
 #include "agentfwd.h"
 #include "session.h"
@@ -50,6 +50,7 @@ const struct ChanType cli_chan_agent = {
 	0, /* sepfds */
 	"auth-agent@openssh.com",
 	new_agent_chan,
+	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -108,7 +109,7 @@ static int new_agent_chan(struct Channel * channel) {
    data        Any data, depending on packet type.  Encoding as in the ssh packet
                protocol.
 */
-static buffer * agent_request(unsigned char type, buffer *data) {
+static buffer * agent_request(unsigned char type, const buffer *data) {
 
 	buffer * payload = NULL;
 	buffer * inbuf = NULL;
@@ -130,7 +131,7 @@ static buffer * agent_request(unsigned char type, buffer *data) {
 	}
 	buf_setpos(payload, 0);
 
-	ret = atomicio(write, fd, buf_getptr(payload, payload->len), payload->len);
+	ret = atomicio(vwrite, fd, buf_getptr(payload, payload->len), payload->len);
 	if ((size_t)ret != payload->len) {
 		TRACE(("write failed fd %d for agent_request, %s", fd, strerror(errno)))
 		goto out;
@@ -155,7 +156,7 @@ static buffer * agent_request(unsigned char type, buffer *data) {
 		goto out;
 	}
 	
-	buf_resize(inbuf, readlen);
+	inbuf = buf_resize(inbuf, readlen);
 	buf_setpos(inbuf, 0);
 	ret = atomicio(read, fd, buf_getwriteptr(inbuf, readlen), readlen);
 	if ((size_t)ret != readlen) {
@@ -210,13 +211,14 @@ static void agent_get_key_list(m_list * ret_list)
 		ret = buf_get_pub_key(key_buf, pubkey, &key_type);
 		buf_free(key_buf);
 		if (ret != DROPBEAR_SUCCESS) {
-			/* This is slack, properly would cleanup vars etc */
-			dropbear_exit("Bad pubkey received from agent");
-		}
-		pubkey->type = key_type;
-		pubkey->source = SIGNKEY_SOURCE_AGENT;
+			TRACE(("Skipping bad/unknown type pubkey from agent"));
+			sign_key_free(pubkey);
+		} else {
+			pubkey->type = key_type;
+			pubkey->source = SIGNKEY_SOURCE_AGENT;
 
-		list_append(ret_list, pubkey);
+			list_append(ret_list, pubkey);
+		}
 
 		/* We'll ignore the comment for now. might want it later.*/
 		buf_eatstring(inbuf);
@@ -229,7 +231,7 @@ out:
 	}
 }
 
-void cli_setup_agent(struct Channel *channel) {
+void cli_setup_agent(const struct Channel *channel) {
 	if (!getenv("SSH_AUTH_SOCK")) {
 		return;
 	}
@@ -253,7 +255,7 @@ void cli_load_agent_keys(m_list *ret_list) {
 }
 
 void agent_buf_sign(buffer *sigblob, sign_key *key, 
-		buffer *data_buf) {
+		const buffer *data_buf) {
 	buffer *request_data = NULL;
 	buffer *response = NULL;
 	unsigned int siglen;

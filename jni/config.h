@@ -32,6 +32,8 @@
 #define DBMULTI_dropbear 1
 #define DROPBEAR_MULTI 1
 
+#define LOCALOPTIONS_H_EXISTS 1
+
 
 /* in jni/interface.c: */
 extern const char *conf_path;

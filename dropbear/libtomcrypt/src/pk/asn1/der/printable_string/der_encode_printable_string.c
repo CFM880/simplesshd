@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -38,7 +36,7 @@ int der_encode_printable_string(const unsigned char *in, unsigned long inlen,
 
    /* get the size */
    if ((err = der_length_printable_string(in, inlen, &len)) != CRYPT_OK) {
-      return err; 
+      return err;
    }
 
    /* too big? */
@@ -81,6 +79,6 @@ int der_encode_printable_string(const unsigned char *in, unsigned long inlen,
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/pk/asn1/der/printable_string/der_encode_printable_string.c,v $ */
-/* $Revision: 1.4 $ */
-/* $Date: 2006/12/04 21:34:03 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

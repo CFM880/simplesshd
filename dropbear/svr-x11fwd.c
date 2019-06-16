@@ -24,7 +24,7 @@
 
 #include "includes.h"
 
-#ifndef DISABLE_X11FWD
+#if DROPBEAR_X11FWD
 #include "x11fwd.h"
 #include "session.h"
 #include "ssh.h"
@@ -38,15 +38,33 @@
 #define X11BASEPORT 6000
 #define X11BINDBASE 6010
 
-static void x11accept(struct Listener* listener, int sock);
+static void x11accept(const struct Listener* listener, int sock);
 static int bindport(int fd);
-static int send_msg_channel_open_x11(int fd, struct sockaddr_in* addr);
+static int send_msg_channel_open_x11(int fd, const struct sockaddr_in* addr);
+
+/* Check untrusted xauth strings for metacharacters */
+/* Returns DROPBEAR_SUCCESS/DROPBEAR_FAILURE */
+static int
+xauth_valid_string(const char *s)
+{
+	size_t i;
+
+	for (i = 0; s[i] != '\0'; i++) {
+		if (!isalnum(s[i]) &&
+		    s[i] != '.' && s[i] != ':' && s[i] != '/' &&
+		    s[i] != '-' && s[i] != '_') {
+			return DROPBEAR_FAILURE;
+		}
+	}
+	return DROPBEAR_SUCCESS;
+}
+
 
 /* called as a request for a session channel, sets up listening X11 */
 /* returns DROPBEAR_SUCCESS or DROPBEAR_FAILURE */
 int x11req(struct ChanSess * chansess) {
 
-	int fd;
+	int fd = -1;
 
 	if (!svr_pubkey_allows_x11fwd()) {
 		return DROPBEAR_FAILURE;
@@ -62,6 +80,11 @@ int x11req(struct ChanSess * chansess) {
 	chansess->x11authcookie = buf_getstring(ses.payload, NULL);
 	chansess->x11screennum = buf_getint(ses.payload);
 
+	if (xauth_valid_string(chansess->x11authprot) == DROPBEAR_FAILURE ||
+		xauth_valid_string(chansess->x11authcookie) == DROPBEAR_FAILURE) {
+		dropbear_log(LOG_WARNING, "Bad xauth request");
+		goto fail;
+	}
 	/* create listening socket */
 	fd = socket(PF_INET, SOCK_STREAM, 0);
 	if (fd < 0) {
@@ -96,18 +119,18 @@ fail:
 	/* cleanup */
 	m_free(chansess->x11authprot);
 	m_free(chansess->x11authcookie);
-	close(fd);
+	m_close(fd);
 
 	return DROPBEAR_FAILURE;
 }
 
 /* accepts a new X11 socket */
 /* returns DROPBEAR_FAILURE or DROPBEAR_SUCCESS */
-static void x11accept(struct Listener* listener, int sock) {
+static void x11accept(const struct Listener* listener, int sock) {
 
 	int fd;
 	struct sockaddr_in addr;
-	int len;
+	socklen_t len;
 	int ret;
 	struct ChanSess * chansess = (struct ChanSess *)(listener->typedata);
 
@@ -131,7 +154,7 @@ static void x11accept(struct Listener* listener, int sock) {
 
 /* This is called after switching to the user, and sets up the xauth
  * and environment variables.  */
-void x11setauth(struct ChanSess *chansess) {
+void x11setauth(const struct ChanSess *chansess) {
 
 	char display[20]; /* space for "localhost:12345.123" */
 	FILE * authprog = NULL;
@@ -142,7 +165,7 @@ void x11setauth(struct ChanSess *chansess) {
 	}
 
 	/* create the DISPLAY string */
-	val = snprintf(display, sizeof(display), "localhost:%d.%d",
+	val = snprintf(display, sizeof(display), "localhost:%d.%u",
 			chansess->x11port - X11BASEPORT, chansess->x11screennum);
 	if (val < 0 || val >= (int)sizeof(display)) {
 		/* string was truncated */
@@ -152,14 +175,14 @@ void x11setauth(struct ChanSess *chansess) {
 	addnewvar("DISPLAY", display);
 
 	/* create the xauth string */
-	val = snprintf(display, sizeof(display), "unix:%d.%d",
+	val = snprintf(display, sizeof(display), "unix:%d.%u",
 			chansess->x11port - X11BASEPORT, chansess->x11screennum);
 	if (val < 0 || val >= (int)sizeof(display)) {
 		/* string was truncated */
 		return;
 	}
 
-	/* popen is a nice function - code is strongly based on OpenSSH's */
+	/* code is strongly based on OpenSSH's */
 	authprog = popen(XAUTH_COMMAND, "w");
 	if (authprog) {
 		fprintf(authprog, "add %s %s %s\n",
@@ -175,7 +198,7 @@ void x11cleanup(struct ChanSess *chansess) {
 	m_free(chansess->x11authprot);
 	m_free(chansess->x11authcookie);
 
-	TRACE(("chansess %p", chansess))
+	TRACE(("chansess %p", (void*)chansess))
 	if (chansess->x11listener != NULL) {
 		remove_listener(chansess->x11listener);
 		chansess->x11listener = NULL;
@@ -193,11 +216,12 @@ static const struct ChanType chan_x11 = {
 	x11_inithandler, /* inithandler */
 	NULL, /* checkclose */
 	NULL, /* reqhandler */
-	NULL /* closehandler */
+	NULL, /* closehandler */
+	NULL /* cleanup */
 };
 
 
-static int send_msg_channel_open_x11(int fd, struct sockaddr_in* addr) {
+static int send_msg_channel_open_x11(int fd, const struct sockaddr_in* addr) {
 
 	char* ipstring = NULL;
 

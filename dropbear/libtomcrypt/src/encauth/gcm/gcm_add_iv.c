@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 
 /**
@@ -16,7 +14,7 @@
 */
 #include "tomcrypt.h"
 
-#ifdef GCM_MODE
+#ifdef LTC_GCM_MODE
 
 /**
   Add IV data to the GCM state
@@ -25,7 +23,7 @@
   @param IVlen  The length of the IV
   @return CRYPT_OK on success
  */
-int gcm_add_iv(gcm_state *gcm, 
+int gcm_add_iv(gcm_state *gcm,
                const unsigned char *IV,     unsigned long IVlen)
 {
    unsigned long x, y;
@@ -37,10 +35,10 @@ int gcm_add_iv(gcm_state *gcm,
    }
 
    /* must be in IV mode */
-   if (gcm->mode != GCM_MODE_IV) {
+   if (gcm->mode != LTC_GCM_MODE_IV) {
       return CRYPT_INVALID_ARG;
    }
- 
+
    if (gcm->buflen >= 16 || gcm->buflen < 0) {
       return CRYPT_INVALID_ARG;
    }
@@ -60,7 +58,7 @@ int gcm_add_iv(gcm_state *gcm,
    if (gcm->buflen == 0) {
       for (x = 0; x < (IVlen & ~15); x += 16) {
           for (y = 0; y < 16; y += sizeof(LTC_FAST_TYPE)) {
-              *((LTC_FAST_TYPE*)(&gcm->X[y])) ^= *((LTC_FAST_TYPE*)(&IV[x + y]));
+              *(LTC_FAST_TYPE_PTR_CAST(&gcm->X[y])) ^= *(LTC_FAST_TYPE_PTR_CAST(&IV[x + y]));
           }
           gcm_mult_h(gcm, gcm->X);
           gcm->totlen += 128;
@@ -73,7 +71,7 @@ int gcm_add_iv(gcm_state *gcm,
    for (; x < IVlen; x++) {
        gcm->buf[gcm->buflen++] = *IV++;
 
-       if (gcm->buflen == 16) {
+      if (gcm->buflen == 16) {
          /* GF mult it */
          for (y = 0; y < 16; y++) {
              gcm->X[y] ^= gcm->buf[y];
@@ -88,8 +86,8 @@ int gcm_add_iv(gcm_state *gcm,
 }
 
 #endif
-   
 
-/* $Source: /cvs/libtom/libtomcrypt/src/encauth/gcm/gcm_add_iv.c,v $ */
-/* $Revision: 1.7 $ */
-/* $Date: 2006/03/31 14:15:35 $ */
+
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

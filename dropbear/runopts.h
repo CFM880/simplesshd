@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE. */
 
-#ifndef _RUNOPTS_H_
-#define _RUNOPTS_H_
+#ifndef DROPBEAR_RUNOPTS_H_
+#define DROPBEAR_RUNOPTS_H_
 
 #include "includes.h"
 #include "signkey.h"
@@ -33,21 +33,27 @@
 
 typedef struct runopts {
 
-#if defined(ENABLE_SVR_REMOTETCPFWD) || defined(ENABLE_CLI_LOCALTCPFWD)
+#if DROPBEAR_SVR_REMOTETCPFWD || DROPBEAR_CLI_LOCALTCPFWD \
+    || DROPBEAR_CLI_REMOTETCPFWD
 	int listen_fwd_all;
 #endif
 	unsigned int recv_window;
 	time_t keepalive_secs; /* Time between sending keepalives. 0 is off */
 	time_t idle_timeout_secs; /* Exit if no traffic is sent/received in this time */
+	int usingsyslog;
 
 #ifndef DISABLE_ZLIB
 	/* TODO: add a commandline flag. Currently this is on by default if compression
 	 * is compiled in, but disabled for a client's non-final multihop stages. (The
 	 * intermediate stages are compressed streams, so are uncompressible. */
-	int enable_compress;
+	enum {
+		DROPBEAR_COMPRESS_DELAYED, /* Server only */
+		DROPBEAR_COMPRESS_ON,
+		DROPBEAR_COMPRESS_OFF,
+	} compress_mode;
 #endif
 
-#ifdef ENABLE_USER_ALGO_LIST
+#if DROPBEAR_USER_ALGO_LIST
 	char *cipher_list;
 	char *mac_list;
 #endif
@@ -58,16 +64,16 @@ extern runopts opts;
 
 int readhostkey(const char * filename, sign_key * hostkey, 
 	enum signkey_type *type);
-void load_all_hostkeys();
+void load_all_hostkeys(void);
 
 typedef struct svr_runopts {
 
 	char * bannerfile;
 
 	int forkbg;
-	int usingsyslog;
 
-	/* ports is an array of the portcount listening ports */
+	/* ports and addresses are arrays of the portcount 
+	listening ports. strings are malloced. */
 	char *ports[DROPBEAR_MAX_PORTS];
 	unsigned int portcount;
 	char *addresses[DROPBEAR_MAX_PORTS];
@@ -80,21 +86,30 @@ typedef struct svr_runopts {
 	int ipv6;
 	*/
 
-#ifdef DO_MOTD
+#if DO_MOTD
 	/* whether to print the MOTD */
 	int domotd;
 #endif
 
 	int norootlogin;
 
+#ifdef HAVE_GETGROUPLIST
+	/* restrict_group is the group name if group restriction was enabled, 
+	NULL otherwise */
+	char *restrict_group;
+	/* restrict_group_gid is only valid if restrict_group is set */
+	gid_t restrict_group_gid;
+#endif
+
 	int noauthpass;
 	int norootpass;
 	int allowblankpass;
+	unsigned int maxauthtries;
 
-#ifdef ENABLE_SVR_REMOTETCPFWD
+#if DROPBEAR_SVR_REMOTETCPFWD
 	int noremotetcp;
 #endif
-#ifdef ENABLE_SVR_LOCALTCPFWD
+#if DROPBEAR_SVR_LOCALTCPFWD
 	int nolocaltcp;
 #endif
 
@@ -108,18 +123,20 @@ typedef struct svr_runopts {
 	buffer * banner;
 	char * pidfile;
 
+	char * forced_command;
+
 } svr_runopts;
 
 extern svr_runopts svr_opts;
 
 void svr_getopts(int argc, char ** argv);
-void loadhostkeys();
+void loadhostkeys(void);
 
 typedef struct cli_runopts {
 
 	char *progname;
 	char *remotehost;
-	char *remoteport;
+	const char *remoteport;
 
 	char *own_user;
 	char *username;
@@ -131,16 +148,19 @@ typedef struct cli_runopts {
 	int no_cmd;
 	int backgrounded;
 	int is_subsystem;
-#ifdef ENABLE_CLI_PUBKEY_AUTH
+#if DROPBEAR_CLI_PUBKEY_AUTH
 	m_list *privkeys; /* Keys to use for public-key auth */
 #endif
-#ifdef ENABLE_CLI_REMOTETCPFWD
+#if DROPBEAR_CLI_ANYTCPFWD
+	int exit_on_fwd_failure;
+#endif
+#if DROPBEAR_CLI_REMOTETCPFWD
 	m_list * remotefwds;
 #endif
-#ifdef ENABLE_CLI_LOCALTCPFWD
+#if DROPBEAR_CLI_LOCALTCPFWD
 	m_list * localfwds;
 #endif
-#ifdef ENABLE_CLI_AGENTFWD
+#if DROPBEAR_CLI_AGENTFWD
 	int agent_fwd;
 	int agent_keys_loaded; /* whether pubkeys has been populated with a 
 							  list of keys held by the agent */
@@ -148,22 +168,24 @@ typedef struct cli_runopts {
 	                 agent sessions have their own file descriptors */
 #endif
 
-#ifdef ENABLE_CLI_NETCAT
+#if DROPBEAR_CLI_NETCAT
 	char *netcat_host;
 	unsigned int netcat_port;
 #endif
-#ifdef ENABLE_CLI_PROXYCMD
+#if DROPBEAR_CLI_PROXYCMD
 	char *proxycmd;
 #endif
+	char *bind_address;
+	char *bind_port;
 } cli_runopts;
 
 extern cli_runopts cli_opts;
 void cli_getopts(int argc, char ** argv);
 
-#ifdef ENABLE_USER_ALGO_LIST
-void parse_ciphers_macs();
+#if DROPBEAR_USER_ALGO_LIST
+void parse_ciphers_macs(void);
 #endif
 
 void print_version(void);
 
-#endif /* _RUNOPTS_H_ */
+#endif /* DROPBEAR_RUNOPTS_H_ */

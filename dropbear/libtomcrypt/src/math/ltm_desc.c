@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 
 #define DESC_DEF_ONLY
@@ -26,7 +24,7 @@ static const struct {
 };
 
 /**
-   Convert a MPI error to a LTC error (Possibly the most powerful function ever!  Oh wait... no) 
+   Convert a MPI error to a LTC error (Possibly the most powerful function ever!  Oh wait... no)
    @param err    The error to convert
    @return The equivalent LTC error code or CRYPT_ERROR if none found
 */
@@ -35,7 +33,7 @@ static int mpi_to_ltc_error(int err)
    int x;
 
    for (x = 0; x < (int)(sizeof(mpi_to_ltc_codes)/sizeof(mpi_to_ltc_codes[0])); x++) {
-       if (err == mpi_to_ltc_codes[x].mpi_code) { 
+       if (err == mpi_to_ltc_codes[x].mpi_code) {
           return mpi_to_ltc_codes[x].ltc_code;
        }
    }
@@ -52,7 +50,7 @@ static int init(void **a)
    if (*a == NULL) {
       return CRYPT_MEM;
    }
-   
+
    if ((err = mpi_to_ltc_error(mp_init(*a))) != CRYPT_OK) {
       XFREE(*a);
    }
@@ -89,7 +87,7 @@ static int init_copy(void **a, void *b)
 }
 
 /* ---- trivial ---- */
-static int set_int(void *a, unsigned long b)
+static int set_int(void *a, ltc_mp_digit b)
 {
    LTC_ARGCHK(a != NULL);
    return mpi_to_ltc_error(mp_set_int(a, b));
@@ -101,7 +99,7 @@ static unsigned long get_int(void *a)
    return mp_get_int(a);
 }
 
-static unsigned long get_digit(void *a, int n)
+static ltc_mp_digit get_digit(void *a, int n)
 {
    mp_int *A;
    LTC_ARGCHK(a != NULL);
@@ -116,7 +114,7 @@ static int get_digit_count(void *a)
    A = a;
    return A->used;
 }
-   
+
 static int compare(void *a, void *b)
 {
    int ret;
@@ -127,11 +125,11 @@ static int compare(void *a, void *b)
       case MP_LT: return LTC_MP_LT;
       case MP_EQ: return LTC_MP_EQ;
       case MP_GT: return LTC_MP_GT;
+      default:    return 0;
    }
-   return 0;
 }
 
-static int compare_d(void *a, unsigned long b)
+static int compare_d(void *a, ltc_mp_digit b)
 {
    int ret;
    LTC_ARGCHK(a != NULL);
@@ -140,8 +138,8 @@ static int compare_d(void *a, unsigned long b)
       case MP_LT: return LTC_MP_LT;
       case MP_EQ: return LTC_MP_EQ;
       case MP_GT: return LTC_MP_GT;
+      default:    return 0;
    }
-   return 0;
 }
 
 static int count_bits(void *a)
@@ -212,8 +210,8 @@ static int add(void *a, void *b, void *c)
    LTC_ARGCHK(c != NULL);
    return mpi_to_ltc_error(mp_add(a, b, c));
 }
-  
-static int addi(void *a, unsigned long b, void *c)
+
+static int addi(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -229,7 +227,7 @@ static int sub(void *a, void *b, void *c)
    return mpi_to_ltc_error(mp_sub(a, b, c));
 }
 
-static int subi(void *a, unsigned long b, void *c)
+static int subi(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -245,7 +243,7 @@ static int mul(void *a, void *b, void *c)
    return mpi_to_ltc_error(mp_mul(a, b, c));
 }
 
-static int muli(void *a, unsigned long b, void *c)
+static int muli(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -276,7 +274,7 @@ static int div_2(void *a, void *b)
 }
 
 /* modi */
-static int modi(void *a, unsigned long b, unsigned long *c)
+static int modi(void *a, ltc_mp_digit b, ltc_mp_digit *c)
 {
    mp_digit tmp;
    int      err;
@@ -289,7 +287,7 @@ static int modi(void *a, unsigned long b, unsigned long *c)
    }
    *c = tmp;
    return CRYPT_OK;
-}  
+}
 
 /* gcd */
 static int gcd(void *a, void *b, void *c)
@@ -307,6 +305,24 @@ static int lcm(void *a, void *b, void *c)
    LTC_ARGCHK(b != NULL);
    LTC_ARGCHK(c != NULL);
    return mpi_to_ltc_error(mp_lcm(a, b, c));
+}
+
+static int addmod(void *a, void *b, void *c, void *d)
+{
+   LTC_ARGCHK(a != NULL);
+   LTC_ARGCHK(b != NULL);
+   LTC_ARGCHK(c != NULL);
+   LTC_ARGCHK(d != NULL);
+   return mpi_to_ltc_error(mp_addmod(a,b,c,d));
+}
+
+static int submod(void *a, void *b, void *c, void *d)
+{
+   LTC_ARGCHK(a != NULL);
+   LTC_ARGCHK(b != NULL);
+   LTC_ARGCHK(c != NULL);
+   LTC_ARGCHK(d != NULL);
+   return mpi_to_ltc_error(mp_submod(a,b,c,d));
 }
 
 static int mulmod(void *a, void *b, void *c, void *d)
@@ -381,17 +397,26 @@ static int exptmod(void *a, void *b, void *c, void *d)
    LTC_ARGCHK(c != NULL);
    LTC_ARGCHK(d != NULL);
    return mpi_to_ltc_error(mp_exptmod(a,b,c,d));
-}   
+}
 
-static int isprime(void *a, int *b)
+static int isprime(void *a, int b, int *c)
 {
    int err;
    LTC_ARGCHK(a != NULL);
-   LTC_ARGCHK(b != NULL);
-   err = mpi_to_ltc_error(mp_prime_is_prime(a, 8, b));
-   *b = (*b == MP_YES) ? LTC_MP_YES : LTC_MP_NO;
+   LTC_ARGCHK(c != NULL);
+   if (b == 0) {
+       b = LTC_MILLER_RABIN_REPS;
+   } /* if */
+   err = mpi_to_ltc_error(mp_prime_is_prime(a, b, c));
+   *c = (*c == MP_YES) ? LTC_MP_YES : LTC_MP_NO;
    return err;
-}   
+}
+
+static int set_rand(void *a, int size)
+{
+   LTC_ARGCHK(a != NULL);
+   return mpi_to_ltc_error(mp_rand(a, size));
+}
 
 const ltc_math_descriptor ltm_desc = {
 
@@ -437,7 +462,7 @@ const ltc_math_descriptor ltm_desc = {
    &mulmod,
    &sqrmod,
    &invmod,
-   
+
    &montgomery_setup,
    &montgomery_normalization,
    &montgomery_reduce,
@@ -446,39 +471,44 @@ const ltc_math_descriptor ltm_desc = {
    &exptmod,
    &isprime,
 
-#ifdef MECC
-#ifdef MECC_FP
+#ifdef LTC_MECC
+#ifdef LTC_MECC_FP
    &ltc_ecc_fp_mulmod,
-#else   
+#else
    &ltc_ecc_mulmod,
 #endif
    &ltc_ecc_projective_add_point,
    &ltc_ecc_projective_dbl_point,
    &ltc_ecc_map,
 #ifdef LTC_ECC_SHAMIR
-#ifdef MECC_FP
+#ifdef LTC_MECC_FP
    &ltc_ecc_fp_mul2add,
 #else
    &ltc_ecc_mul2add,
-#endif /* MECC_FP */
+#endif /* LTC_MECC_FP */
 #else
    NULL,
 #endif /* LTC_ECC_SHAMIR */
 #else
    NULL, NULL, NULL, NULL, NULL,
-#endif /* MECC */
+#endif /* LTC_MECC */
 
-#ifdef MRSA
+#ifdef LTC_MRSA
    &rsa_make_key,
    &rsa_exptmod,
 #else
-   NULL, NULL
+   NULL, NULL,
 #endif
+   &addmod,
+   &submod,
+
+   &set_rand,
+
 };
 
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/math/ltm_desc.c,v $ */
-/* $Revision: 1.29 $ */
-/* $Date: 2006/12/03 00:39:56 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

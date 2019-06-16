@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 
 /* Implements ECC over Z/pZ for curve y^2 = x^3 - 3x + b
@@ -20,9 +18,9 @@
 /**
   @file ecc_shared_secret.c
   ECC Crypto, Tom St Denis
-*/  
+*/
 
-#ifdef MECC
+#ifdef LTC_MECC
 
 /**
   Create an ECC shared secret between two keys
@@ -90,7 +88,7 @@ done:
 }
 
 #endif
-/* $Source: /cvs/libtom/libtomcrypt/src/pk/ecc/ecc_shared_secret.c,v $ */
-/* $Revision: 1.8 $ */
-/* $Date: 2006/12/04 02:19:48 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
 

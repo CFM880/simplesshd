@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 
 /* AES implementation by Tom St Denis
@@ -33,7 +31,7 @@
 
 #include "tomcrypt.h"
 
-#ifdef RIJNDAEL
+#ifdef LTC_RIJNDAEL
 
 #ifndef ENCRYPT_ONLY 
 
@@ -51,7 +49,7 @@ const struct ltc_cipher_descriptor rijndael_desc =
     6,
     16, 32, 16, 10,
     SETUP, ECB_ENC, ECB_DEC, ECB_TEST, ECB_DONE, ECB_KS,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 #endif
 
@@ -61,7 +59,7 @@ const struct ltc_cipher_descriptor aes_desc =
     6,
     16, 32, 16, 10,
     SETUP, ECB_ENC, ECB_DEC, ECB_TEST, ECB_DONE, ECB_KS,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 #else
@@ -77,7 +75,7 @@ const struct ltc_cipher_descriptor rijndael_enc_desc =
     6,
     16, 32, 16, 10,
     SETUP, ECB_ENC, NULL, NULL, ECB_DONE, ECB_KS,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 const struct ltc_cipher_descriptor aes_enc_desc =
@@ -86,11 +84,12 @@ const struct ltc_cipher_descriptor aes_enc_desc =
     6,
     16, 32, 16, 10,
     SETUP, ECB_ENC, NULL, NULL, ECB_DONE, ECB_KS,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 #endif
 
+#define __LTC_AES_TAB_C__
 #include "aes_tab.c"
 
 static ulong32 setup_mix(ulong32 temp)
@@ -123,7 +122,7 @@ static ulong32 setup_mix2(ulong32 temp)
  */
 int SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey)
 {
-    int i, j;
+    int i;
     ulong32 temp, *rk;
 #ifndef ENCRYPT_ONLY
     ulong32 *rrk;
@@ -149,7 +148,6 @@ int SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *s
     LOAD32H(rk[2], key +  8);
     LOAD32H(rk[3], key + 12);
     if (keylen == 16) {
-        j = 44;
         for (;;) {
             temp  = rk[3];
             rk[4] = rk[0] ^ setup_mix(temp) ^ rcon[i];
@@ -162,7 +160,6 @@ int SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *s
             rk += 4;
         }
     } else if (keylen == 24) {
-        j = 52;   
         LOAD32H(rk[4], key + 16);
         LOAD32H(rk[5], key + 20);
         for (;;) {
@@ -183,7 +180,6 @@ int SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *s
             rk += 6;
         }
     } else if (keylen == 32) {
-        j = 60;
         LOAD32H(rk[4], key + 16);
         LOAD32H(rk[5], key + 20);
         LOAD32H(rk[6], key + 24);
@@ -210,13 +206,14 @@ int SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *s
         }
     } else {
        /* this can't happen */
+       /* coverity[dead_error_line] */
        return CRYPT_ERROR;
     }
 
 #ifndef ENCRYPT_ONLY    
     /* setup the inverse key now */
     rk   = skey->rijndael.dK;
-    rrk  = skey->rijndael.eK + j - 4; 
+    rrk  = skey->rijndael.eK + (28 + keylen) - 4;
     
     /* apply the inverse MixColumn transform to all round keys but the first and the last: */
     /* copy first */
@@ -691,23 +688,8 @@ int ECB_TEST(void)
   
     rijndael_ecb_encrypt(tests[i].pt, tmp[0], &key);
     rijndael_ecb_decrypt(tmp[0], tmp[1], &key);
-    if (XMEMCMP(tmp[0], tests[i].ct, 16) || XMEMCMP(tmp[1], tests[i].pt, 16)) { 
-#if 0
-       printf("\n\nTest %d failed\n", i);
-       if (XMEMCMP(tmp[0], tests[i].ct, 16)) {
-          printf("CT: ");
-          for (i = 0; i < 16; i++) {
-             printf("%02x ", tmp[0][i]);
-          }
-          printf("\n");
-       } else {
-          printf("PT: ");
-          for (i = 0; i < 16; i++) {
-             printf("%02x ", tmp[1][i]);
-          }
-          printf("\n");
-       }
-#endif       
+    if (compare_testvector(tmp[0], 16, tests[i].ct, 16, "AES Encrypt", i) ||
+          compare_testvector(tmp[1], 16, tests[i].pt, 16, "AES Decrypt", i)) {
         return CRYPT_FAIL_TESTVECTOR;
     }
 
@@ -729,6 +711,7 @@ int ECB_TEST(void)
 */
 void ECB_DONE(symmetric_key *skey)
 {
+  LTC_UNUSED_PARAM(skey);
 }
 
 
@@ -758,6 +741,6 @@ int ECB_KS(int *keysize)
 #endif
 
 
-/* $Source: /cvs/libtom/libtomcrypt/src/ciphers/aes/aes.c,v $ */
-/* $Revision: 1.14 $ */
-/* $Date: 2006/11/08 23:01:06 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

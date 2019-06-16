@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -33,14 +31,14 @@ unsigned long der_object_identifier_bits(unsigned long x)
 
 /**
   Gets length of DER encoding of Object Identifier
-  @param nwords   The number of OID words 
+  @param nwords   The number of OID words
   @param words    The actual OID words to get the size of
   @param outlen   [out] The length of the DER encoding for the given string
   @return CRYPT_OK if successful
 */
 int der_length_object_identifier(unsigned long *words, unsigned long nwords, unsigned long *outlen)
 {
-   unsigned long y, z, t, wordbuf;   
+   unsigned long y, z, t, wordbuf;
 
    LTC_ARGCHK(words  != NULL);
    LTC_ARGCHK(outlen != NULL);
@@ -85,6 +83,6 @@ int der_length_object_identifier(unsigned long *words, unsigned long nwords, uns
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/pk/asn1/der/object_identifier/der_length_object_identifier.c,v $ */
-/* $Revision: 1.4 $ */
-/* $Date: 2006/04/16 20:17:42 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

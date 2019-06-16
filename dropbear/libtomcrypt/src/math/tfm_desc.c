@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 
 #define DESC_DEF_ONLY
@@ -26,7 +24,7 @@ static const struct {
 };
 
 /**
-   Convert a tfm error to a LTC error (Possibly the most powerful function ever!  Oh wait... no) 
+   Convert a tfm error to a LTC error (Possibly the most powerful function ever!  Oh wait... no)
    @param err    The error to convert
    @return The equivalent LTC error code or CRYPT_ERROR if none found
 */
@@ -35,7 +33,7 @@ static int tfm_to_ltc_error(int err)
    int x;
 
    for (x = 0; x < (int)(sizeof(tfm_to_ltc_codes)/sizeof(tfm_to_ltc_codes[0])); x++) {
-       if (err == tfm_to_ltc_codes[x].tfm_code) { 
+       if (err == tfm_to_ltc_codes[x].tfm_code) {
           return tfm_to_ltc_codes[x].ltc_code;
        }
    }
@@ -85,7 +83,7 @@ static int init_copy(void **a, void *b)
 }
 
 /* ---- trivial ---- */
-static int set_int(void *a, unsigned long b)
+static int set_int(void *a, ltc_mp_digit b)
 {
    LTC_ARGCHK(a != NULL);
    fp_set(a, b);
@@ -100,7 +98,7 @@ static unsigned long get_int(void *a)
    return A->used > 0 ? A->dp[0] : 0;
 }
 
-static unsigned long get_digit(void *a, int n)
+static ltc_mp_digit get_digit(void *a, int n)
 {
    fp_int *A;
    LTC_ARGCHK(a != NULL);
@@ -115,7 +113,7 @@ static int get_digit_count(void *a)
    A = a;
    return A->used;
 }
-   
+
 static int compare(void *a, void *b)
 {
    int ret;
@@ -130,7 +128,7 @@ static int compare(void *a, void *b)
    return 0;
 }
 
-static int compare_d(void *a, unsigned long b)
+static int compare_d(void *a, ltc_mp_digit b)
 {
    int ret;
    LTC_ARGCHK(a != NULL);
@@ -214,8 +212,8 @@ static int add(void *a, void *b, void *c)
    fp_add(a, b, c);
    return CRYPT_OK;
 }
-  
-static int addi(void *a, unsigned long b, void *c)
+
+static int addi(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -233,7 +231,7 @@ static int sub(void *a, void *b, void *c)
    return CRYPT_OK;
 }
 
-static int subi(void *a, unsigned long b, void *c)
+static int subi(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -247,11 +245,11 @@ static int mul(void *a, void *b, void *c)
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(b != NULL);
    LTC_ARGCHK(c != NULL);
-   fp_mul(a, b, c); 
+   fp_mul(a, b, c);
    return CRYPT_OK;
 }
 
-static int muli(void *a, unsigned long b, void *c)
+static int muli(void *a, ltc_mp_digit b, void *c)
 {
    LTC_ARGCHK(a != NULL);
    LTC_ARGCHK(c != NULL);
@@ -285,7 +283,7 @@ static int div_2(void *a, void *b)
 }
 
 /* modi */
-static int modi(void *a, unsigned long b, unsigned long *c)
+static int modi(void *a, ltc_mp_digit b, ltc_mp_digit *c)
 {
    fp_digit tmp;
    int      err;
@@ -298,7 +296,7 @@ static int modi(void *a, unsigned long b, unsigned long *c)
    }
    *c = tmp;
    return CRYPT_OK;
-}  
+}
 
 /* gcd */
 static int gcd(void *a, void *b, void *c)
@@ -318,6 +316,24 @@ static int lcm(void *a, void *b, void *c)
    LTC_ARGCHK(c != NULL);
    fp_lcm(a, b, c);
    return CRYPT_OK;
+}
+
+static int addmod(void *a, void *b, void *c, void *d)
+{
+   LTC_ARGCHK(a != NULL);
+   LTC_ARGCHK(b != NULL);
+   LTC_ARGCHK(c != NULL);
+   LTC_ARGCHK(d != NULL);
+   return tfm_to_ltc_error(fp_addmod(a,b,c,d));
+}
+
+static int submod(void *a, void *b, void *c, void *d)
+{
+   LTC_ARGCHK(a != NULL);
+   LTC_ARGCHK(b != NULL);
+   LTC_ARGCHK(c != NULL);
+   LTC_ARGCHK(d != NULL);
+   return tfm_to_ltc_error(fp_submod(a,b,c,d));
 }
 
 static int mulmod(void *a, void *b, void *c, void *d)
@@ -394,17 +410,20 @@ static int exptmod(void *a, void *b, void *c, void *d)
    LTC_ARGCHK(c != NULL);
    LTC_ARGCHK(d != NULL);
    return tfm_to_ltc_error(fp_exptmod(a,b,c,d));
-}   
+}
 
-static int isprime(void *a, int *b)
+static int isprime(void *a, int b, int *c)
 {
    LTC_ARGCHK(a != NULL);
-   LTC_ARGCHK(b != NULL);
-   *b = (fp_isprime(a) == FP_YES) ? LTC_MP_YES : LTC_MP_NO;
+   LTC_ARGCHK(c != NULL);
+   if (b == 0) {
+       b = LTC_MILLER_RABIN_REPS;
+   } /* if */
+   *c = (fp_isprime_ex(a, b) == FP_YES) ? LTC_MP_YES : LTC_MP_NO;
    return CRYPT_OK;
 }
 
-#if defined(MECC) && defined(MECC_ACCEL)
+#if defined(LTC_MECC) && defined(LTC_MECC_ACCEL)
 
 static int tfm_ecc_projective_dbl_point(ecc_point *P, ecc_point *R, void *modulus, void *Mp)
 {
@@ -438,7 +457,7 @@ static int tfm_ecc_projective_dbl_point(ecc_point *P, ecc_point *R, void *modulu
    if (fp_cmp(R->z, modulus) != FP_LT) {
       fp_sub(R->z, modulus, R->z);
    }
-   
+
    /* &t2 = X - T1 */
    fp_sub(R->x, &t1, &t2);
    if (fp_cmp_d(&t2, 0) == FP_LT) {
@@ -497,7 +516,7 @@ static int tfm_ecc_projective_dbl_point(ecc_point *P, ecc_point *R, void *modulu
       fp_add(R->x, modulus, R->x);
    }
 
-   /* Y = Y - X */     
+   /* Y = Y - X */
    fp_sub(R->y, R->x, R->y);
    if (fp_cmp_d(R->y, 0) == FP_LT) {
       fp_add(R->y, modulus, R->y);
@@ -510,7 +529,7 @@ static int tfm_ecc_projective_dbl_point(ecc_point *P, ecc_point *R, void *modulu
    if (fp_cmp_d(R->y, 0) == FP_LT) {
       fp_add(R->y, modulus, R->y);
    }
- 
+
    return CRYPT_OK;
 }
 
@@ -520,14 +539,14 @@ static int tfm_ecc_projective_dbl_point(ecc_point *P, ecc_point *R, void *modulu
    @param Q        The point to add
    @param R        [out] The destination of the double
    @param modulus  The modulus of the field the ECC curve is in
-   @param mp       The "b" value from montgomery_setup()
+   @param Mp       The "b" value from montgomery_setup()
    @return CRYPT_OK on success
 */
 static int tfm_ecc_projective_add_point(ecc_point *P, ecc_point *Q, ecc_point *R, void *modulus, void *Mp)
 {
    fp_int  t1, t2, x, y, z;
-   fp_digit mp;  
-   
+   fp_digit mp;
+
    LTC_ARGCHK(P       != NULL);
    LTC_ARGCHK(Q       != NULL);
    LTC_ARGCHK(R       != NULL);
@@ -544,7 +563,7 @@ static int tfm_ecc_projective_add_point(ecc_point *P, ecc_point *Q, ecc_point *R
 
    /* should we dbl instead? */
    fp_sub(modulus, Q->y, &t1);
-   if ( (fp_cmp(P->x, Q->x) == FP_EQ) && 
+   if ( (fp_cmp(P->x, Q->x) == FP_EQ) &&
         (Q->z != NULL && fp_cmp(P->z, Q->z) == FP_EQ) &&
         (fp_cmp(P->y, Q->y) == FP_EQ || fp_cmp(P->y, &t1) == FP_EQ)) {
         return tfm_ecc_projective_dbl_point(P, R, modulus, Mp);
@@ -637,7 +656,7 @@ static int tfm_ecc_projective_add_point(ecc_point *P, ecc_point *Q, ecc_point *R
    /* T1 = T1 * X  */
    fp_mul(&t1, &x, &t1);
    fp_montgomery_reduce(&t1, modulus, mp);
- 
+
    /* X = Y*Y */
    fp_sqr(&y, &x);
    fp_montgomery_reduce(&x, modulus, mp);
@@ -651,7 +670,7 @@ static int tfm_ecc_projective_add_point(ecc_point *P, ecc_point *Q, ecc_point *R
    fp_sub(&t2, &x, &t2);
    if (fp_cmp_d(&t2, 0) == FP_LT) {
       fp_add(&t2, modulus, &t2);
-   } 
+   }
    /* T2 = T2 - X */
    fp_sub(&t2, &x, &t2);
    if (fp_cmp_d(&t2, 0) == FP_LT) {
@@ -674,12 +693,19 @@ static int tfm_ecc_projective_add_point(ecc_point *P, ecc_point *Q, ecc_point *R
    fp_copy(&x, R->x);
    fp_copy(&y, R->y);
    fp_copy(&z, R->z);
-   
+
    return CRYPT_OK;
 }
 
 
 #endif
+
+static int set_rand(void *a, int size)
+{
+   LTC_ARGCHK(a != NULL);
+   fp_rand(a, size);
+   return CRYPT_OK;
+}
 
 const ltc_math_descriptor tfm_desc = {
 
@@ -734,45 +760,49 @@ const ltc_math_descriptor tfm_desc = {
    &exptmod,
    &isprime,
 
-#ifdef MECC
-#ifdef MECC_FP
+#ifdef LTC_MECC
+#ifdef LTC_MECC_FP
    &ltc_ecc_fp_mulmod,
 #else
    &ltc_ecc_mulmod,
-#endif /* MECC_FP */
-#ifdef MECC_ACCEL
+#endif /* LTC_MECC_FP */
+#ifdef LTC_MECC_ACCEL
    &tfm_ecc_projective_add_point,
    &tfm_ecc_projective_dbl_point,
 #else
    &ltc_ecc_projective_add_point,
    &ltc_ecc_projective_dbl_point,
-#endif /* MECC_ACCEL */
+#endif /* LTC_MECC_ACCEL */
    &ltc_ecc_map,
 #ifdef LTC_ECC_SHAMIR
-#ifdef MECC_FP
+#ifdef LTC_MECC_FP
    &ltc_ecc_fp_mul2add,
 #else
    &ltc_ecc_mul2add,
-#endif /* MECC_FP */
+#endif /* LTC_MECC_FP */
 #else
    NULL,
 #endif /* LTC_ECC_SHAMIR */
 #else
    NULL, NULL, NULL, NULL, NULL,
-#endif /* MECC */
+#endif /* LTC_MECC */
 
-#ifdef MRSA
+#ifdef LTC_MRSA
    &rsa_make_key,
    &rsa_exptmod,
 #else
-   NULL, NULL
+   NULL, NULL,
 #endif
-   
+   &addmod,
+   &submod,
+
+   set_rand,
+
 };
 
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/math/tfm_desc.c,v $ */
-/* $Revision: 1.26 $ */
-/* $Date: 2006/12/03 00:39:56 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -18,7 +16,7 @@
 
 #ifdef LTC_F9_MODE
 
-/** f9-MAC a block of memory 
+/** f9-MAC a block of memory
   @param cipher     Index of cipher to use
   @param key        [in]  Secret key
   @param keylen     Length of key in octets
@@ -28,7 +26,7 @@
   @param outlen     [in/out] Output size and final tag size
   Return CRYPT_OK on success.
 */
-int f9_memory(int cipher, 
+int f9_memory(int cipher,
                const unsigned char *key, unsigned long keylen,
                const unsigned char *in,  unsigned long inlen,
                      unsigned char *out, unsigned long *outlen)
@@ -67,6 +65,6 @@ done:
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/mac/f9/f9_memory.c,v $ */
-/* $Revision: 1.4 $ */
-/* $Date: 2006/11/21 23:02:42 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */

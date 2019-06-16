@@ -6,8 +6,6 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
@@ -63,7 +61,7 @@ int xcbc_done(xcbc_state *xcbc, unsigned char *out, unsigned long *outlen)
       out[x] = xcbc->IV[x];
    }
    *outlen = x;
-  
+
 #ifdef LTC_CLEAN_STACK
    zeromem(xcbc, sizeof(*xcbc));
 #endif
@@ -72,7 +70,7 @@ int xcbc_done(xcbc_state *xcbc, unsigned char *out, unsigned long *outlen)
 
 #endif
 
-/* $Source: /cvs/libtom/libtomcrypt/src/mac/xcbc/xcbc_done.c,v $ */
-/* $Revision: 1.4 $ */
-/* $Date: 2006/11/07 03:23:46 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
 

@@ -6,12 +6,11 @@
  *
  * The library is free for all purposes without any express
  * guarantee it works.
- *
- * Tom St Denis, tomstdenis@gmail.com, http://libtomcrypt.com
  */
 #include "tomcrypt.h"
 
-/** 
+#ifdef LTC_RNG_MAKE_PRNG
+/**
   @file rng_make_prng.c
   portable way to get secure random bits to feed a PRNG  (Tom St Denis)
 */
@@ -23,13 +22,13 @@
   @param prng     [out] PRNG state to initialize
   @param callback A pointer to a void function for when the RNG is slow, this can be NULL
   @return CRYPT_OK if successful
-*/  
-int rng_make_prng(int bits, int wprng, prng_state *prng, 
+*/
+int rng_make_prng(int bits, int wprng, prng_state *prng,
                   void (*callback)(void))
 {
    unsigned char buf[256];
    int err;
-   
+
    LTC_ARGCHK(prng != NULL);
 
    /* check parameter */
@@ -63,8 +62,9 @@ int rng_make_prng(int bits, int wprng, prng_state *prng,
    #endif
    return CRYPT_OK;
 }
+#endif /* #ifdef LTC_RNG_MAKE_PRNG */
 
 
-/* $Source: /cvs/libtom/libtomcrypt/src/prngs/rng_make_prng.c,v $ */
-/* $Revision: 1.4 $ */
-/* $Date: 2006/03/31 14:15:35 $ */
+/* ref:         $Format:%D$ */
+/* git commit:  $Format:%H$ */
+/* commit time: $Format:%ai$ */
