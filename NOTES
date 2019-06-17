@@ -898,8 +898,6 @@ the manifest...
 allowBackup="false" took immediate effect and had no surprises...
 
 
-XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
-
 
 --- new release
 
@@ -908,9 +906,5 @@ XXX - see if settings looks better with SDK26, if not, hack it so that the ones 
 XXX - ed25519?
 
 XXX - try /data/data/com.termux/files/usr/bin/zsh as login shell
-XXX - test it installed from play store and upgrading to the API 26 one
-XXX - test it installed scratch as the API 26 one
-XXX - test it upgraded and installed on oldish device (set up android emulator)
-XXX - test it installed on x86 with android emulator
 
 XXX - libiconv? HAVE_ICONV_H etc
