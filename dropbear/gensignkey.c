@@ -143,10 +143,11 @@ int signkey_generate(enum signkey_type keytype, int bits, const char* filename, 
 	if (link(fn_temp, filename) < 0) {
 		/* If generating keys on connection (skipexist) it's OK to get EEXIST 
 		- we probably just lost a race with another connection to generate the key */
-		if (!(skip_exist && errno == EEXIST)) {
+		/* fallback to rename() if the fs doesn't support link() */
+		if ((!(skip_exist && errno == EEXIST)) &&
+		    (rename(fn_temp, filename) < 0)) {
 			dropbear_log(LOG_ERR, "Failed moving key file to %s: %s", filename,
 				strerror(errno));
-			/* XXX fallback to non-atomic copy for some filesystems? */
 			ret = DROPBEAR_FAILURE;
 			goto out;
 		}
