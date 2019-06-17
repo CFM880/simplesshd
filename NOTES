@@ -876,6 +876,27 @@ useful.  I think I'm gonna leave that be.
 More productively, I found that it won't startForegroundService() because
 that was added at Oreo!
 
+I can't seem to get start-on-boot to work, but from some of the crap in
+logcat, I have the idea CyanogenMod might not be good at broadcasting the
+boot event.
+
+Now for the interesting test...I uninstalled SimpleSSHD on the Moto X
+(API 22), and am reinstalling it new.  So it won't have grandfathered
+permissions.  It works fine!  No surprises.  It still doesn't start on
+boot *shrug*.
+
+Now to try the same uninstall test with Moto Z2 Force (API 26).  It works
+fine, and on the first start-up it does ask for permission to access
+files (/sdcard).  To my surprise, it saved my Settings and my
+/data/user/0/org.galexander.sshd/files.  That's actually kind of bad,
+because the host key would be saved, and there aren't really many
+settings to re-enter in the upside case.  Apparently this is new behavior
+since I added targetSdkVersion>=23, so users haven't had their data
+backed up yet and I can change this setting with allowBackup="false" in
+the manifest...
+
+allowBackup="false" took immediate effect and had no surprises...
+
 
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
