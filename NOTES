@@ -802,6 +802,35 @@ Settings screen to force it to enable foreground services if
 start-on-boot is selected, and then we'll be golden.
 
 
+June 16, 2019.
+
+I finished the dropbear 2019.78 merge and got it all to work again on the
+x86 version 28 (Pie) emulator.  It also works on x86 version 26 (Oreo)
+emulator, and on my ARM Oreo phone (Moto Z2 Force).  I also tried with an
+emulated ARM version 16 (JB 4.1), and it works, but it generates a lot of
+this spamming the log:
+
+   Failed lookup: Non-recoverable failure in name resolution.
+
+This gives me a kind of deja vu, something to do with library versions. I
+have the idea it's because I built with a newer libc than what is found
+by dynamic linking in older Android.  But I cannot link the main dropbear
+thing with -static because it needs to be JNI (which is loaded with
+dlopen()).  Apparently.
+
+Anyways, I'm not sure there's anything I can do about that other than
+reduce the log noise.  I'm not really interested in digging up a magic
+older version of the NDK or anything like that.
+
+But I do think the only reason it has -static on the stand-alone
+executables is basically a hack to make them work with the old NDK, so I
+can get rid of that...
+
+Testing with emulated x86 Android 21 (KK 5.0)...  It seems to work fine.
+It resolve my IP to the string "127.0.0.1", anyways.  rsync seems to
+work, and start-on-boot in the background works.
+
+
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
 

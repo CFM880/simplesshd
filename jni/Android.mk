@@ -494,7 +494,7 @@ LOCAL_SRC_FILES := $(DROPBEAR_PATH)/scp.c \
 	$(DROPBEAR_PATH)/atomicio.c
 LOCAL_C_INCLUDES:= dropbear dropbear/libtomcrypt/src/headers dropbear/libtommath
 # LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   := -static
+LOCAL_LDFLAGS   :=
 
 include $(BUILD_EXECUTABLE)
 
@@ -524,7 +524,7 @@ LOCAL_SRC_FILES := $(OPENSSH_PATH)/sftp-server-main.c \
 	$(OPENSSH_PATH)/openbsd-compat/strmode.c
 LOCAL_C_INCLUDES:= openssh
 # LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   := -static
+LOCAL_LDFLAGS   :=
 
 include $(BUILD_EXECUTABLE)
 
@@ -602,7 +602,7 @@ LOCAL_SRC_FILES := $(RSYNC_PATH)/flist.c \
 
 LOCAL_C_INCLUDES:= rsync rsync/popt rsync/zlib
 LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   := -static
+LOCAL_LDFLAGS   :=
 
 include $(BUILD_EXECUTABLE)
 
@@ -616,6 +616,6 @@ LOCAL_MODULE    := buffersu
 
 LOCAL_SRC_FILES := buffersu.c
 # LOCAL_LDLIBS    :=
-LOCAL_LDFLAGS   := -static
+LOCAL_LDFLAGS   :=
 
 include $(BUILD_EXECUTABLE)
