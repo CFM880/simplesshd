@@ -830,6 +830,13 @@ Testing with emulated x86 Android 21 (KK 5.0)...  It seems to work fine.
 It resolve my IP to the string "127.0.0.1", anyways.  rsync seems to
 work, and start-on-boot in the background works.
 
+Anyways, I made a naive thing to decode an IP address to a numeric
+string, in case getnameinfo() fails.  It is working for me in the ARM
+Android 16 now.  It generates a reasonable string even though it
+presumably fails to use the library lookup.  It starts on boot as a
+background service.  And rsync and scp work.  Only need to test on my
+Moto X now.
+
 
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 

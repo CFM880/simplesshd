@@ -615,6 +615,42 @@ void get_socket_address(int fd, char **local_host, char **local_port,
 	}
 }
 
+static void
+lastditch_lookup(struct sockaddr_storage *addr, char *host, char *port)
+{
+	if (addr->ss_family == AF_INET) {
+		struct sockaddr_in *sa = (struct sockaddr_in *)addr;
+		unsigned int ip = ntohl(sa->sin_addr.s_addr);
+		sprintf(host, "%u.%u.%u.%u", ((ip>>24)&0xff), ((ip>>16)&0xff),
+				((ip>>8)&0xff), (ip&0xff));
+		sprintf(port, "%d", ntohs(sa->sin_port));
+	} else if (addr->ss_family == AF_INET6) {
+		struct sockaddr_in6 *sa = (struct sockaddr_in6 *)addr;
+		sprintf(host, "%02X%02X:%02X%02X:%02X%02X:%02X%02X:"
+			      "%02X%02X:%02X%02X:%02X%02X:%02X%02X",
+			sa->sin6_addr.in6_u.u6_addr8[0],
+			sa->sin6_addr.in6_u.u6_addr8[1],
+			sa->sin6_addr.in6_u.u6_addr8[2],
+			sa->sin6_addr.in6_u.u6_addr8[3],
+			sa->sin6_addr.in6_u.u6_addr8[4],
+			sa->sin6_addr.in6_u.u6_addr8[5],
+			sa->sin6_addr.in6_u.u6_addr8[6],
+			sa->sin6_addr.in6_u.u6_addr8[7],
+			sa->sin6_addr.in6_u.u6_addr8[8],
+			sa->sin6_addr.in6_u.u6_addr8[9],
+			sa->sin6_addr.in6_u.u6_addr8[10],
+			sa->sin6_addr.in6_u.u6_addr8[11],
+			sa->sin6_addr.in6_u.u6_addr8[12],
+			sa->sin6_addr.in6_u.u6_addr8[13],
+			sa->sin6_addr.in6_u.u6_addr8[14],
+			sa->sin6_addr.in6_u.u6_addr8[15]);
+		sprintf(port, "%d", ntohs(sa->sin6_port));
+	} else {
+		sprintf(port, "unknown%u", (unsigned)addr->ss_family);
+		strcpy(port, "unknown");
+	}
+}
+
 /* Return a string representation of the socket address passed. The return
  * value is allocated with malloc() */
 void getaddrstring(struct sockaddr_storage* addr, 
@@ -663,9 +699,7 @@ void getaddrstring(struct sockaddr_storage* addr,
 			return;
 		} else {
 			/* if we can't do a numeric lookup, something's gone terribly wrong */
-			dropbear_log(LOG_WARNING, "Failed lookup: %s", gai_strerror(ret));
-			sprintf(host, "unknown%u", ((struct sockaddr *)addr)->sa_family);
-			strcpy(serv, "unknown");
+			lastditch_lookup(addr, host, serv);
 		}
 	}
 
