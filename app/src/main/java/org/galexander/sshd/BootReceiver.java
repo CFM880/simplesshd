@@ -12,13 +12,15 @@ public class BootReceiver extends BroadcastReceiver {
 		Prefs.init(context);
 		if (Prefs.get_onboot()) {
 			Intent i = new Intent(context, SimpleSSHDService.class);
-			if (Prefs.get_foreground()) {
-				context.startForegroundService(i);
-			} else if (Build.VERSION.SDK_INT >=
+			if (Build.VERSION.SDK_INT >=
 					Build.VERSION_CODES.O) {
-				Toast.makeText(context,
+				if (Prefs.get_foreground()) {
+					context.startForegroundService(i);
+				} else {
+					Toast.makeText(context,
 "SimpleSSHD cannot start background at boot since Oreo (see Settings).",
-					Toast.LENGTH_LONG).show();
+						Toast.LENGTH_LONG).show();
+				}
 			} else {
 				context.startService(i);
 			}

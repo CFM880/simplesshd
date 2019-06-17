@@ -837,6 +837,45 @@ presumably fails to use the library lookup.  It starts on boot as a
 background service.  And rsync and scp work.  Only need to test on my
 Moto X now.
 
+...
+
+Testing start-on-boot on my Moto Z2 Force, it works, but there is an
+infelicity.  If I go into Settings and try to turn off foreground
+service, it won't let me because start-on-boot is selected and I am using
+Oreo.  It is supposed to show a toast to let me know this, but the toast
+doesn't appear.  That's because I had previously disabled notifications
+so that the foreground service doesn't have a notification.
+
+I can make the toast appear by following these steps: re-enable
+notifications (manually in Settings -> Apps & Notifications), then
+re-start the service, then disable the notification (by long-tapping on
+the notification itself).  Then toasts work.  I think probably it has
+saved the fact that all notifications are disabled, because it only knew
+one class of notification when it was using compatibility with the old
+SDK...but now it knows two classes (a notification and a toast), and it
+records that only one class is disabled.  I really have no idea but I
+think it sucks.
+
+...
+
+Testing with Moto X (ARM, Android 5.1 API 22), and it works.  But it has
+this infelicity...when scp or rsync is run:
+
+   WARNING: linker: /data/app/org.galexander.sshd-2/lib/arm/libscp.so: unused DT entry: type 0x6ffffffe arg 0xb64
+   WARNING: linker: /data/app/org.galexander.sshd-2/lib/arm/libscp.so: unused DT entry: type 0x6fffffff arg 0x2
+
+These are DT types that are present in the .so which are not supported by
+the kernel.  It may be because the kernel is CyanogenMod?  The types are
+DT_VERNEED and DT_VERNEEDNUM.  They refer to a section .gnu.version_r,
+which I guess holds two 32-byte entries which are unintelligible to me.
+
+Supposedly I can use an "ELF cleaner" to strip out these DT_VERNEED
+things.  But there's some ambiguity as to whether they're necessary or
+useful.  I think I'm gonna leave that be.
+
+More productively, I found that it won't startForegroundService() because
+that was added at Oreo!
+
 
 XXX - test with Android 16, and on my Moto X, and emulated 26, and emulated 28.
 
