@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 instlib() {
 	for i in `ls libs`
@@ -9,7 +9,7 @@ instlib() {
 }
 
 dropbear/ifndef_wrapper.sh < dropbear/default_options.h > dropbear/default_options_guard.h &&
-~/Android/Sdk/ndk-bundle/ndk-build -j8 &&
+~//Library/android/sdk/ndk-bundle/ndk-build -j8 &&
 mkdir -p app/src/main/lib/armeabi-v7a &&
 instlib scp libscp.so &&
 instlib sftp-server libsftp-server.so &&

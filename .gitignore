@@ -187,3 +187,8 @@ lint/tmp/
 /.idea/
 /local.properties
 /keystore.properties
+
+/obj/local/*/rsync
+/obj/local/*/scp
+/obj/local/*/sftp-server
+/obj/local/*/buffersu
