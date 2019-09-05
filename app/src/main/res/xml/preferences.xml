@@ -22,7 +22,7 @@
 	android:title="Port Number"
 	android:summary="Must be greater than 1024."
 	android:numeric="integer"
-	android:defaultValue="2222" />
+	android:defaultValue="10000" />
     <CheckBoxPreference
 	android:key="rsyncbuffer"
 	android:title="Buffer hack for rsync+SuperSU"

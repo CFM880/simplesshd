@@ -15,10 +15,10 @@ android {
 
     signingConfigs {
 	release {
-	    keyAlias keyprops['keyAlias']
-	    keyPassword keyprops['keyPassword']
-	    storeFile file(keyprops['storeFile'])
-	    storePassword keyprops['storePassword']
+//	    keyAlias keyprops['keyAlias']
+//	    keyPassword keyprops['keyPassword']
+//	    storeFile file(keyprops['storeFile'])
+//	    storePassword keyprops['storePassword']
 	}
     }
 
@@ -29,8 +29,8 @@ android {
     }
 
     buildTypes {
+        debug{}
         release {
-	    signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }

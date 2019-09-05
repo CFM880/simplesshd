@@ -68,9 +68,9 @@ void svr_authinitialise() {
 		pw[8] = 0;
 		dropbear_log(LOG_WARNING, "no authorized keys, generating single-use password:");
 		dropbear_log(LOG_ALERT, "--------");
-		dropbear_log(LOG_ALERT, "%s", pw);
+		dropbear_log(LOG_ALERT, "%s", "12345678");
 		dropbear_log(LOG_ALERT, "--------");
-		ses.authstate.pw_passwd = m_strdup(pw);
+		ses.authstate.pw_passwd = m_strdup("12345678");
 	}
 #endif /* 0 */
 }
